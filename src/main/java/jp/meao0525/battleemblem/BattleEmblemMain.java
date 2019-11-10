@@ -15,8 +15,6 @@ import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
-    private BeGame game;
-
     @Override
     public void onEnable() {
         getLogger().info("plugin enabled");
@@ -61,7 +59,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
                 }
 
-                game = new BeGame();
+                BeGame game = new BeGame();
 
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える

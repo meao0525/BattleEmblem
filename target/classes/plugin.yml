@@ -1,7 +1,7 @@
 main: jp.meao0525.battleemblem.BattleEmblemMain
 name: BattleEmblem
 version: 1.0-SNAPSHOT
-api-version: 1.14.4
+api-version: '1.14.4'
 #--
 commands:
   be:

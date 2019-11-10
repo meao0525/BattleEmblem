@@ -1,5 +1,5 @@
-main: jp.meao0525.battleemblem.BattleEmblemMain
 name: BattleEmblem
+main: jp.meao0525.battleemblem.BattleEmblemMain
 version: ${project.version}
 api-version: 1.14.4
 #--
