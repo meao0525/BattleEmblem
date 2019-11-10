@@ -15,6 +15,8 @@ import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
+    private BeGame game;
+
     @Override
     public void onEnable() {
         getLogger().info("plugin enabled");
@@ -28,12 +30,15 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-        if (args.length > 1) { return false; }
+        //引数3つ以上とかありえない
+        if (args.length > 2) { return false; }
 
         switch (args[0]) {
             case "":
-            case "help" : //helpの表示
+            case "help" :
+                //不正なコマンドじゃない?
+                if (args.length == 2) { return false;}
+
                 sender.sendMessage(ChatColor.GOLD + "=== Battle Emblem ===");
                 sender.sendMessage("/be help - このプラグインのコマンド一覧");
                 sender.sendMessage("/be score - 自分のスコアを表示");
@@ -47,18 +52,25 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
             case "score" : //スコアの表示
                 //TODO:
+                sender.sendMessage("プレイヤーのスコアを表示します");
                 return true;
 
             case "start" : //ゲームを始める
-                BeGame bg = new BeGame();
+                //あなたはOPですか?
+                if (!(sender.isOp())) {
+                    sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
+                }
+
+                game = new BeGame();
 
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える
                     //TODO: クラスを選択してないプレイヤーにランダムクラスを与える
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
-                    bg.Start();
+                    game.Start();
+                } else {
+                    Bukkit.broadcastMessage("全員同じクラスでゲームを始めます");
                 }
-
 
                 return true;
         }

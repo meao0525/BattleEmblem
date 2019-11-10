@@ -48,6 +48,7 @@ public class BeGame {
                     for (Player p : list) {
                         //TODO: ランダムにスポーン
                         p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,1.0F,1.0F);
+                        //TODO: 「開戦」のタイトル表示
                         //TODO: ロードアウトセレクターを取り上げる
                     }
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "開戦");
