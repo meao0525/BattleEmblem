@@ -23,8 +23,8 @@ public class BeGame {
     public void Start() {
         //bePlayerListの作成
         createPlayerList();
-        //準備時間
-        phase = 1;
+        /*=======準備時間=======*/
+        setPhase(1);
 
         //30秒カウントダウンする
         Timer timer = new Timer();
@@ -33,18 +33,24 @@ public class BeGame {
             public void run() {
                 if (count >= 10) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと" + ChatColor.AQUA + count + ChatColor.RESET + "秒");
+                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,1.0F,1.0F);});
+
                 } else if (count > 5) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
+                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,1.0F,1.0F);});
+
                 } else if (count > 0) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
                     bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.BLOCK_ANVIL_FALL,SoundCategory.MASTER,1.0F,1.0F);});
+
                 } else {
-                    /*=======カウントダウン終了=======*/
+                    /*=======開戦=======*/
+                    setPhase(2);
                     //全員をランダムなlocationにテレポート
                     ArrayList<Player> list = bePlayerList;
                     Collections.shuffle(list);
 
-                    int n = 0;
+                    int n = 0; //テレポートロケーション用
                     for (Player p : list) {
                         //TODO: ランダムにスポーン
                         p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,1.0F,1.0F);
@@ -88,5 +94,9 @@ public class BeGame {
 
     public int getPhase() {
         return phase;
+    }
+
+    public void setPhase(int phase) {
+        this.phase = phase;
     }
 }

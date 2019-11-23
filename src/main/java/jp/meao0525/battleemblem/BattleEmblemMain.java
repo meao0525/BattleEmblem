@@ -57,9 +57,16 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 //あなたはOPですか?
                 if (!(sender.isOp())) {
                     sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
+                    return true;
                 }
 
                 BeGame game = new BeGame();
+
+                //え？ゲーム中じゃね？
+                if (game.getPhase() != 0) {
+                    sender.sendMessage(ChatColor.DARK_RED + "ただいまゲーム中です");
+                    return true;
+                }
 
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える
