@@ -33,15 +33,15 @@ public class BeGame {
             public void run() {
                 if (count >= 10) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと" + ChatColor.AQUA + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,1.0F,1.0F);});
+                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else if (count > 5) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,1.0F,1.0F);});
+                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else if (count > 0) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.BLOCK_ANVIL_FALL,SoundCategory.MASTER,1.0F,1.0F);});
+                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.BLOCK_ANVIL_PLACE,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else {
                     /*=======開戦=======*/
@@ -53,11 +53,12 @@ public class BeGame {
                     int n = 0; //テレポートロケーション用
                     for (Player p : list) {
                         //TODO: ランダムにスポーン
-                        p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,1.0F,1.0F);
+                        p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
+                        p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
                         //TODO: 「開戦」のタイトル表示
                         //TODO: ロードアウトセレクターを取り上げる
                     }
-                    Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "開戦");
+                    Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
                     timer.cancel();
                 }
                 count--;
@@ -65,12 +66,13 @@ public class BeGame {
         }, 0, 1000);
 
         //残り人数が一人になったら終わる
-        while (bePlayerList.size() == 1) {
-            //TODO:
-        }
+//        while (bePlayerList.size() == 1) {
+//        }
+        End();
     }
 
     public void End() {
+        setPhase(0);
         //TODO: 終了処理
     }
 

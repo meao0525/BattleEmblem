@@ -15,6 +15,8 @@ import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
+    private BeGame game = new BeGame();
+
     @Override
     public void onEnable() {
         getLogger().info("plugin enabled");
@@ -37,7 +39,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 //不正なコマンドじゃない?
                 if (args.length == 2) { return false;}
 
-                sender.sendMessage(ChatColor.GOLD + "=== Battle Emblem ===");
+                sender.sendMessage(ChatColor.GOLD + "===== Battle Emblem =====");
                 sender.sendMessage("/be help - このプラグインのコマンド一覧");
                 sender.sendMessage("/be score - 自分のスコアを表示");
                 if (sender.isOp()) {
@@ -45,7 +47,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage("/be start - ゲームスタート");
                     sender.sendMessage("/be start <バトルクラス名> - 指定したバトルクラスに統一してスタート");
                 }
-                sender.sendMessage(ChatColor.GOLD + "=====================");
+                sender.sendMessage(ChatColor.GOLD + "======================");
                 return true;
 
             case "score" : //スコアの表示
@@ -59,8 +61,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
                     return true;
                 }
-
-                BeGame game = new BeGame();
 
                 //え？ゲーム中じゃね？
                 if (game.getPhase() != 0) {

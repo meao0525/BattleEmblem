@@ -2,5 +2,7 @@ jp\meao0525\battleemblem\beplayer\BePlayer.class
 jp\meao0525\battleemblem\battleclass\BattleClass.class
 jp\meao0525\battleemblem\begame\BeGame.class
 jp\meao0525\battleemblem\BattleEmblemMain.class
+jp\meao0525\battleemblem\battleclass\ClassStatus.class
 jp\meao0525\battleemblem\begame\BeGame$1.class
+jp\meao0525\battleemblem\beevent\ClassSelectEvent.class
 jp\meao0525\battleemblem\beplayer\BePlayerList.class
