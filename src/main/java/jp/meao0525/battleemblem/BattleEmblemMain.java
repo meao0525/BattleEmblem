@@ -30,14 +30,12 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        //引数3つ以上とかありえない
-        if (args.length > 2) { return false; }
 
         switch (args[0]) {
             case "":
             case "help" :
                 //不正なコマンドじゃない?
-                if (args.length == 2) { return false;}
+                if (args.length > 1) { return false;}
 
                 sender.sendMessage(ChatColor.GOLD + "===== Battle Emblem =====");
                 sender.sendMessage("/be help - このプラグインのコマンド一覧");
@@ -46,6 +44,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage("/be score <プレイヤー名> - 指定したプレイヤーのスコアを表示");
                     sender.sendMessage("/be start - ゲームスタート");
                     sender.sendMessage("/be start <バトルクラス名> - 指定したバトルクラスに統一してスタート");
+                    sender.sendMessage("/be give <アイテム名> <プレイヤー名> <個数> - 指定したアイテムを渡す");
                 }
                 sender.sendMessage(ChatColor.GOLD + "======================");
                 return true;
@@ -73,11 +72,15 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     //TODO: クラスを選択してないプレイヤーにランダムクラスを与える
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
                     game.Start();
-                } else {
+                } else if (args.length == 2){
                     Bukkit.broadcastMessage("全員同じクラスでゲームを始めます");
+                } else {
+                    return false; //引数3つ以上とかありえない
                 }
-
                 return true;
+
+            case "give" : //beアイテムを渡す
+                //TODO: helpの通りにコマンド動かすよ
         }
 
         return false;

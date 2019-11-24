@@ -1,6 +1,8 @@
 package jp.meao0525.battleemblem.battleclass;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 public enum BattleClass {
     Sword_Master("剣聖", Material.DIAMOND_SWORD, ClassStatus.SWORD_MASTER_STATUS),
