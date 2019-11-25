@@ -1,6 +1,7 @@
 package jp.meao0525.battleemblem;
 
 import jp.meao0525.battleemblem.begame.BeGame;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -67,13 +68,24 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     return true;
                 }
 
+                //プレイヤーリストの作成
+                ArrayList<Player> bePlayerList = game.createPlayerList();
+
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える
-                    //TODO: クラスを選択してないプレイヤーにランダムクラスを与える
+                    //クラスを選択してないプレイヤーにランダムクラスを与える
+                    bePlayerList.forEach(p -> {
+                        if (p.getPlayerListHeader().isEmpty()) {
+                            BePlayer bp = new BePlayer(p);
+                            bp.setBattleClass(game.getRandomClass());
+                        }
+                    });
+                    /*===ゲームスタート===*/
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
-                    game.Start();
+                    game.Start(bePlayerList);
+
                 } else if (args.length == 2){
-                    Bukkit.broadcastMessage("全員同じクラスでゲームを始めます");
+                    Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "全員" + ChatColor.AQUA + args[1] + ChatColor.RESET + "でゲームスタート");
                 } else {
                     return false; //引数3つ以上とかありえない
                 }

@@ -13,6 +13,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class ClassSelectEvent implements Listener {
+    public static String BATTLE_CLASS_INV_NAME = "バトルクラス";
+
     @EventHandler
     public void ClassSelectEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
@@ -20,7 +22,7 @@ public class ClassSelectEvent implements Listener {
 
         //おぬしが持っておるのはもしやロードアウトセレクターか？
         if (!(item.getType().equals(Material.EMERALD))
-                ||!(item.getItemMeta().getDisplayName().equals("ロードアウトセレクター"))) {
+                ||!(item.getItemMeta().getDisplayName().equalsIgnoreCase("ロードアウトセレクター"))) {
             return;
         }
 
@@ -28,9 +30,9 @@ public class ClassSelectEvent implements Listener {
     }
 
     public Inventory getClassInventory() {
-        Inventory inv = Bukkit.createInventory(null,9,"バトルクラス");
+        Inventory inv = Bukkit.createInventory(null,9, "バトルクラス");
 
-        inv.setItem(1,getIcon(BattleClass.Sword_Master));
+        inv.setItem(1,getIcon(BattleClass.SWORD_MASTER));
         inv.setItem(2,getIcon(BattleClass.BERSERKER));
         inv.setItem(3,getIcon(BattleClass.ARMOR_KNIGHT));
         inv.setItem(4,getIcon(BattleClass.BRAVE_HERO));

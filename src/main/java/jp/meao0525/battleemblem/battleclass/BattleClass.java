@@ -4,13 +4,15 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static jp.meao0525.battleemblem.battleclass.BattleClassName.*;
+
 public enum BattleClass {
-    Sword_Master("剣聖", Material.DIAMOND_SWORD, ClassStatus.SWORD_MASTER_STATUS),
-    BERSERKER("狂戦士", Material.DIAMOND_AXE, ClassStatus.BERSERKER_STATUS),
-    ARMOR_KNIGHT("重鎧兵", Material.DIAMOND_CHESTPLATE, ClassStatus.ARMOR_KNIGHT_STATUS),
-    BRAVE_HERO("勇者", Material.GOLDEN_CHESTPLATE, ClassStatus.BRAVE_HERO_STATUS),
-    SNIPER("狙撃手", Material.BOW, ClassStatus.SNIPER_STATUS),
-    ASSASSIN("暗殺者", Material.IRON_SWORD, ClassStatus.ASSASSIN_STATUS);
+    SWORD_MASTER(SWORD_MASTER_NAME, Material.DIAMOND_SWORD, ClassStatus.SWORD_MASTER_STATUS),
+    BERSERKER(BERSERKER_NAME, Material.DIAMOND_AXE, ClassStatus.BERSERKER_STATUS),
+    ARMOR_KNIGHT(ARMOR_KNIGHT_NAME, Material.DIAMOND_CHESTPLATE, ClassStatus.ARMOR_KNIGHT_STATUS),
+    BRAVE_HERO(BRAVE_HERO_NAME, Material.GOLDEN_CHESTPLATE, ClassStatus.BRAVE_HERO_STATUS),
+    SNIPER(SNIPER_NAME, Material.BOW, ClassStatus.SNIPER_STATUS),
+    ASSASSIN(ASSASSIN_NAME, Material.IRON_SWORD, ClassStatus.ASSASSIN_STATUS);
 
     private final Material icon;
     private final String name;

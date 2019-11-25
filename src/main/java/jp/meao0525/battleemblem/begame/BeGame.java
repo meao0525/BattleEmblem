@@ -23,20 +23,12 @@ public class BeGame {
     public BeGame() {
     }
 
-    public void Start() {
+    public void Start(ArrayList<Player> bePlayerList) {
         /*=======準備時間=======*/
         setPhase(1);
 
-        //bePlayerListの作成
-        createPlayerList();
-
-        //未選択の人にランダムクラスを付与
-        bePlayerList.forEach(p -> {
-            if (p.getPlayerListHeader().isEmpty()) {
-                BePlayer bp = new BePlayer(p);
-                bp.setBattleClass(getRandomClass());
-            }
-        });
+        //bePlayerListの取得
+        this.bePlayerList = bePlayerList;
 
         //30秒カウントダウンする
         Timer timer = new Timer();
@@ -90,17 +82,17 @@ public class BeGame {
         //TODO: 終了処理
     }
 
-    private void createPlayerList() {
+    public ArrayList<Player> createPlayerList() {
         ArrayList<Player> list = new ArrayList<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.getGameMode().equals(GameMode.ADVENTURE)) {
                 list.add(p);
             }
         }
-        setBePlayerList(list);
+        return list;
     }
 
-    private BattleClass getRandomClass() {
+    public BattleClass getRandomClass() {
         //未使用のクラスのリストを作成
         ArrayList<BattleClass> classList = new ArrayList<>();
         for (BattleClass bc : BattleClass.values()) {

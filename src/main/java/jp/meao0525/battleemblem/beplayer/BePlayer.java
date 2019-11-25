@@ -16,12 +16,26 @@ public class BePlayer {
     public void setBattleClass(BattleClass battleClass) {
         //headerにクラス名をセット
         player.setPlayerListHeader(battleClass.getName());
+
         //プレイヤーのステータスをセットしていくよ
         ClassStatus status = battleClass.getStatus();
         player.setHealthScale(status.getHp()); //HP
         player.setWalkSpeed(status.getSpeed()); //足の速さ
         setAttack(status.getAttack()); //攻撃
         setDefence(status.getDefence()); //防御
+
+        //バトルクラスを使用中にする
+        battleClass.setUsed(true);
+
+        //TODO: ロードアウトセレクター回収する
+    }
+
+    public void removeBattleClass() {
+        //TODO: headerを空にする
+        //TODO: ステータスを元に戻す
+        //TODO: 攻撃と防御を空に
+        //TODO: バトルクラスのUsedをfalseにする
+        //TODO: ロードアウトセレクターを渡す
     }
 
     public Player getPlayer() {
