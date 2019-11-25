@@ -1,10 +1,13 @@
 package jp.meao0525.battleemblem.begame;
 
+import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collector;
 
 public class BeGame {
     //フェーズ
@@ -21,10 +24,19 @@ public class BeGame {
     }
 
     public void Start() {
-        //bePlayerListの作成
-        createPlayerList();
         /*=======準備時間=======*/
         setPhase(1);
+
+        //bePlayerListの作成
+        createPlayerList();
+
+        //未選択の人にランダムクラスを付与
+        bePlayerList.forEach(p -> {
+            if (p.getPlayerListHeader().isEmpty()) {
+                BePlayer bp = new BePlayer(p);
+                bp.setBattleClass(getRandomClass());
+            }
+        });
 
         //30秒カウントダウンする
         Timer timer = new Timer();
@@ -59,6 +71,7 @@ public class BeGame {
                         //TODO: ロードアウトセレクターを取り上げる
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
+                    End(); //TODO: ここはあとで消す
                     timer.cancel();
                 }
                 count--;
@@ -68,7 +81,6 @@ public class BeGame {
         //残り人数が一人になったら終わる
 //        while (bePlayerList.size() == 1) {
 //        }
-        End();
     }
 
     public void End() {
@@ -76,7 +88,7 @@ public class BeGame {
         //TODO: 終了処理
     }
 
-    public void createPlayerList() {
+    private void createPlayerList() {
         ArrayList<Player> list = new ArrayList<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.getGameMode().equals(GameMode.ADVENTURE)) {
@@ -84,6 +96,20 @@ public class BeGame {
             }
         }
         setBePlayerList(list);
+    }
+
+    private BattleClass getRandomClass() {
+        //未使用のクラスのリストを作成
+        ArrayList<BattleClass> classList = new ArrayList<>();
+        for (BattleClass bc : BattleClass.values()) {
+            if (!bc.isUsed()) {
+                classList.add(bc);
+            }
+        }
+        //リストをシャッフル
+        Collections.shuffle(classList);
+
+        return classList.get(1);
     }
 
     public ArrayList<Player> getBePlayerList() {

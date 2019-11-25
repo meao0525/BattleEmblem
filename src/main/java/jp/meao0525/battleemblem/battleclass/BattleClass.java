@@ -16,6 +16,8 @@ public enum BattleClass {
     private final String name;
     private final ClassStatus status;
 
+    private boolean used = false;
+
     private BattleClass (String name, Material icon, ClassStatus status) {
         this.icon = icon;
         this.name = name;
@@ -32,5 +34,13 @@ public enum BattleClass {
 
     public ClassStatus getStatus() {
         return status;
+    }
+
+    public boolean isUsed() {
+        return used;
+    }
+
+    public void setUsed(boolean used) {
+        this.used = used;
     }
 }
