@@ -14,6 +14,9 @@ public class BePlayer {
     }
 
     public void setBattleClass(BattleClass battleClass) {
+        //バトルクラスを使用中にする
+        battleClass.setUsed(true);
+
         //headerにクラス名をセット
         player.setPlayerListHeader(battleClass.getName());
 
@@ -24,8 +27,7 @@ public class BePlayer {
         setAttack(status.getAttack()); //攻撃
         setDefence(status.getDefence()); //防御
 
-        //バトルクラスを使用中にする
-        battleClass.setUsed(true);
+        //TODO: 装備を与える
 
         //TODO: ロードアウトセレクター回収する
     }

@@ -12,11 +12,11 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ClassSelectEvent implements Listener {
+public class OpenSelectorEvent implements Listener {
     public static String BATTLE_CLASS_INV_NAME = "バトルクラス";
 
     @EventHandler
-    public void ClassSelectEvent(PlayerInteractEvent e) {
+    public void openSelectorEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
