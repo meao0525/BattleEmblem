@@ -1,5 +1,7 @@
 package jp.meao0525.battleemblem;
 
+import jp.meao0525.battleemblem.beevent.OpenSelectorEvent;
+import jp.meao0525.battleemblem.beevent.SelectLoadOutEvent;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
@@ -22,6 +24,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
     public void onEnable() {
         getLogger().info("plugin enabled");
         getCommand("be").setExecutor(this);
+
+        getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
+        getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(), this);
     }
 
     @Override

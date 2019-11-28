@@ -11,13 +11,14 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 
 import static jp.meao0525.battleemblem.battleclass.BattleClassName.*;
+import static jp.meao0525.battleemblem.beevent.OpenSelectorEvent.BATTLE_CLASS_INV_NAME;
 
 public class SelectLoadOutEvent implements Listener {
     @EventHandler
     public void SelectLoadOutEvent(InventoryClickEvent e) {
         //ロードアウトセレクターのインベントリか?
         String invName = e.getView().getTitle();
-        if (!invName.equalsIgnoreCase("バトルクラス")) {
+        if (!invName.equalsIgnoreCase(BATTLE_CLASS_INV_NAME)) {
             return;
         }
         //クリックしたのはPlayerか?

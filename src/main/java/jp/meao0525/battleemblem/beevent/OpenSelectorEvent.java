@@ -16,7 +16,7 @@ public class OpenSelectorEvent implements Listener {
     public static String BATTLE_CLASS_INV_NAME = "バトルクラス";
 
     @EventHandler
-    public void openSelectorEvent(PlayerInteractEvent e) {
+    public void OpenSelectorEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 
@@ -30,7 +30,7 @@ public class OpenSelectorEvent implements Listener {
     }
 
     public Inventory getClassInventory() {
-        Inventory inv = Bukkit.createInventory(null,9, "バトルクラス");
+        Inventory inv = Bukkit.createInventory(null,9, BATTLE_CLASS_INV_NAME);
 
         inv.setItem(1,getIcon(BattleClass.SWORD_MASTER));
         inv.setItem(2,getIcon(BattleClass.BERSERKER));
