@@ -17,7 +17,7 @@ public class BeGame {
     private ArrayList<Player> bePlayerList = new ArrayList<>();
 
     //カウントダウン用変数
-    int count = 30;
+    int count;
 
     //コンストラクター
     public BeGame() {
@@ -31,6 +31,7 @@ public class BeGame {
         this.bePlayerList = bePlayerList;
 
         //30秒カウントダウンする
+        count = 30;
         Timer timer = new Timer();
         Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲーム開始まで");
         timer.scheduleAtFixedRate(new TimerTask() {

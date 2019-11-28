@@ -15,8 +15,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class OpenSelectorEvent implements Listener {
     public static String BATTLE_CLASS_INV_NAME = "バトルクラス";
 
+    public OpenSelectorEvent() {}
+
     @EventHandler
-    public void OpenSelectorEvent(PlayerInteractEvent e) {
+    public void openSelectorEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
         ItemStack item = player.getInventory().getItemInMainHand();
 

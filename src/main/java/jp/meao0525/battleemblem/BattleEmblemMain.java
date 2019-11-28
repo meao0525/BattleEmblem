@@ -18,7 +18,8 @@ import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
-    private BeGame game = new BeGame();
+    BeGame game = new BeGame();
+    ArrayList<Player> bePlayerList = new ArrayList<>();
 
     @Override
     public void onEnable() {
@@ -36,9 +37,11 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (args.length == 0) {
+            return false;
+        }
 
         switch (args[0]) {
-            case "":
             case "help" :
                 //不正なコマンドじゃない?
                 if (args.length > 1) { return false;}
@@ -74,17 +77,19 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 }
 
                 //プレイヤーリストの作成
-                ArrayList<Player> bePlayerList = game.createPlayerList();
+                bePlayerList = game.createPlayerList();
+
+                if (bePlayerList.size() == 0) { sender.sendMessage("誰もいないね"); }
 
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える
                     //クラスを選択してないプレイヤーにランダムクラスを与える
-                    bePlayerList.forEach(p -> {
-                        if (p.getPlayerListHeader().isEmpty()) {
+                    for (Player p : bePlayerList) {
+                        if ((p.getPlayerListHeader() == null)||(p.getPlayerListHeader().isEmpty())) {
                             BePlayer bp = new BePlayer(p);
                             bp.setBattleClass(game.getRandomClass());
                         }
-                    });
+                    }
                     /*===ゲームスタート===*/
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
                     game.Start(bePlayerList);
