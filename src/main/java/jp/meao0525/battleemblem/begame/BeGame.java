@@ -61,9 +61,7 @@ public class BeGame {
                         //開戦のエフェクト
                         p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
                         p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
-                        p.sendTitle(ChatColor.AQUA + "-開戦-",null,1,2,1);
-                        //ロードアウトセレクターを取り上げる
-                        p.getInventory().remove(Material.EMERALD);
+                        p.sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
                     End(); //TODO: ここはあとで消す

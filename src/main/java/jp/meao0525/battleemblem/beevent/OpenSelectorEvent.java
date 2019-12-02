@@ -8,12 +8,13 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class OpenSelectorEvent implements Listener {
-    public static String BATTLE_CLASS_INV_NAME = "バトルクラス";
+    public static final String BATTLE_CLASS_INV_NAME = "バトルクラス";
 
     public OpenSelectorEvent() {}
 
@@ -58,6 +59,7 @@ public class OpenSelectorEvent implements Listener {
                 ItemFlag.HIDE_POTION_EFFECTS,
                 ItemFlag.HIDE_UNBREAKABLE);
 
+        item.setItemMeta(meta);
         return item;
     }
 }

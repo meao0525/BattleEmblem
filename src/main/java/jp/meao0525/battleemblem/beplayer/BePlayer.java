@@ -2,6 +2,7 @@ package jp.meao0525.battleemblem.beplayer;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class BePlayer {
@@ -29,7 +30,8 @@ public class BePlayer {
 
         //TODO: 装備を与える
 
-        //TODO: ロードアウトセレクター回収する
+        //ロードアウトセレクター回収する
+        player.getInventory().remove(Material.EMERALD);
     }
 
     public void removeBattleClass() {

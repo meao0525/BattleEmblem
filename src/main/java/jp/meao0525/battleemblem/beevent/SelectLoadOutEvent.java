@@ -26,6 +26,8 @@ public class SelectLoadOutEvent implements Listener {
 
         Player player = (Player) e.getWhoClicked();
         BePlayer bePlayer = new BePlayer(player);
+
+        if (e.getCurrentItem() == null) { return; } //空欄のクリック時
         String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
         //何クリックしたのー?
         switch (itemName) {
@@ -46,6 +48,8 @@ public class SelectLoadOutEvent implements Listener {
                 break;
             case "暗殺者":
                 bePlayer.setBattleClass(BattleClass.ASSASSIN);
+                break;
+            default:
                 break;
         }
 
