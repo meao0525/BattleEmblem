@@ -105,25 +105,29 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
             case "give" : //beアイテムを渡す
                 //TODO: helpの通りにコマンド動かすよ
                 Player player;
+                if (args[2] == null) { //プレイヤー指定なし
+                    if (sender instanceof Player) {
+                        player = (Player) sender; //自分を指定
+                    } else {
+                        sender.sendMessage("このコマンドはゲーム内から行ってください");
+                        return true;
+                    }
+                } else { //プレイヤー指定あり
+                    player = Bukkit.getPlayerExact(args[2]);
+                    if (player == null) {
+                        sender.sendMessage("そんな人いないよ...");
+                    }
+                }
+                //渡すのは何かな？
                 switch (args[1]) {
                     case "selector" :
-                        if (args[2] == null) { //プレイヤー指定なし
-                            if (sender instanceof Player) {
-                                player = (Player) sender; //自分を指定
-                            } else {
-                                sender.sendMessage("このコマンドはゲーム内から行ってください");
-                                return true;
-                            }
-
-                        } else { //プレイヤー指定あり
-                            player = Bukkit.getPlayerExact(args[2]);
-                            if (player == null) {
-                                sender.sendMessage("そんな人いないよ...");
-                            }
-                        }
-
                         //指定したプレイヤーに渡すよ
                         player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+                        return true;
+
+                    case "book" :
+                        sender.sendMessage("バトルクラス一覧を渡そうね");
+                        return true;
                 }
         }
 
