@@ -1,21 +1,32 @@
-package jp.meao0525.battleemblem.begame;
-
+package jp.meao0525.battleemblem.beitem;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class BeItem {
+import static jp.meao0525.battleemblem.beitem.BeItemName.*;
+
+public enum BeItems {
+    /*=====ゲームアイテム=====*/
+    LOADOUT_SELECTOR(Material.EMERALD, LOADOUT_SELECTOR_NAME),
+    /*=====クラスアイテム=====*/
+    MASTER_SWORD(Material.DIAMOND_SWORD, MASTER_SWORD_NAME),
+    BERSERKER_AXE(Material.DIAMOND_AXE, BERSERKER_AXE_NAME),
+    KNIGHT_AXE(Material.DIAMOND_AXE, KNIGHT_AXE_NAME),
+    BRAVE_SWORD(Material.IRON_SWORD, BRAVE_SWORD_NAME),
+    SNIPER_BOW(Material.BOW, SNIPER_BOW_NAME),
+    ASSASSIN_DAGGER(Material.IRON_SWORD, ASSASSIN_DAGGER_NAME);
+
     private final Material type;
     private final String name;
 
-    public BeItem(Material material, String name) {
-        this.type = material;
+    private BeItems(Material type, String name) {
+        this.type = type;
         this.name = name;
     }
 
-    public ItemStack toItem() {
+    public ItemStack toItemStack() {
         ItemStack beItem = new ItemStack(getType());
         ItemMeta meta = beItem.getItemMeta();
 

@@ -3,6 +3,7 @@ package jp.meao0525.battleemblem;
 import jp.meao0525.battleemblem.beevent.OpenSelectorEvent;
 import jp.meao0525.battleemblem.beevent.SelectLoadOutEvent;
 import jp.meao0525.battleemblem.begame.BeGame;
+import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -53,7 +54,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage("/be score <プレイヤー名> - 指定したプレイヤーのスコアを表示");
                     sender.sendMessage("/be start - ゲームスタート");
                     sender.sendMessage("/be start <バトルクラス名> - 指定したバトルクラスに統一してスタート");
-                    sender.sendMessage("/be give <アイテム名> <プレイヤー名> <個数> - 指定したアイテムを渡す");
+                    sender.sendMessage("/be give selector <プレイヤー名> - 指定したプレイヤーにロードアウトセレクターを渡す");
                 }
                 sender.sendMessage(ChatColor.GOLD + "======================");
                 return true;
@@ -103,6 +104,27 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
             case "give" : //beアイテムを渡す
                 //TODO: helpの通りにコマンド動かすよ
+                Player player;
+                switch (args[1]) {
+                    case "selector" :
+                        if (args[2] == null) { //プレイヤー指定なし
+                            if (sender instanceof Player) {
+                                player = (Player) sender; //自分を指定
+                            } else {
+                                sender.sendMessage("このコマンドはゲーム内から行ってください");
+                                return true;
+                            }
+
+                        } else { //プレイヤー指定あり
+                            player = Bukkit.getPlayerExact(args[2]);
+                            if (player == null) {
+                                sender.sendMessage("そんな人いないよ...");
+                            }
+                        }
+
+                        //指定したプレイヤーに渡すよ
+                        player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+                }
         }
 
         return false;
