@@ -13,8 +13,16 @@ public enum BeItems {
     /*=====クラスアイテム=====*/
     MASTER_SWORD(Material.DIAMOND_SWORD, MASTER_SWORD_NAME),
     BERSERKER_AXE(Material.DIAMOND_AXE, BERSERKER_AXE_NAME),
-    KNIGHT_AXE(Material.DIAMOND_AXE, KNIGHT_AXE_NAME),
+    KNIGHT_AXE(Material.IRON_AXE, KNIGHT_AXE_NAME),
+    KNIGHT_HELMET(Material.DIAMOND_HELMET, KNIGHT_ARMOR_NAME),
+    KNIGHT_CHESTPLATE(Material.DIAMOND_CHESTPLATE, KNIGHT_ARMOR_NAME),
+    KNIGHT_LEGGINGS(Material.DIAMOND_LEGGINGS, KNIGHT_ARMOR_NAME),
+    KNIGHT_BOOTS(Material.DIAMOND_BOOTS, KNIGHT_ARMOR_NAME),
     BRAVE_SWORD(Material.IRON_SWORD, BRAVE_SWORD_NAME),
+    BRAVE_HELMET(Material.GOLDEN_HELMET, BRAVE_ARMOR_NAME),
+    BRAVE_CHESTPLATE(Material.GOLDEN_CHESTPLATE, BRAVE_ARMOR_NAME),
+    BRAVE_LEGGINGS(Material.GOLDEN_LEGGINGS, BRAVE_ARMOR_NAME),
+    BRAVE_BOOTS(Material.GOLDEN_BOOTS, BRAVE_ARMOR_NAME),
     SNIPER_BOW(Material.BOW, SNIPER_BOW_NAME),
     ASSASSIN_DAGGER(Material.IRON_SWORD, ASSASSIN_DAGGER_NAME);
 
@@ -29,7 +37,6 @@ public enum BeItems {
     public ItemStack toItemStack() {
         ItemStack beItem = new ItemStack(getType());
         ItemMeta meta = beItem.getItemMeta();
-
         //オリジナル名前付きアイテムを作るよ
         meta.setDisplayName(getName());
         meta.setUnbreakable(true);
