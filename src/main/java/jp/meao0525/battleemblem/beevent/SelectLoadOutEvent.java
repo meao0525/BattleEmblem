@@ -55,5 +55,7 @@ public class SelectLoadOutEvent implements Listener {
 
         //イベントキャンセル
         e.setCancelled(true);
+        //インベントリを閉じる
+        player.closeInventory();
     }
 }
