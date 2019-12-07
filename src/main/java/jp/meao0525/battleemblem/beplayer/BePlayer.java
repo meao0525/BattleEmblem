@@ -21,17 +21,17 @@ public class BePlayer {
         battleClass.setUsed(true);
 
         //headerにクラス名をセット
-        getPlayer().setPlayerListHeader(battleClass.getName());
+        player.setPlayerListHeader(battleClass.getName());
 
         //プレイヤーのステータスをセットしていくよ
         ClassStatus status = battleClass.getStatus();
-        getPlayer().setHealthScale(status.getHp()); //HP
-        getPlayer().setWalkSpeed(status.getSpeed()); //足の速さ
+        player.setHealthScale(status.getHp()); //HP
+        player.setWalkSpeed(status.getSpeed()); //足の速さ
         setAttack(status.getAttack()); //攻撃
         setDefence(status.getDefence()); //防御
 
         //装備を与える
-        getPlayer().getInventory().addItem(battleClass.getItem().toItemStack());
+        player.getInventory().addItem(battleClass.getItem().toItemStack());
         //鎧は必要ですか？
         if (battleClass.equals(BattleClass.ARMOR_KNIGHT) || battleClass.equals(BattleClass.BRAVE_HERO)) {
             setArmor(getPlayer(), battleClass);
