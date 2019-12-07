@@ -7,6 +7,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 public class FallDamageEvent implements Listener {
     @EventHandler
     public void FallDamageEvent(EntityDamageEvent e) {
-
+        if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+            e.setCancelled(true);
+        }
     }
 }
