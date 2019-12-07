@@ -2,6 +2,7 @@ package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,33 +30,41 @@ public class SelectLoadOutEvent implements Listener {
 
         if (e.getCurrentItem() == null) { return; } //空欄のクリック時
         String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
+        BattleClass battleClass = null;
         //何クリックしたのー?
         switch (itemName) {
             case "剣聖":
-                bePlayer.setBattleClass(BattleClass.SWORD_MASTER);
+                battleClass = BattleClass.SWORD_MASTER;
                 break;
             case "狂戦士":
-                bePlayer.setBattleClass(BattleClass.BERSERKER);
+                battleClass = BattleClass.BERSERKER;
                 break;
             case "重鎧兵":
-                bePlayer.setBattleClass(BattleClass.ARMOR_KNIGHT);
+                 battleClass = BattleClass.ARMOR_KNIGHT;
                 break;
             case "勇者":
-                bePlayer.setBattleClass(BattleClass.BRAVE_HERO);
+                battleClass = BattleClass.BRAVE_HERO;
                 break;
             case "狙撃手":
-                bePlayer.setBattleClass(BattleClass.SNIPER);
+                battleClass = BattleClass.SNIPER;
                 break;
             case "暗殺者":
-                bePlayer.setBattleClass(BattleClass.ASSASSIN);
+                battleClass = BattleClass.ASSASSIN;
                 break;
             default:
                 break;
         }
+        if (battleClass == null) { return; }
 
         //イベントキャンセル
         e.setCancelled(true);
-        //インベントリを閉じる
-        player.closeInventory();
+
+        //使われてないといいね
+        if (battleClass.isUsed()) {
+            player.sendMessage(battleClass.getName() + ChatColor.RED + "は使用中です");
+        } else {
+            bePlayer.setBattleClass(battleClass);
+            player.closeInventory();
+        }
     }
 }
