@@ -42,6 +42,10 @@ public class BePlayer {
         if (battleClass.equals(BattleClass.ARMOR_KNIGHT) || battleClass.equals(BattleClass.BRAVE_HERO)) {
             setArmor(getPlayer(), battleClass);
         }
+        //スナイパーには矢もあげようね
+        if (battleClass.equals(BattleClass.SNIPER)) {
+            player.getInventory().addItem(new ItemStack(Material.ARROW));
+        }
 
         //ロードアウトセレクター回収する
         getPlayer().getInventory().remove(Material.EMERALD);
@@ -54,7 +58,6 @@ public class BePlayer {
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
         player.setWalkSpeed(DEFAULT_SPEED);
-
         //攻撃と防御を空に
         attack = 0;
         defence = 0;
@@ -102,7 +105,7 @@ public class BePlayer {
 
     public boolean hasBattleClass(BattleClass battleClass) {
         boolean flag = false;
-        if (this.battleClass.getName().equalsIgnoreCase(battleClass.getName())) {
+        if (this.battleClass.equals(battleClass)) {
             flag = true;
         }
         return flag;
