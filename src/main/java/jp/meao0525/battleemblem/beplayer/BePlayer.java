@@ -9,14 +9,20 @@ import org.bukkit.inventory.ItemStack;
 
 public class BePlayer {
     private Player player;
+    private BattleClass battleClass;
     private int attack;
     private int defence;
+
+    private final double DEFAULT_HEALTH = 20.0;
+    private final float DEFAULT_SPEED = 0.2F;
 
     public BePlayer(Player player) {
         this.player = player;
     }
 
     public void setBattleClass(BattleClass battleClass) {
+        this.battleClass = battleClass;
+
         //バトルクラスを使用中にする
         battleClass.setUsed(true);
 
@@ -42,11 +48,28 @@ public class BePlayer {
     }
 
     public void removeBattleClass() {
-        //TODO: headerを空にする
-        //TODO: ステータスを元に戻す
-        //TODO: 攻撃と防御を空に
-        //TODO: バトルクラスのUsedをfalseにする
-        //TODO: ロードアウトセレクターを渡す
+        //headerを空にする
+        player.setPlayerListHeader("");
+
+        //ステータスを元に戻す
+        player.setHealthScale(DEFAULT_HEALTH);
+        player.setWalkSpeed(DEFAULT_SPEED);
+
+        //攻撃と防御を空に
+        attack = 0;
+        defence = 0;
+
+        //装備を回収
+        player.getInventory().clear();
+
+        //バトルクラスのUsedをfalseにする
+        battleClass.setUsed(false);
+
+        //バトルクラスを手放す
+        battleClass = null;
+
+        //ロードアウトセレクターを渡す
+        player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
     }
 
     public Player getPlayer() {
@@ -67,6 +90,22 @@ public class BePlayer {
 
     public void setDefence(int defence) {
         this.defence = defence;
+    }
+
+    public boolean hasBattleClass() {
+        boolean flag = true;
+        if (battleClass == null) {
+            flag = false;
+        }
+        return flag;
+    }
+
+    public boolean hasBattleClass(BattleClass battleClass) {
+        boolean flag = false;
+        if (this.battleClass.getName().equalsIgnoreCase(battleClass.getName())) {
+            flag = true;
+        }
+        return flag;
     }
 
     private void setArmor(Player player, BattleClass battleClass) {

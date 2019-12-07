@@ -17,6 +17,9 @@ import static jp.meao0525.battleemblem.beevent.OpenSelectorEvent.BATTLE_CLASS_IN
 public class SelectLoadOutEvent implements Listener {
     @EventHandler
     public void SelectLoadOutEvent(InventoryClickEvent e) {
+        //空欄のクリック時
+        if (e.getCurrentItem() == null) { return; }
+
         //ロードアウトセレクターのインベントリか?
         String invName = e.getView().getTitle();
         if (!invName.equalsIgnoreCase(BATTLE_CLASS_INV_NAME)) {
@@ -28,7 +31,11 @@ public class SelectLoadOutEvent implements Listener {
         Player player = (Player) e.getWhoClicked();
         BePlayer bePlayer = new BePlayer(player);
 
-        if (e.getCurrentItem() == null) { return; } //空欄のクリック時
+        //クラスを持っているか
+        if (bePlayer.hasBattleClass()) {
+            bePlayer.removeBattleClass();
+        }
+
         String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
         BattleClass battleClass = null;
         //何クリックしたのー?
@@ -61,7 +68,7 @@ public class SelectLoadOutEvent implements Listener {
 
         //使われてないといいね
         if (battleClass.isUsed()) {
-            player.sendMessage(battleClass.getName() + ChatColor.RED + "は使用中です");
+            player.sendMessage(battleClass.getName() + ChatColor.DARK_RED + "は使用中です");
         } else {
             bePlayer.setBattleClass(battleClass);
             player.closeInventory();

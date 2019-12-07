@@ -80,7 +80,10 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 //プレイヤーリストの作成
                 bePlayerList = game.createPlayerList();
 
-                if (bePlayerList.size() == 0) { sender.sendMessage("誰もいないね"); }
+                if (bePlayerList.size() == 0) {
+                    sender.sendMessage(ChatColor.DARK_RED + "誰もいないね...");
+                    return true;
+                }
 
                 if (args.length == 1) {
                     //TODO: ロードアウトセレクターを与える
