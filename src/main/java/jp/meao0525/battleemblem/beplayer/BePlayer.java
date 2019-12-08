@@ -73,6 +73,8 @@ public class BePlayer {
 
         //ロードアウトセレクターを渡す
         player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+
+        //TODO: 初期リスに飛ばす
     }
 
     public Player getPlayer() {
