@@ -10,3 +10,4 @@ jp\meao0525\battleemblem\beplayer\BePlayer.class
 jp\meao0525\battleemblem\beitem\BeItemName.class
 jp\meao0525\battleemblem\BattleEmblemMain.class
 jp\meao0525\battleemblem\beitem\BeItems.class
+jp\meao0525\battleemblem\beevent\FallDamageEvent.class

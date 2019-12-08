@@ -2,6 +2,7 @@ package jp.meao0525.battleemblem;
 
 import jp.meao0525.battleemblem.beevent.FallDamageEvent;
 import jp.meao0525.battleemblem.beevent.OpenSelectorEvent;
+import jp.meao0525.battleemblem.beevent.RegainHealthBySatiatedEvent;
 import jp.meao0525.battleemblem.beevent.SelectLoadOutEvent;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
@@ -31,6 +32,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
         getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(), this);
         getServer().getPluginManager().registerEvents(new FallDamageEvent(), this);
+        getServer().getPluginManager().registerEvents(new RegainHealthBySatiatedEvent(), this);
     }
 
     @Override
