@@ -32,7 +32,7 @@ public class SelectLoadOutEvent implements Listener {
         BePlayer bePlayer = new BePlayer(player);
 
         //クラスを持っているか
-        if (bePlayer.hasBattleClass()) {
+        if (bePlayer.isBattleClass()) {
             bePlayer.removeBattleClass();
         }
 

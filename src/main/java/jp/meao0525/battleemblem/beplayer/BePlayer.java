@@ -97,20 +97,28 @@ public class BePlayer {
         this.defence = defence;
     }
 
-    public boolean hasBattleClass() {
-        boolean flag = true;
-        if (battleClass == null) {
-            flag = false;
+    public boolean isBattleClass() {
+        //バトルクラスになっているか？
+        if (battleClass != null) {
+            return true;
         }
-        return flag;
+        return false;
     }
 
-    public boolean hasBattleClass(BattleClass battleClass) {
-        boolean flag = false;
+    public boolean isBattleClass(BattleClass battleClass) {
+        //指定されたバトルクラスになっているか？
         if (this.battleClass.equals(battleClass)) {
-            flag = true;
+            return true;
         }
-        return flag;
+        return false;
+    }
+
+    public boolean hasBeItem(BeItems beItem) {
+        //指定されたアイテムを持っているか？
+        if (beItem.toItemStack().equals(player.getInventory().getItemInMainHand())) {
+            return true;
+        }
+        return false;
     }
 
     private void setArmor(Player player, BattleClass battleClass) {

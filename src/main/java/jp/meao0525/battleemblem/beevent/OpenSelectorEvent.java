@@ -1,6 +1,8 @@
 package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,11 +21,10 @@ public class OpenSelectorEvent implements Listener {
     @EventHandler
     public void openSelectorEvent(PlayerInteractEvent e) {
         Player player = e.getPlayer();
-        ItemStack item = player.getInventory().getItemInMainHand();
+        BePlayer bePlayer = new BePlayer(player);
 
         //おぬしが持っておるのはもしやロードアウトセレクターか？
-        if (!(item.getType().equals(Material.EMERALD))
-                ||!(item.getItemMeta().getDisplayName().equalsIgnoreCase("ロードアウトセレクター"))) {
+        if (!bePlayer.hasBeItem(BeItems.LOADOUT_SELECTOR)) {
             return;
         }
 
