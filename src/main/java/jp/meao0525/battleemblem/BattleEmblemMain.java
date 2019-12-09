@@ -90,10 +90,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 }
 
                 if (args.length == 1) {
-                    //TODO: ロードアウトセレクターを与える
                     //クラスを選択してないプレイヤーにランダムクラスを与える
                     for (Player p : bePlayerList) {
-                        if ((p.getPlayerListHeader() == null)||(p.getPlayerListHeader().isEmpty())) {
+                        if (p.getPlayerListHeader().isEmpty()) {
                             BePlayer bp = new BePlayer(p);
                             bp.setBattleClass(game.getRandomClass());
                         }

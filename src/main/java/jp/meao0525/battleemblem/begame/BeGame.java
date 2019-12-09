@@ -20,8 +20,7 @@ public class BeGame {
     int count;
 
     //コンストラクター
-    public BeGame() {
-    }
+    public BeGame() { }
 
     public void Start(ArrayList<Player> bePlayerList) {
         /*=======準備時間=======*/
