@@ -78,6 +78,9 @@ public class BeGame {
     public void End() {
         setPhase(0);
         //TODO: 終了処理
+        //TODO: removeBattleClassをする
+        //TODO: 初期リスに飛ばす
+        //TODO: ロードアウトセレクターを渡す
     }
 
     public ArrayList<Player> createPlayerList() {

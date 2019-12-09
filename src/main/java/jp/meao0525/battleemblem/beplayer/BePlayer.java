@@ -71,10 +71,6 @@ public class BePlayer {
         //バトルクラスを手放す
         battleClass = null;
 
-        //ロードアウトセレクターを渡す
-        player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
-
-        //TODO: 初期リスに飛ばす
     }
 
     public Player getPlayer() {
