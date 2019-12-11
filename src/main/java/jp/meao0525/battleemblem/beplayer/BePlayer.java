@@ -63,11 +63,11 @@ public class BePlayer {
         defence = 0;
 
         //装備を回収
-        player.getInventory().clear();
+        player.getInventory().clear(); //TODO: 武器きえないよ
 
         //バトルクラスのUsedをfalseにする
-        battleClass.setUsed(false);
-
+        battleClass.setUsed(false); //TODO: ここでbattleClassはnull
+        
         //バトルクラスを手放す
         battleClass = null;
 
