@@ -79,26 +79,11 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage(ChatColor.DARK_RED + "ただいまゲーム中です");
                     return true;
                 }
-
-                //プレイヤーリストの作成
-                bePlayerList = game.createPlayerList();
-
-                if (bePlayerList.size() == 0) {
-                    sender.sendMessage(ChatColor.DARK_RED + "誰もいないね...");
-                    return true;
-                }
-
+                //引数はありますか
                 if (args.length == 1) {
-                    //クラスを選択してないプレイヤーにランダムクラスを与える
-                    for (Player p : bePlayerList) {
-                        if (p.getPlayerListHeader().isEmpty()) {
-                            BePlayer bp = new BePlayer(p);
-                            bp.setBattleClass(game.getRandomClass());
-                        }
-                    }
                     /*===ゲームスタート===*/
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
-                    game.Start(bePlayerList);
+                    game.Start(null);
 
                 } else if (args.length == 2){
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "全員" + ChatColor.AQUA + args[1] + ChatColor.RESET + "でゲームスタート");
@@ -142,5 +127,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         }
 
         return false;
+    }
+
+    public BeGame getGame() {
+        return game;
     }
 }

@@ -1,5 +1,6 @@
 package jp.meao0525.battleemblem.begame;
 
+import com.sun.istack.internal.Nullable;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
@@ -14,7 +15,7 @@ public class BeGame {
     private int phase = 0;
 
     //プレイヤーリスト
-    private ArrayList<Player> bePlayerList = new ArrayList<>();
+    private ArrayList<BePlayer> bePlayerList = new ArrayList<>();
 
     //カウントダウン用変数
     int count;
@@ -22,12 +23,31 @@ public class BeGame {
     //コンストラクター
     public BeGame() { }
 
-    public void Start(ArrayList<Player> bePlayerList) {
+    public void Start(@Nullable BattleClass battleClass) {
+        //bePlayerListの取得
+        this.bePlayerList = createPlayerList();
+
+        //プレイヤーがいない
+        if (bePlayerList.size() == 0) {
+            Bukkit.broadcastMessage(ChatColor.DARK_RED + "誰もいないね...");
+            return;
+        }
+
+        if (battleClass == null) {
+            //クラスを選択してないプレイヤーにランダムクラスを与える
+            for (BePlayer bp : bePlayerList) {
+                if (bp.getPlayer().getPlayerListHeader().isEmpty()) {
+                    bp.setBattleClass(getRandomClass());
+                }
+            }
+        } else {
+            for (BePlayer bp : bePlayerList) {
+                bp.setBattleClass(battleClass);
+            }
+        }
+
         /*=======準備時間=======*/
         setPhase(1);
-
-        //bePlayerListの取得
-        this.bePlayerList = bePlayerList;
 
         //30秒カウントダウンする
         count = 30;
@@ -37,30 +57,30 @@ public class BeGame {
             public void run() {
                 if (count >= 10) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと" + ChatColor.AQUA + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
+                    bePlayerList.forEach(bp -> {bp.getPlayer().playSound(bp.getPlayer().getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else if (count > 5) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
+                    bePlayerList.forEach(bp -> {bp.getPlayer().playSound(bp.getPlayer().getLocation(),Sound.ENTITY_EXPERIENCE_ORB_PICKUP,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else if (count > 0) {
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "あと " + ChatColor.RED + count + ChatColor.RESET + "秒");
-                    bePlayerList.forEach(p -> {p.playSound(p.getLocation(),Sound.BLOCK_ANVIL_PLACE,SoundCategory.MASTER,5.0F,5.0F);});
+                    bePlayerList.forEach(bp -> {bp.getPlayer().playSound(bp.getPlayer().getLocation(),Sound.BLOCK_ANVIL_PLACE,SoundCategory.MASTER,5.0F,5.0F);});
 
                 } else {
                     /*=======開戦=======*/
                     setPhase(2);
                     //全員をランダムなlocationにテレポート
-                    ArrayList<Player> list = bePlayerList;
+                    ArrayList<BePlayer> list = bePlayerList;
                     Collections.shuffle(list);
 
                     int n = 0; //テレポートロケーション用
-                    for (Player p : list) {
+                    for (BePlayer bp : list) {
                         //TODO: ランダムにスポーン
                         //開戦のエフェクト
-                        p.playSound(p.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
-                        p.playSound(p.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
-                        p.sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
+                        bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
+                        bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
+                        bp.getPlayer().sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
                     End(); //TODO: ここはあとで消す
@@ -83,11 +103,11 @@ public class BeGame {
         //TODO: ロードアウトセレクターを渡す
     }
 
-    public ArrayList<Player> createPlayerList() {
-        ArrayList<Player> list = new ArrayList<>();
+    public ArrayList<BePlayer> createPlayerList() {
+        ArrayList<BePlayer> list = new ArrayList<>();
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p.getGameMode().equals(GameMode.ADVENTURE)) {
-                list.add(p);
+                list.add(new BePlayer(p));
             }
         }
         return list;
@@ -107,11 +127,11 @@ public class BeGame {
         return classList.get(1);
     }
 
-    public ArrayList<Player> getBePlayerList() {
+    public ArrayList<BePlayer> getBePlayerList() {
         return bePlayerList;
     }
 
-    public void setBePlayerList(ArrayList<Player> bePlayerList) {
+    public void setBePlayerList(ArrayList<BePlayer> bePlayerList) {
         this.bePlayerList = bePlayerList;
     }
 
