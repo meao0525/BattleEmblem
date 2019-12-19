@@ -127,6 +127,16 @@ public class BeGame {
         return classList.get(1);
     }
 
+    public BePlayer getBePlayer(Player player) {
+        BePlayer bePlayer = null;
+        for (BePlayer bp : bePlayerList) {
+            if (bp.getPlayer().equals(player)) {
+                bePlayer = bp;
+            }
+        }
+        return bePlayer;
+    }
+
     public ArrayList<BePlayer> getBePlayerList() {
         return bePlayerList;
     }
