@@ -19,12 +19,12 @@ public class LogoutEvent implements Listener {
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
-        BePlayer bePlayer = new BePlayer(player);
+        BePlayer bePlayer = game.getBePlayer(player);
         //バトルクラスをremoveして持ち物も空にする
         bePlayer.removeBattleClass();
         player.getInventory().clear();
         //プレイヤーリストを減らす
-        game.getBePlayerList().remove(player);
+        game.getBePlayerList().remove(bePlayer);
 
         //TODO: 残り1人の処理はここでするのか？
 
