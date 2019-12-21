@@ -18,6 +18,9 @@ public class LogoutEvent implements Listener {
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
+        //フェーズが0ならこの処理はいらないよね
+        if (game.getPhase() == 0) { return; }
+
         Player player = e.getPlayer();
         BePlayer bePlayer = game.getBePlayer(player);
         //バトルクラスをremoveして持ち物も空にする
@@ -26,7 +29,9 @@ public class LogoutEvent implements Listener {
         //プレイヤーリストを減らす
         game.getBePlayerList().remove(bePlayer);
 
-        //TODO: 残り1人の処理はここでするのか？
-
+        //残り人数が一人以下ならゲーム終了
+        if (game.getBePlayerList().size() <= 1) {
+            game.End();
+        }
     }
 }
