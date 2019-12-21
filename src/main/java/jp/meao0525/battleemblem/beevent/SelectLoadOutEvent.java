@@ -1,6 +1,7 @@
 package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
@@ -15,8 +16,14 @@ import static jp.meao0525.battleemblem.battleclass.BattleClassName.*;
 import static jp.meao0525.battleemblem.beevent.OpenSelectorEvent.BATTLE_CLASS_INV_NAME;
 
 public class SelectLoadOutEvent implements Listener {
+
+    private BeGame game;
+
+    //こんすとあｒくた
+    public SelectLoadOutEvent(BeGame game) { this.game = game; }
+
     @EventHandler
-    public void SelectLoadOutEvent(InventoryClickEvent e) {
+    public void SelectEvent(InventoryClickEvent e) {
         //空欄のクリック時
         if (e.getCurrentItem() == null) { return; }
 
@@ -31,7 +38,7 @@ public class SelectLoadOutEvent implements Listener {
         Player player = (Player) e.getWhoClicked();
         BePlayer bePlayer = new BePlayer(player);
 
-        //クラスを持っているか
+        //TODO: ここ違う
         if (bePlayer.isBattleClass()) {
             bePlayer.removeBattleClass();
         }

@@ -3,6 +3,7 @@ package jp.meao0525.battleemblem.beplayer;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -52,6 +53,8 @@ public class BePlayer {
     }
 
     public void removeBattleClass() {
+        //デバッグメッセージ
+        Bukkit.broadcastMessage(player.getDisplayName() + "がログアウトしたよー");
         //headerを空にする
         player.setPlayerListHeader("");
 
@@ -66,7 +69,7 @@ public class BePlayer {
         player.getInventory().clear();
 
         //バトルクラスのUsedをfalseにする
-        battleClass.setUsed(false);
+        battleClass.setUsed(false); //TODO: 自分でクラス選んだ人はこれができない
         
         //バトルクラスを手放す
         battleClass = null;

@@ -18,12 +18,10 @@ public class LogoutEvent implements Listener {
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
-        //フェーズが0ならこの処理はいらないよね
-        if (game.getPhase() == 0) { return; }
-
         Player player = e.getPlayer();
         //BeGameからBePlayerのインスタンスを取得
         BePlayer bePlayer = game.getBePlayer(player);
+
         //ログアウトしたのがBePlayerじゃない
         if (bePlayer == null) { return; }
 
