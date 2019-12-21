@@ -22,10 +22,13 @@ public class LogoutEvent implements Listener {
         if (game.getPhase() == 0) { return; }
 
         Player player = e.getPlayer();
+        //BeGameからBePlayerのインスタンスを取得
         BePlayer bePlayer = game.getBePlayer(player);
-        //バトルクラスをremoveして持ち物も空にする
+        //ログアウトしたのがBePlayerじゃない
+        if (bePlayer == null) { return; }
+
+        //バトルクラスをremoveする
         bePlayer.removeBattleClass();
-        player.getInventory().clear();
         //プレイヤーリストを減らす
         game.getBePlayerList().remove(bePlayer);
 

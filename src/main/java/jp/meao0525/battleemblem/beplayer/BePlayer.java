@@ -66,7 +66,7 @@ public class BePlayer {
         player.getInventory().clear();
 
         //バトルクラスのUsedをfalseにする
-        battleClass.setUsed(false); //TODO: ここでbattleClassはnull
+        battleClass.setUsed(false);
         
         //バトルクラスを手放す
         battleClass = null;

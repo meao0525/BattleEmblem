@@ -2,6 +2,7 @@ package jp.meao0525.battleemblem.begame;
 
 import com.sun.istack.internal.Nullable;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
@@ -97,10 +98,27 @@ public class BeGame {
 
     public void End() {
         setPhase(0);
-        //TODO: 終了処理
-        //TODO: removeBattleClassをする
-        //TODO: 初期リスに飛ばす
-        //TODO: ロードアウトセレクターを渡す
+
+        BePlayer winner = bePlayerList.get(0);
+
+        //結果発表おおおおおおおおおおおおおお
+        Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]"
+                + ChatColor.RESET + "勝者は"
+                + ChatColor.AQUA + "[" + winner.getPlayer().getPlayerListHeader() + "]"
+                + ChatColor.GOLD + winner.getPlayer().getDisplayName()
+                + ChatColor.RESET + "です");
+        Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます");
+
+        //removeBattleClassをする
+        for (BePlayer bp : bePlayerList) {
+            bp.removeBattleClass();
+        }
+
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            //TODO: 初期リスに飛ばす
+            //ロードアウトセレクターを渡す
+            p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+        }
     }
 
     public ArrayList<BePlayer> createPlayerList() {
