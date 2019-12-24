@@ -18,10 +18,8 @@ import static jp.meao0525.battleemblem.beevent.OpenSelectorEvent.BATTLE_CLASS_IN
 
 public class SelectLoadOutEvent implements Listener {
 
-    private BeGame game;
-
     //こんすとあｒくた
-    public SelectLoadOutEvent(BattleEmblemMain main) { this.game = main.getGame(); }
+    public SelectLoadOutEvent() { }
 
     @EventHandler
     public void SelectEvent(InventoryClickEvent e) {

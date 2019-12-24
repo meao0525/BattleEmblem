@@ -29,8 +29,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getServer().getPluginManager().registerEvents(new FallDamageEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new RegainHealthBySatiatedEvent(), this);
-        getServer().getPluginManager().registerEvents(new LogoutEvent(this), this);
-        getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(this), this);
+        getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(), this);
     }
 
     @Override
@@ -81,6 +80,8 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
                 //ニューゲーム
                 game = new BeGame();
+                //イベント登録
+                registEvent();
 
                 //引数はありますか
                 if (args.length == 1) {
@@ -130,6 +131,10 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         }
 
         return false;
+    }
+
+    public void registEvent() {
+        getServer().getPluginManager().registerEvents(new LogoutEvent(this), this);
     }
 
     public BeGame getGame() {

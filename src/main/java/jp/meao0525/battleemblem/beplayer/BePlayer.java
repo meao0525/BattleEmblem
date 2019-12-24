@@ -53,8 +53,6 @@ public class BePlayer {
     }
 
     public void removeBattleClass() {
-        //デバッグメッセージ
-        Bukkit.broadcastMessage(player.getDisplayName() + "がログアウトしたよー");
         //headerを空にする
         player.setPlayerListHeader("");
 
