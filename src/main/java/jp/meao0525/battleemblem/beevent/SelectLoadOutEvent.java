@@ -35,6 +35,7 @@ public class SelectLoadOutEvent implements Listener {
         if (!(e.getWhoClicked() instanceof Player)) { return; }
 
         Player player = (Player) e.getWhoClicked();
+        //とりあえずのnewBePlayer
         BePlayer bePlayer = new BePlayer(player);
 
         //バトルクラスを持っている人はダメよ
