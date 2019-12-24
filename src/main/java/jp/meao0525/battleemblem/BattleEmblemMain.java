@@ -18,8 +18,7 @@ import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
-    BeGame game = new BeGame();
-    ArrayList<Player> bePlayerList = new ArrayList<>();
+    private BeGame game;
 
     @Override
     public void onEnable() {
@@ -27,11 +26,11 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getCommand("be").setExecutor(this);
 
         getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
-        getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(game), this);
         getServer().getPluginManager().registerEvents(new FallDamageEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new RegainHealthBySatiatedEvent(), this);
-        getServer().getPluginManager().registerEvents(new LogoutEvent(game), this);
+        getServer().getPluginManager().registerEvents(new LogoutEvent(this), this);
+        getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(this), this);
     }
 
     @Override
@@ -75,10 +74,14 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 }
 
                 //え？ゲーム中じゃね？
-                if (game.getPhase() != 0) {
+                if ((game !=null)&&(game.getPhase() != 0)) {
                     sender.sendMessage(ChatColor.DARK_RED + "ただいまゲーム中です");
                     return true;
                 }
+
+                //ニューゲーム
+                game = new BeGame();
+
                 //引数はありますか
                 if (args.length == 1) {
                     /*===ゲームスタート===*/

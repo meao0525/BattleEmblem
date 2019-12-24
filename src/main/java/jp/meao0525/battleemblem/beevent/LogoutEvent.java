@@ -1,5 +1,6 @@
 package jp.meao0525.battleemblem.beevent;
 
+import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 
@@ -7,14 +8,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.plugin.Plugin;
 
 public class LogoutEvent implements Listener {
     private BeGame game;
 
-    public LogoutEvent(BeGame game) {
-        this.game = game;
-    }
+    public LogoutEvent(BattleEmblemMain main) { this.game = main.getGame(); }
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {

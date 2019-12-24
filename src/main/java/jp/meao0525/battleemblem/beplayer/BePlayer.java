@@ -68,11 +68,11 @@ public class BePlayer {
         //装備を回収
         player.getInventory().clear();
 
-        //バトルクラスのUsedをfalseにする
-        battleClass.setUsed(false); //TODO: 自分でクラス選んだ人はこれができない
-        
-        //バトルクラスを手放す
-        battleClass = null;
+//        //バトルクラスのUsedをfalseにする
+//        battleClass.setUsed(false); //TODO: 自分でクラス選んだ人はこれができない
+//
+//        //バトルクラスを手放す
+//        battleClass = null;
 
     }
 
@@ -97,8 +97,8 @@ public class BePlayer {
     }
 
     public boolean isBattleClass() {
-        //バトルクラスになっているか？
-        if (battleClass != null) {
+        //バトルクラスを持っているか？
+        if ((player.getPlayerListHeader() != null)&&(!player.getPlayerListHeader().isEmpty())) {
             return true;
         }
         return false;

@@ -1,5 +1,6 @@
 package jp.meao0525.battleemblem.beevent;
 
+import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
@@ -20,7 +21,7 @@ public class SelectLoadOutEvent implements Listener {
     private BeGame game;
 
     //こんすとあｒくた
-    public SelectLoadOutEvent(BeGame game) { this.game = game; }
+    public SelectLoadOutEvent(BattleEmblemMain main) { this.game = main.getGame(); }
 
     @EventHandler
     public void SelectEvent(InventoryClickEvent e) {
@@ -38,10 +39,8 @@ public class SelectLoadOutEvent implements Listener {
         Player player = (Player) e.getWhoClicked();
         BePlayer bePlayer = new BePlayer(player);
 
-        //TODO: ここ違う
-        if (bePlayer.isBattleClass()) {
-            bePlayer.removeBattleClass();
-        }
+        //バトルクラスを持っている人はダメよ
+        if (bePlayer.isBattleClass()) { return; }
 
         String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
         BattleClass battleClass = null;

@@ -21,7 +21,12 @@ public class BeGame {
     int count;
 
     //コンストラクター
-    public BeGame() { }
+    public BeGame() {
+        //インスタンス生成時にBattleClassを全て使用可能にする
+        for (BattleClass bc : BattleClass.values()) {
+            bc.setUsed(false);
+        }
+    }
 
     public void Start(BattleClass battleClass) {
         //bePlayerListの取得
