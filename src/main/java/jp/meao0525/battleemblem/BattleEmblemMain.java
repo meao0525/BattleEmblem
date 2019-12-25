@@ -55,6 +55,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage("/be score <プレイヤー名> - 指定したプレイヤーのスコアを表示");
                     sender.sendMessage("/be start - ゲームスタート");
                     sender.sendMessage("/be start <バトルクラス名> - 指定したバトルクラスに統一してスタート");
+                    sender.sendMessage("/be end - ゲームを強制終了させる");
                     sender.sendMessage("/be give selector <プレイヤー名> - 指定したプレイヤーにロードアウトセレクターを渡す");
                 }
                 sender.sendMessage(ChatColor.GOLD + "======================");
@@ -71,7 +72,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
                     return true;
                 }
-
                 //え？ゲーム中じゃね？
                 if ((game !=null)&&(game.getPhase() != 0)) {
                     sender.sendMessage(ChatColor.DARK_RED + "ただいまゲーム中です");
@@ -96,6 +96,22 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 }
                 return true;
 
+            case "end" : //ゲームを強制終了する
+                //あなたはOPですかぁ?
+                if (!(sender.isOp())) {
+                    sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。");
+                    return true;
+                }
+                //ゲーム始まってないやんけ！
+                if ((game == null)||(game.getPhase() == 0)) {
+                    sender.sendMessage(ChatColor.DARK_RED + "強制終了するゲームが見つかりません");
+                    return true;
+                }
+                //ゲームを強制終了
+                Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームを強制終了します");
+                game.End();
+                return true;
+
             case "give" : //beアイテムを渡す
                 //TODO: helpの通りにコマンド動かすよ
                 Player player;
@@ -103,29 +119,28 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     if (sender instanceof Player) {
                         player = (Player) sender; //自分を指定
                     } else {
-                        sender.sendMessage("このコマンドはゲーム内から行ってください");
+                        sender.sendMessage(ChatColor.DARK_RED + "このコマンドはゲーム内から行ってください");
                         return true;
                     }
-
                 } else if (args.length == 3) { //プレイヤー指定あり
                     player = Bukkit.getPlayerExact(args[2]);
                     if (player == null) {
-                        sender.sendMessage("そんな人いないよ...");
+                        sender.sendMessage(ChatColor.DARK_RED + "そんな人いないよ...");
                         return true;
                     }
-                } else {
-                    return false; //それ以外の引数はあり得ない
+                } else { //それ以外の引数はあり得ない
+                    return false;
                 }
-
                 //渡すのは何かな？
                 switch (args[1]) {
                     case "selector" :
                         //指定したプレイヤーに渡すよ
                         player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+                        sender.sendMessage(player.getDisplayName() + "　にロードアウトセレクターを渡しました");
                         return true;
 
                     case "book" :
-                        sender.sendMessage("バトルクラス一覧を渡そうね");
+                        //TODO: バトルクラス一覧を渡す
                         return true;
                 }
         }

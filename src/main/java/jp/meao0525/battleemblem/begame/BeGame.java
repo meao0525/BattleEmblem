@@ -29,26 +29,28 @@ public class BeGame {
     }
 
     public void Start(BattleClass battleClass) {
-        //bePlayerListの取得
-        this.bePlayerList = createPlayerList();
+        //プレイヤーリスト作成
+        BePlayerList.createPlayerList();
+
+        //プレイヤーリストの取得
+        bePlayerList = BePlayerList.getBePlayerList();
 
         //プレイヤーがいない
-        if (bePlayerList.size() == 0) {
+        if (bePlayerList.size() == 0) { //TODO: ここは最終的には1以下
             Bukkit.broadcastMessage(ChatColor.DARK_RED + "誰もいないね...");
             return;
         }
 
-        if (battleClass == null) {
-            //クラスを選択してないプレイヤーにランダムクラスを与える
-            for (BePlayer bp : bePlayerList) {
-                if (bp.getPlayer().getPlayerListHeader().isEmpty()) {
-                    bp.setBattleClass(getRandomClass());
-                }
-            }
-        } else {
+        if (battleClass != null) {
             for (BePlayer bp : bePlayerList) {
                 bp.setBattleClass(battleClass);
             }
+        }
+
+        for (BePlayer bp : bePlayerList) {
+            //ロードアウトセレクターは没収だあ！！！
+            bp.getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
+            //TODO: ステージにスポーン
         }
 
         /*=======準備時間=======*/
@@ -75,33 +77,24 @@ public class BeGame {
                 } else {
                     /*=======開戦=======*/
                     setPhase(2);
-                    //全員をランダムなlocationにテレポート
-                    ArrayList<BePlayer> list = bePlayerList;
-                    Collections.shuffle(list);
 
-                    int n = 0; //テレポートロケーション用
-                    for (BePlayer bp : list) {
-                        //TODO: ランダムにスポーン
+                    for (BePlayer bp : bePlayerList) {
                         //開戦のエフェクト
                         bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
                         bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
                         bp.getPlayer().sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
-                    End(); //TODO: ここはあとで消す
                     timer.cancel();
                 }
                 count--;
             }
         }, 0, 1000);
 
-        //残り人数が一人になったら終わる
-//        while (bePlayerList.size() == 1) {
-//        }
     }
 
     public void End() {
-        BePlayer winner = bePlayerList.get(0);
+        BePlayer winner = BePlayerList.getBePlayerList().get(0);
 
         //結果発表おおおおおおおおおおおおおお
         Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]"
@@ -111,13 +104,15 @@ public class BeGame {
         Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます");
 
         //removeBattleClassをする
-        for (BePlayer bp : bePlayerList) {
+        for (BePlayer bp : BePlayerList.getBePlayerList()) {
             bp.removeBattleClass();
         }
         //リストを空にする
-        bePlayerList.clear();
+        BePlayerList.getBePlayerList().clear();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
+            //ゲームモードをアドベンチャーにする
+            if (!p.getGameMode().equals(GameMode.CREATIVE)) { p.setGameMode(GameMode.ADVENTURE); }
             //TODO: 初期リスに飛ばす
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
@@ -125,44 +120,6 @@ public class BeGame {
 
         //フェーズを0に戻す
         setPhase(0);
-    }
-
-    public ArrayList<BePlayer> createPlayerList() {
-        ArrayList<BePlayer> list = new ArrayList<>();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p.getGameMode().equals(GameMode.ADVENTURE)) {
-                list.add(new BePlayer(p));
-            }
-        }
-        return list;
-    }
-
-    public BattleClass getRandomClass() {
-        //未使用のクラスのリストを作成
-        ArrayList<BattleClass> classList = new ArrayList<>();
-        for (BattleClass bc : BattleClass.values()) {
-            if (!bc.isUsed()) {
-                classList.add(bc);
-            }
-        }
-        //リストをシャッフル
-        Collections.shuffle(classList);
-
-        return classList.get(1);
-    }
-
-    public BePlayer getBePlayer(Player player) {
-        BePlayer bePlayer = null;
-        for (BePlayer bp : bePlayerList) {
-            if (bp.getPlayer().equals(player)) {
-                bePlayer = bp;
-            }
-        }
-        return bePlayer;
-    }
-
-    public ArrayList<BePlayer> getBePlayerList() {
-        return bePlayerList;
     }
 
     public int getPhase() {

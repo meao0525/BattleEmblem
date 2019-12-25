@@ -11,8 +11,6 @@ public class LoginEvent implements Listener {
     @EventHandler
     public void LoginEvent(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        //headerをnullにならないように空欄にする
-        player.setPlayerListHeader("");
         //アドベンチャーモードの人はインベントリを空にする
         if (player.getGameMode().equals(GameMode.ADVENTURE)) { player.getInventory().clear(); }
         //ロードアウトセレクターを渡す

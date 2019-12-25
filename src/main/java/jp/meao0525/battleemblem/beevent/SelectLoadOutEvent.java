@@ -4,6 +4,8 @@ import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
+import jp.meao0525.battleemblem.beplayer.BePlayerList;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -34,12 +36,18 @@ public class SelectLoadOutEvent implements Listener {
         //クリックしたのはPlayerか?
         if (!(e.getWhoClicked() instanceof Player)) { return; }
 
+        //イベントキャンセル
+        e.setCancelled(true);
+
         Player player = (Player) e.getWhoClicked();
         //とりあえずのnewBePlayer
         BePlayer bePlayer = new BePlayer(player);
 
         //バトルクラスを持っている人はダメよ
-        if (bePlayer.isBattleClass()) { return; }
+        if (bePlayer.isBattleClass()) {
+            player.sendMessage(ChatColor.GRAY + "すでにバトルクラスを選択しています");
+            return;
+        }
 
         String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
         BattleClass battleClass = null;
@@ -68,15 +76,20 @@ public class SelectLoadOutEvent implements Listener {
         }
         if (battleClass == null) { return; }
 
-        //イベントキャンセル
-        e.setCancelled(true);
-
         //使われてないといいね
         if (battleClass.isUsed()) {
-            player.sendMessage(battleClass.getName() + ChatColor.DARK_RED + "は使用中です");
+            player.sendMessage(battleClass.getName() + ChatColor.GRAY + "は使用中です");
         } else {
+            //バトルクラスのセット
             bePlayer.setBattleClass(battleClass);
+            //プレイヤーリストに追加
+            BePlayerList.getBePlayerList().add(bePlayer);
+            //インベントリ閉じる
             player.closeInventory();
+            //選択をアナウンス
+            Bukkit.broadcastMessage(player.getDisplayName() + "がバトルクラス"
+                    + ChatColor.AQUA + battleClass.getName()
+                    + ChatColor.RESET + "を選択しました");
         }
     }
 }

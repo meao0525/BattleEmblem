@@ -4,6 +4,7 @@ import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.beitem.BeItems;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -27,8 +28,8 @@ public class BePlayer {
         //バトルクラスを使用中にする
         battleClass.setUsed(true);
 
-        //headerにクラス名をセット
-        player.setPlayerListHeader(battleClass.getName());
+        //playerListNameにクラス名をセット
+        player.setPlayerListName(ChatColor.AQUA + "[" +battleClass.getName() + "]" + ChatColor.RESET + player.getDisplayName());
 
         //プレイヤーのステータスをセットしていくよ
         ClassStatus status = battleClass.getStatus();
@@ -53,8 +54,8 @@ public class BePlayer {
     }
 
     public void removeBattleClass() {
-        //headerを空にする
-        player.setPlayerListHeader("");
+        //プレイヤーリスト名を元に戻す
+        player.setPlayerListName(player.getDisplayName());
 
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
@@ -65,12 +66,6 @@ public class BePlayer {
 
         //装備を回収
         player.getInventory().clear();
-
-//        //バトルクラスのUsedをfalseにする
-//        battleClass.setUsed(false); //TODO: 自分でクラス選んだ人はこれができない
-//
-//        //バトルクラスを手放す
-//        battleClass = null;
 
     }
 
@@ -96,7 +91,7 @@ public class BePlayer {
 
     public boolean isBattleClass() {
         //バトルクラスを持っているか？
-        if ((player.getPlayerListHeader() != null)&&(!player.getPlayerListHeader().isEmpty())) {
+        if (!player.getPlayerListName().equalsIgnoreCase(player.getDisplayName())) {
             return true;
         }
         return false;

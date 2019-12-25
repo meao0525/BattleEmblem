@@ -4,6 +4,7 @@ import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 
+import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,7 +19,7 @@ public class LogoutEvent implements Listener {
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
         Player player = e.getPlayer();
         //BeGameからBePlayerのインスタンスを取得
-        BePlayer bePlayer = game.getBePlayer(player);
+        BePlayer bePlayer = BePlayerList.getBePlayer(player);
 
         //ログアウトしたのがBePlayerじゃない
         if (bePlayer == null) { return; }
@@ -26,10 +27,10 @@ public class LogoutEvent implements Listener {
         //バトルクラスをremoveする
         bePlayer.removeBattleClass();
         //プレイヤーリストを減らす
-        game.getBePlayerList().remove(bePlayer);
+        BePlayerList.getBePlayerList().remove(bePlayer);
 
         //残り人数が一人以下ならゲーム終了
-        if (game.getBePlayerList().size() <= 1) {
+        if (BePlayerList.getBePlayerList().size() <= 1) {
             game.End();
         }
     }

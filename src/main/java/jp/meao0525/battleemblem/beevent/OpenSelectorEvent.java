@@ -24,9 +24,7 @@ public class OpenSelectorEvent implements Listener {
         BePlayer bePlayer = new BePlayer(player);
 
         //おぬしが持っておるのはもしやロードアウトセレクターか？
-        if (!bePlayer.hasBeItem(BeItems.LOADOUT_SELECTOR)) {
-            return;
-        }
+        if (!bePlayer.hasBeItem(BeItems.LOADOUT_SELECTOR)) { return; }
 
         player.openInventory(getClassInventory());
     }
