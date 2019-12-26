@@ -3,6 +3,7 @@ package jp.meao0525.battleemblem.beevent;
 import jp.meao0525.battleemblem.beitem.BeItems;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -12,6 +13,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -63,6 +65,7 @@ public class DefaultGameEvent implements Listener {
     @EventHandler
     public void CantTakeOffEvent(InventoryClickEvent e) {
         //装備を脱げないよ
+        //TODO: できてない
         ItemStack item = e.getCurrentItem();
         if (item == null) { return; }
 
@@ -77,4 +80,14 @@ public class DefaultGameEvent implements Listener {
             e.setCancelled(true);
         }
     }
+
+    @EventHandler
+    public void cantTradeEvent(PlayerInteractEntityEvent e) {
+        //商人とトレードできない
+        if (e.getRightClicked() instanceof Villager) {
+            e.setCancelled(true);
+        }
+    }
+
+    //TODO: 村人を殴れない処理はいりますか?
 }
