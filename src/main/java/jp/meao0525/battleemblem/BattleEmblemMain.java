@@ -85,7 +85,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 //引数はありますか
                 if (args.length == 1) {
                     /*===ゲームスタート===*/
-                    Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームスタート");
                     game.Start(null);
 
                 } else if (args.length == 2){
