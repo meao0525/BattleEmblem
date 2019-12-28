@@ -6,12 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityPickupItemEvent;
-import org.bukkit.event.entity.EntityRegainHealthEvent;
-import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
@@ -65,24 +61,23 @@ public class DefaultGameEvent implements Listener {
     @EventHandler
     public void CantTakeOffEvent(InventoryClickEvent e) {
         //装備を脱げないよ
-        //TODO: できてない
         ItemStack item = e.getCurrentItem();
         if (item == null) { return; }
 
-        if ((item.equals(BeItems.BRAVE_BOOTS))
-        ||(item.equals(BeItems.BRAVE_CHESTPLATE))
-        ||(item.equals(BeItems.BRAVE_HELMET))
-        ||(item.equals(BeItems.BRAVE_LEGGINGS))
-        ||(item.equals(BeItems.KNIGHT_BOOTS))
-        ||(item.equals(BeItems.KNIGHT_CHESTPLATE))
-        ||(item.equals(BeItems.KNIGHT_HELMET))
-        ||(item.equals(BeItems.KNIGHT_LEGGINGS))) {
+        if ((item.equals(BeItems.BRAVE_BOOTS.toItemStack()))
+        ||(item.equals(BeItems.BRAVE_CHESTPLATE.toItemStack()))
+        ||(item.equals(BeItems.BRAVE_HELMET.toItemStack()))
+        ||(item.equals(BeItems.BRAVE_LEGGINGS.toItemStack()))
+        ||(item.equals(BeItems.KNIGHT_BOOTS.toItemStack()))
+        ||(item.equals(BeItems.KNIGHT_CHESTPLATE.toItemStack()))
+        ||(item.equals(BeItems.KNIGHT_HELMET.toItemStack()))
+        ||(item.equals(BeItems.KNIGHT_LEGGINGS.toItemStack()))) {
             e.setCancelled(true);
         }
     }
 
     @EventHandler
-    public void cantTradeEvent(PlayerInteractEntityEvent e) {
+    public void CantTradeEvent(PlayerInteractEntityEvent e) {
         //商人とトレードできない
         if (e.getRightClicked() instanceof Villager) {
             e.setCancelled(true);
