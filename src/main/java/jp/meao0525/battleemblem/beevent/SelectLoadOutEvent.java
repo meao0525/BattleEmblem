@@ -7,6 +7,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -84,6 +85,8 @@ public class SelectLoadOutEvent implements Listener {
             bePlayer.setBattleClass(battleClass);
             //プレイヤーリストに追加
             BePlayerList.getBePlayerList().add(bePlayer);
+            //TODO: 効果音
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO,5.0F,5.0F);
             //インベントリ閉じる
             player.closeInventory();
             //選択をアナウンス
