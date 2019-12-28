@@ -111,7 +111,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 return true;
 
             case "give" : //beアイテムを渡す
-                //TODO: helpの通りにコマンド動かすよ
                 Player player;
                 if (args.length == 2) { //プレイヤー指定なし
                     if (sender instanceof Player) {
