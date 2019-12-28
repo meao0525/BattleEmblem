@@ -38,7 +38,10 @@ public class BeDeathEvent implements Listener {
             bePlayer.setLife(bePlayer.getLife() - 1);
             //TODO: 初期位置にTP
             //残機を教えてあげて
-            player.sendMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "残機は" + bePlayer.getLife() + "です");
+            player.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
+                    + ChatColor.RESET + "残機は"
+                    + ChatColor.AQUA + bePlayer.getLife()
+                    + ChatColor.RESET + "です");
         } else {
             //バトルクラスを外す
             bePlayer.removeBattleClass();
