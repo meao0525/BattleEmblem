@@ -3,11 +3,13 @@ package jp.meao0525.battleemblem.beplayer;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.beitem.BeItems;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
+
 
 public class BePlayer {
     private Player player;
@@ -15,10 +17,7 @@ public class BePlayer {
     private int attack;
     private int defence;
 
-    private int life = 2;
-
-    private final double DEFAULT_HEALTH = 20.0;
-    private final float DEFAULT_SPEED = 0.2F;
+    private int life = PLAYER_LIFE;
 
     public BePlayer(Player player) {
         this.player = player;
