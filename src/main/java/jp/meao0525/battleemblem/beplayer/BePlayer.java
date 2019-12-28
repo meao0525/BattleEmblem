@@ -15,6 +15,8 @@ public class BePlayer {
     private int attack;
     private int defence;
 
+    private int life = 2;
+
     private final double DEFAULT_HEALTH = 20.0;
     private final float DEFAULT_SPEED = 0.2F;
 
@@ -87,6 +89,14 @@ public class BePlayer {
 
     public void setDefence(int defence) {
         this.defence = defence;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
     }
 
     public boolean isBattleClass() {
