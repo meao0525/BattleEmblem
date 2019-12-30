@@ -11,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
+import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
+
 public class BeDeathEvent implements Listener {
 
     private BeGame game;
@@ -36,7 +38,8 @@ public class BeDeathEvent implements Listener {
         if (bePlayer.getLife() != 0) {
             //ライフを1減らす
             bePlayer.setLife(bePlayer.getLife() - 1);
-            //TODO: 初期位置にTP
+            //初期位置にTP
+            player.teleport(coliseum);
             //残機を教えてあげて
             player.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
                     + ChatColor.RESET + "残機は"

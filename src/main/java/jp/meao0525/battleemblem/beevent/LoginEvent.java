@@ -7,6 +7,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
+
 public class LoginEvent implements Listener {
     @EventHandler
     public void LoginEvent(PlayerJoinEvent e) {
@@ -15,6 +17,7 @@ public class LoginEvent implements Listener {
         if (player.getGameMode().equals(GameMode.ADVENTURE)) { player.getInventory().clear(); }
         //ロードアウトセレクターを渡す
         player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
-        //TODO: 初期リスに飛ばす
+        //ロビーに飛ばす
+        player.teleport(lobby);
     }
 }

@@ -10,6 +10,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
+import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
+
 public class BeGame {
     //フェーズ
     private int phase = 0;
@@ -50,7 +53,8 @@ public class BeGame {
         for (BePlayer bp : bePlayerList) {
             //ロードアウトセレクターは没収だあ！！！
             bp.getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
-            //TODO: ステージにスポーン
+            //ステージにスポーン
+            bp.getPlayer().teleport(coliseum);
         }
 
         /*=======準備時間=======*/
@@ -111,7 +115,8 @@ public class BeGame {
         for (Player p : Bukkit.getOnlinePlayers()) {
             //ゲームモードをアドベンチャーにする
             if (!p.getGameMode().equals(GameMode.CREATIVE)) { p.setGameMode(GameMode.ADVENTURE); }
-            //TODO: 初期リスに飛ばす
+            //ロビーに飛ばす
+            p.teleport(lobby);
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
         }
