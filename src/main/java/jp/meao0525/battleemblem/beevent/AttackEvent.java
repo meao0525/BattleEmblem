@@ -38,7 +38,7 @@ public class AttackEvent implements Listener {
         }
 
         //攻撃したのもダメージ受けたのもPlayerか?
-        if (!(e.getDamager() instanceof Player) && !(e.getEntity() instanceof Player)) {
+        if (!(e.getDamager() instanceof Player) || !(e.getEntity() instanceof Player)) {
             return;
         }
 
