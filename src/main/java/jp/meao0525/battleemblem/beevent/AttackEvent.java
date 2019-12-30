@@ -6,10 +6,16 @@ import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
+import org.bukkit.Material;
+import org.bukkit.entity.AbstractArrow;
+import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
@@ -85,6 +91,37 @@ public class AttackEvent implements Listener {
                 e.setCancelled(true);
         }
 
+    }
+
+    @EventHandler
+    public void BeSnipeEvent(EntityShootBowEvent e) {
+        if (!(e.getEntity() instanceof Player) || !(e.getProjectile() instanceof Arrow)) {
+            return;
+        }
+        //ゲーム中じゃない
+        if (game.getPhase() != 2) {
+            e.setCancelled(true);
+            return;
+        }
+
+        Arrow arrow = (Arrow) e.getProjectile();
+        Player shooter = (Player) e.getEntity();
+        BePlayer beShooter = BePlayerList.getBePlayer(shooter);
+        //参加者じゃないやんけぇ
+        if (beShooter == null) { return; }
+
+        float force = e.getForce();
+        //どんだけ引き絞った?
+        if (force == 1.0F) {
+            arrow.setDamage(10.0);
+        } else {
+            arrow.setDamage(5.0);
+        }
+        //ノックバック
+        arrow.setKnockbackStrength(2);
+
+        //矢を渡しましょう
+        shooter.getInventory().addItem(new ItemStack(Material.ARROW));
     }
 
     private boolean isBackAttack(Player attacker, Player defender) {

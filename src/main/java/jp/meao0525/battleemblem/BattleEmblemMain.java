@@ -146,7 +146,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
     }
 
     public void registEvent() {
+        getServer().getPluginManager().registerEvents(new BeDeathEvent(this),this);
         getServer().getPluginManager().registerEvents(new LogoutEvent(this), this);
+        getServer().getPluginManager().registerEvents(new AttackEvent(this),this);
     }
 
     public BeGame getGame() {
