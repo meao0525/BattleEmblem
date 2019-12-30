@@ -11,8 +11,8 @@ public enum ClassStatus {
 
     private final double hp;
     private final float speed;
-    private final int attack;
-    private final int defence;
+    private final double attack;
+    private final double defence;
 
     private ClassStatus(double hp, float speed, int attack, int defence) {
         this.hp = hp;
@@ -29,11 +29,11 @@ public enum ClassStatus {
         return speed;
     }
 
-    public int getAttack() {
+    public double getAttack() {
         return attack;
     }
 
-    public int getDefence() {
+    public double getDefence() {
         return defence;
     }
 }

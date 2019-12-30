@@ -4,6 +4,7 @@ import jp.meao0525.battleemblem.beitem.BeItems;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
+import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
@@ -79,7 +80,7 @@ public class DefaultGameEvent implements Listener {
     @EventHandler
     public void CantTradeEvent(PlayerInteractEntityEvent e) {
         //商人とトレードできない
-        if (e.getRightClicked() instanceof Villager) {
+        if (e.getRightClicked() instanceof WanderingTrader) {
             e.setCancelled(true);
         }
     }

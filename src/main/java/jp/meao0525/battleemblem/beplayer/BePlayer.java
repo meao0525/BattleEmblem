@@ -14,8 +14,8 @@ import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 public class BePlayer {
     private Player player;
     private BattleClass battleClass;
-    private int attack;
-    private int defence;
+    private double attack;
+    private double defence;
 
     private int life = PLAYER_LIFE;
 
@@ -74,19 +74,19 @@ public class BePlayer {
         return player;
     }
 
-    public int getAttack() {
+    public double getAttack() {
         return attack;
     }
 
-    public void setAttack(int attack) {
+    public void setAttack(double attack) {
         this.attack = attack;
     }
 
-    public int getDefence() {
+    public double getDefence() {
         return defence;
     }
 
-    public void setDefence(int defence) {
+    public void setDefence(double defence) {
         this.defence = defence;
     }
 
