@@ -24,12 +24,7 @@ public class BeGame {
     int count;
 
     //コンストラクター
-    public BeGame() {
-        //インスタンス生成時にBattleClassを全て使用可能にする
-        for (BattleClass bc : BattleClass.values()) {
-            bc.setUsed(false);
-        }
-    }
+    public BeGame() { }
 
     public void Start(BattleClass battleClass) {
         //プレイヤーリスト作成
@@ -119,6 +114,11 @@ public class BeGame {
             p.teleport(lobby);
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+        }
+
+        //バトルクラスの使用をすべて許可する
+        for (BattleClass bc : BattleClass.values()) {
+            bc.setUsed(false);
         }
 
         //フェーズを0に戻す

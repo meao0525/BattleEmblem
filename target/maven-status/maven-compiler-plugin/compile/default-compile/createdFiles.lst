@@ -1,3 +1,4 @@
+jp\meao0525\battleemblem\beevent\BeDeathEvent.class
 jp\meao0525\battleemblem\beevent\SelectLoadOutEvent.class
 jp\meao0525\battleemblem\battleclass\BattleClass.class
 jp\meao0525\battleemblem\begame\BeGame.class
@@ -9,7 +10,10 @@ jp\meao0525\battleemblem\beevent\DefaultGameEvent.class
 jp\meao0525\battleemblem\beplayer\BePlayerList.class
 jp\meao0525\battleemblem\beplayer\BePlayer.class
 jp\meao0525\battleemblem\beevent\LoginEvent.class
+jp\meao0525\battleemblem\beplayer\BePlayerStatus.class
 jp\meao0525\battleemblem\beevent\LogoutEvent.class
 jp\meao0525\battleemblem\beitem\BeItemName.class
 jp\meao0525\battleemblem\BattleEmblemMain.class
+jp\meao0525\battleemblem\beevent\AttackEvent.class
 jp\meao0525\battleemblem\beitem\BeItems.class
+jp\meao0525\battleemblem\begame\BeLocation.class
