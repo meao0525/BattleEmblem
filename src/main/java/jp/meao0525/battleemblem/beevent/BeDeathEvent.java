@@ -32,7 +32,7 @@ public class BeDeathEvent implements Listener {
         //キープインベントリ
         e.setKeepInventory(true);
         //HP全回復
-        player.setHealth(player.getHealthScale());
+//        player.setHealth(player.getHealthScale());
 
         //残機はなんぼ?
         if (bePlayer.getLife() != 0) {
