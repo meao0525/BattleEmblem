@@ -95,10 +95,12 @@ public class BeGame {
     public static void End() {
         BePlayer winner = BePlayerList.getBePlayerList().get(0);
 
-        //結果発表おおおおおおおおおおおおおお
-        Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者は ");
-        Bukkit.broadcastMessage(winner.getPlayer().getPlayerListName() + "です");
-        Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます!");
+        if (winner != null) {
+            //結果発表おおおおおおおおおおおおおお
+            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者は ");
+            Bukkit.broadcastMessage(winner.getPlayer().getPlayerListName() + "です");
+            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます!");
+        }
 
         //removeBattleClassをする
         for (BePlayer bp : BePlayerList.getBePlayerList()) {
