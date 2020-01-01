@@ -1,9 +1,11 @@
 package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +27,12 @@ public class OpenSelectorEvent implements Listener {
 
         //おぬしが持っておるのはもしやロードアウトセレクターか？
         if (!bePlayer.hasBeItem(BeItems.LOADOUT_SELECTOR)) { return; }
+
+        //ゲーム中じゃダメだよ
+        if (BeGame.getPhase() != 0) {
+            player.sendMessage(ChatColor.GRAY + "ゲーム中は使用できません。大人しく観戦してください");
+            return;
+        }
 
         player.openInventory(getClassInventory());
     }

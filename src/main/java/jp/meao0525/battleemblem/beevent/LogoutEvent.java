@@ -11,14 +11,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class LogoutEvent implements Listener {
-    private BeGame game;
 
-    public LogoutEvent(BattleEmblemMain main) { this.game = main.getGame(); }
+    public LogoutEvent() { }
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
         //ゲーム中じゃなきゃいんじゃね
-        if (game.getPhase() == 0) { return; }
+        if (BeGame.getPhase() == 0) { return; }
 
         Player player = e.getPlayer();
         //BeGameからBePlayerのインスタンスを取得
@@ -34,7 +33,7 @@ public class LogoutEvent implements Listener {
 
         //残り人数が一人以下ならゲーム終了
         if (BePlayerList.getBePlayerList().size() <= 1) {
-            game.End();
+            BeGame.End();
         }
     }
 }

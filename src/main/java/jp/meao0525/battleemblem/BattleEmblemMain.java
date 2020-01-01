@@ -29,6 +29,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);
         getServer().getPluginManager().registerEvents(new SelectLoadOutEvent(), this);
+        getServer().getPluginManager().registerEvents(new BeDeathEvent(),this);
+        getServer().getPluginManager().registerEvents(new LogoutEvent(), this);
+        getServer().getPluginManager().registerEvents(new AttackEvent(),this);
     }
 
     @Override
@@ -72,15 +75,13 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     return true;
                 }
                 //え？ゲーム中じゃね？
-                if ((game !=null)&&(game.getPhase() != 0)) {
+                if (BeGame.getPhase() != 0) {
                     sender.sendMessage(ChatColor.DARK_RED + "ただいまゲーム中です");
                     return true;
                 }
 
                 //ニューゲーム
                 game = new BeGame();
-                //イベント登録
-                registEvent();
 
                 //引数はありますか
                 if (args.length == 1) {
@@ -101,13 +102,13 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     return true;
                 }
                 //ゲーム始まってないやんけ！
-                if ((game == null)||(game.getPhase() == 0)) {
+                if (BeGame.getPhase() == 0) {
                     sender.sendMessage(ChatColor.DARK_RED + "強制終了するゲームが見つかりません");
                     return true;
                 }
                 //ゲームを強制終了
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲームを強制終了します");
-                game.End();
+                BeGame.End();
                 return true;
 
             case "give" : //beアイテムを渡す
@@ -145,13 +146,4 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         return false;
     }
 
-    public void registEvent() {
-        getServer().getPluginManager().registerEvents(new BeDeathEvent(this),this);
-        getServer().getPluginManager().registerEvents(new LogoutEvent(this), this);
-        getServer().getPluginManager().registerEvents(new AttackEvent(this),this);
-    }
-
-    public BeGame getGame() {
-        return game;
-    }
 }

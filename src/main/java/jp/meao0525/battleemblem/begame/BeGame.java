@@ -15,7 +15,7 @@ import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
 
 public class BeGame {
     //フェーズ
-    private int phase = 0;
+    private static int phase = 0;
 
     //プレイヤーリスト
     private ArrayList<BePlayer> bePlayerList = new ArrayList<>();
@@ -92,7 +92,7 @@ public class BeGame {
 
     }
 
-    public void End() {
+    public static void End() {
         BePlayer winner = BePlayerList.getBePlayerList().get(0);
 
         //結果発表おおおおおおおおおおおおおお
@@ -125,11 +125,11 @@ public class BeGame {
         setPhase(0);
     }
 
-    public int getPhase() {
+    public static int getPhase() {
         return phase;
     }
 
-    public void setPhase(int phase) {
-        this.phase = phase;
+    public static void setPhase(int phase) {
+        BeGame.phase = phase;
     }
 }

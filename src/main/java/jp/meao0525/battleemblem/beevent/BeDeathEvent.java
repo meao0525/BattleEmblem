@@ -15,14 +15,12 @@ import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
 
 public class BeDeathEvent implements Listener {
 
-    private BeGame game;
-
-    public BeDeathEvent(BattleEmblemMain main) { this.game = main.getGame(); }
+    public BeDeathEvent() { }
 
     @EventHandler
     public void DeathEvent(PlayerDeathEvent e) {
         //ゲーム中じゃない
-        if (game.getPhase() == 0) { return; }
+        if (BeGame.getPhase() == 0) { return; }
 
         Player player = e.getEntity();
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
@@ -53,7 +51,12 @@ public class BeDeathEvent implements Listener {
             //観戦者にする
             player.setGameMode(GameMode.SPECTATOR);
             //デスメッセージ
-            e.setDeathMessage(ChatColor.GOLD + "[BattleEmblem]" + player.getPlayerListName() + " が脱落しました");
+            e.setDeathMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET +player.getPlayerListName() + " が脱落しました");
+
+            //残り人数が一人以下ならゲーム終了
+            if (BePlayerList.getBePlayerList().size() <= 1) {
+                BeGame.End();
+            }
         }
     }
 }

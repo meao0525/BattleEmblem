@@ -23,16 +23,12 @@ import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 
 public class AttackEvent implements Listener {
 
-    private BeGame game;
-
-    public AttackEvent(BattleEmblemMain main) {
-        this.game = main.getGame();
-    }
+    public AttackEvent() { }
 
     @EventHandler
     public void BeAttackEvent(EntityDamageByEntityEvent e) {
         //フェーズが2以外の時は攻撃できない
-        if (game.getPhase() != 2) {
+        if (BeGame.getPhase() != 2) {
             e.setCancelled(true);
             return;
         }
@@ -99,7 +95,7 @@ public class AttackEvent implements Listener {
             return;
         }
         //ゲーム中じゃない
-        if (game.getPhase() != 2) {
+        if (BeGame.getPhase() != 2) {
             e.setCancelled(true);
             return;
         }
