@@ -48,6 +48,8 @@ public class BeGame {
         for (BePlayer bp : bePlayerList) {
             //ロードアウトセレクターは没収だあ！！！
             bp.getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
+            //リスポーンを指定
+            bp.getPlayer().setBedSpawnLocation(coliseum,true);
             //ステージにスポーン
             bp.getPlayer().teleport(coliseum);
         }
@@ -114,6 +116,8 @@ public class BeGame {
             if (!p.getGameMode().equals(GameMode.CREATIVE)) { p.setGameMode(GameMode.ADVENTURE); }
             //ロビーに飛ばす
             p.teleport(lobby);
+            //リスポーンを指定
+            p.setBedSpawnLocation(lobby,true);
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
         }
