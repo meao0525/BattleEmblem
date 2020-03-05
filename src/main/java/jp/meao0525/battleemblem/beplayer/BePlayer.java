@@ -17,6 +17,8 @@ public class BePlayer {
     private double attack;
     private double defence;
 
+    private int cooldown = 0;
+    private boolean usingAbility = false;
     private int life = PLAYER_LIFE;
 
     public BePlayer(Player player) {
@@ -69,7 +71,36 @@ public class BePlayer {
         player.getInventory().clear();
 
     }
+    public boolean isBattleClass() {
+        //バトルクラスを持っているか？
+        if (!player.getPlayerListName().equalsIgnoreCase(player.getDisplayName())) {
+            return true;
+        }
+        return false;
+    }
 
+    public boolean isBattleClass(BattleClass battleClass) {
+        //指定されたバトルクラスになっているか？
+        if (this.battleClass.equals(battleClass)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean hasBeItem(BeItems beItem) {
+        //指定されたアイテムを持っているか？
+        if (beItem.toItemStack().equals(player.getInventory().getItemInMainHand())) {
+            return true;
+        }
+        return false;
+    }
+
+    public void setCooldown(int cooldown) {
+        this.cooldown = cooldown;
+        //TODO: thread開始
+    }
+
+    //げったーせったー
     public Player getPlayer() {
         return player;
     }
@@ -98,30 +129,15 @@ public class BePlayer {
         this.life = life;
     }
 
-    public boolean isBattleClass() {
-        //バトルクラスを持っているか？
-        if (!player.getPlayerListName().equalsIgnoreCase(player.getDisplayName())) {
-            return true;
-        }
-        return false;
+    public boolean isUsingAbility() { return usingAbility; }
+
+    public void setUsingAbility(boolean usingAbility) {
+        this.usingAbility = usingAbility;
     }
 
-    public boolean isBattleClass(BattleClass battleClass) {
-        //指定されたバトルクラスになっているか？
-        if (this.battleClass.equals(battleClass)) {
-            return true;
-        }
-        return false;
-    }
+    public int getCooldown() { return cooldown; }
 
-    public boolean hasBeItem(BeItems beItem) {
-        //指定されたアイテムを持っているか？
-        if (beItem.toItemStack().equals(player.getInventory().getItemInMainHand())) {
-            return true;
-        }
-        return false;
-    }
-
+    //ぷらいべーとなめそっど
     private void setArmor(Player player, BattleClass battleClass) {
         //同じ操作してるのが気持ち悪い
         if (battleClass.equals(BattleClass.ARMOR_KNIGHT)) {
@@ -138,4 +154,6 @@ public class BePlayer {
             player.getInventory().setBoots(BeItems.BRAVE_BOOTS.toItemStack());
         }
     }
+
+
 }
