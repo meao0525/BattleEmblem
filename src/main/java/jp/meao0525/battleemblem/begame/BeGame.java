@@ -16,6 +16,11 @@ import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
 public class BeGame {
     //フェーズ
     private static int phase = 0;
+    /*
+     * phase = 0 ロビー時間
+     * phase = 1 準備時間
+     * phase = 2 ゲーム時間
+     */
 
     //プレイヤーリスト
     private ArrayList<BePlayer> bePlayerList = new ArrayList<>();
@@ -57,8 +62,8 @@ public class BeGame {
         /*=======準備時間=======*/
         setPhase(1);
 
-        //30秒カウントダウンする
-        count = 30;
+        //20秒カウントダウンする
+        count = 20;
         Timer timer = new Timer();
         Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "ゲーム開始まで");
         timer.scheduleAtFixedRate(new TimerTask() {

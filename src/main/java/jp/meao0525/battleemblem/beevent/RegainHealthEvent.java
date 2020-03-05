@@ -29,7 +29,7 @@ public class RegainHealthEvent implements Listener {
 
     @EventHandler
     public void PlayerSneakEvent(PlayerToggleSneakEvent e) {
-        //ゲーム中じゃない
+        //ロビー中
         if (BeGame.getPhase() == 0) { return; }
 
         if (e.getPlayer().isSneaking()) {

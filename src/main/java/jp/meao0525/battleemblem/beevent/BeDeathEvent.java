@@ -19,7 +19,7 @@ public class BeDeathEvent implements Listener {
 
     @EventHandler
     public void DeathEvent(PlayerDeathEvent e) {
-        //ゲーム中じゃない
+        //ロビー中
         if (BeGame.getPhase() == 0) { return; }
 
         Player player = e.getEntity();
@@ -49,7 +49,7 @@ public class BeDeathEvent implements Listener {
             //プレイヤーリストから外す
             BePlayerList.getBePlayerList().remove(bePlayer);
             //観戦者にする
-            player.setGameMode(GameMode.SPECTATOR);
+//            player.setGameMode(GameMode.SPECTATOR);
             //デスメッセージ
             e.setDeathMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET +player.getPlayerListName() + " が脱落しました");
 
