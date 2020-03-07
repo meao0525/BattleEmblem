@@ -38,6 +38,8 @@ public class BeDeathEvent implements Listener {
             bePlayer.setLife(bePlayer.getLife() - 1);
             //初期位置にTP
             player.teleport(coliseum);
+            //TODO: ゲームモードをアドベンチャーにする(できてない)
+            player.setGameMode(GameMode.ADVENTURE);
             //残機を教えてあげて
             player.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
                     + ChatColor.RESET + "残機は"
@@ -48,8 +50,6 @@ public class BeDeathEvent implements Listener {
             bePlayer.removeBattleClass();
             //プレイヤーリストから外す
             BePlayerList.getBePlayerList().remove(bePlayer);
-            //観戦者にする
-//            player.setGameMode(GameMode.SPECTATOR);
             //デスメッセージ
             e.setDeathMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET +player.getPlayerListName() + " が脱落しました");
 

@@ -1,17 +1,25 @@
 package jp.meao0525.battleemblem.beplayer;
 
+import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
 
-public class BePlayer {
+public class BePlayer extends BukkitRunnable {
     private Player player;
     private BattleClass battleClass;
     private double attack;
@@ -95,9 +103,24 @@ public class BePlayer {
         return false;
     }
 
-    public void setCooldown(int cooldown) {
+    public void setCooldown(int cooldown, Plugin plugin) {
         this.cooldown = cooldown;
         //TODO: thread開始
+        this.runTaskTimer(plugin,0, 20);
+    }
+
+    public void run() {
+        Objective objective = player.getScoreboard().getObjective("cooldown");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        if (cooldown > 0) {
+            //残りクールダウンを表示
+            cooldown--;
+            objective.getScore("cooldown").setScore(cooldown);
+        } else {
+            //残り0秒になったら終わり
+            objective.setDisplaySlot(null);
+            this.cancel();
+        }
     }
 
     //げったーせったー
@@ -154,6 +177,5 @@ public class BePlayer {
             player.getInventory().setBoots(BeItems.BRAVE_BOOTS.toItemStack());
         }
     }
-
 
 }

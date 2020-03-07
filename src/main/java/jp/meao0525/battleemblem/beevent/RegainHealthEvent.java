@@ -1,7 +1,10 @@
 package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.BattleEmblemMain;
+import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.begame.BeGame;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
+import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
@@ -32,7 +35,7 @@ public class RegainHealthEvent implements Listener {
         //ロビー中
         if (BeGame.getPhase() == 0) { return; }
 
-        if (e.getPlayer().isSneaking()) {
+        if (!e.getPlayer().isSneaking()) {
             //スニーク時
             Player player = e.getPlayer();
             player.sendMessage(ChatColor.YELLOW + "回復中...");
@@ -89,19 +92,28 @@ public class RegainHealthEvent implements Listener {
         }
 
         public void countHealStart() {
+            //bePlayer取得
+            BePlayer bePlayer = BePlayerList.getBePlayer(player);
+
             //5秒止まると1ずつHPが回復
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    //healingリストにいないか、HPが満タン
-                    if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == player.getHealthScale())) {
-                        cancel();
+                    //healingリストにいないか
+                    if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == 40.0)) {
+                        this.cancel();
                         return;
                     }
+                    //HPが満タン
+//                    if ((bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)&&(player.getHealth()==60.0))
+//                            ||(!bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)&&(player.getHealth()==40.0))) {
+//                        this.cancel();
+//                    }
+
                     //5秒以上経った
                     if (count >= 5) {
                         //HP1回復
-                        player.setHealth(player.getHealth() + 1.0);
+                        player.setHealth(player.getHealth() + 1.0); //TODO: ここでエラー
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
                     } else {
                         //経過秒数を1増やす

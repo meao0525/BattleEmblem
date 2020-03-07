@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -18,12 +19,15 @@ import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 
 public class BeAbilityEvent implements Listener {
 
-    public BeAbilityEvent() { }
+    private Plugin plugin;
+
+    public BeAbilityEvent(Plugin plugin) { this.plugin = plugin; }
 
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent e) {
+        //TODO: これなにも反応しない
         //ゲーム中しか使えない
-        if (BeGame.getPhase() != 2) { return; }
+        if (BeGame.getPhase() == 0) { return; }
 
         Player player = e.getPlayer();
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
@@ -49,7 +53,7 @@ public class BeAbilityEvent implements Listener {
                 /* ==剣聖アビリティ==
                  * 5秒間スピードを1段階あげる(CD:15s)
                  */
-                bePlayer.setCooldown(15);
+                bePlayer.setCooldown(15, plugin);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
                 return;
             case BERSERKER_AXE_NAME:

@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
     public void onEnable() {
         getLogger().info("plugin enabled");
         getCommand("be").setExecutor(this);
+
+        //スコアボード
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        scoreboard.registerNewObjective("cooldown","dummy","CD: ");
 
         getServer().getPluginManager().registerEvents(new DefaultGameEvent(), this);
         getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
