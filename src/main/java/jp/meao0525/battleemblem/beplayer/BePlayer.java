@@ -106,7 +106,7 @@ public class BePlayer extends BukkitRunnable {
     public void setCooldown(int cooldown, Plugin plugin) {
         this.cooldown = cooldown;
         //TODO: thread開始
-        this.runTaskTimer(plugin,0, 20);
+//        this.runTaskTimer(plugin,0, 20);
     }
 
     public void run() {

@@ -8,6 +8,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -100,7 +102,8 @@ public class RegainHealthEvent implements Listener {
                 @Override
                 public void run() {
                     //healingリストにいないかHPが満タン
-                    if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == player.getHealthScale())) {
+                    if ((!healingPlayer.containsKey(player) )
+                            || (player.getHealth() == player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())) {
                         this.cancel();
                     }
 
