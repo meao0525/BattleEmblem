@@ -99,16 +99,10 @@ public class RegainHealthEvent implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    //healingリストにいないか
-                    if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == 40.0)) {
+                    //healingリストにいないかHPが満タン
+                    if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == player.getHealthScale())) {
                         this.cancel();
-                        return;
                     }
-                    //HPが満タン
-//                    if ((bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)&&(player.getHealth()==60.0))
-//                            ||(!bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)&&(player.getHealth()==40.0))) {
-//                        this.cancel();
-//                    }
 
                     //5秒以上経った
                     if (count >= 5) {

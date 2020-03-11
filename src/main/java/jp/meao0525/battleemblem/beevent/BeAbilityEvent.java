@@ -25,7 +25,6 @@ public class BeAbilityEvent implements Listener {
 
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent e) {
-        //TODO: これなにも反応しない
         //ゲーム中しか使えない
         if (BeGame.getPhase() == 0) { return; }
 
