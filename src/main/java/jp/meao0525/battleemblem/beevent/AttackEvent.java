@@ -36,39 +36,52 @@ public class AttackEvent implements Listener {
             return;
         }
 
-        //攻撃したのもダメージ受けたのもPlayerか?
-        if (!(e.getDamager() instanceof Player) || !(e.getEntity() instanceof Player)) {
-            return;
-        }
-        //各プレイヤーの取得
-        Player attacker = (Player) e.getDamager();
+        //ダメージ受けたのがPlayerか?
+        if (!(e.getEntity() instanceof Player)) { return; }
+        //被ダメージプレイヤーの取得
         Player defender = (Player) e.getEntity();
-        BePlayer beAttacker = BePlayerList.getBePlayer(attacker);
         BePlayer beDefender = BePlayerList.getBePlayer(defender);
+        //被ダメージプレイヤーは参加者じゃない
+        if (beDefender == null) { return; }
 
-        //ゲーム参加者じゃなかったわー笑
-        if ((beAttacker == null) || (beDefender == null)) {
-            return;
-        }
-        //所持アイテム取得
-        ItemStack item = attacker.getInventory().getItemInMainHand();
-        //素手で殴ってやがるよ笑
-        if (item == null) {
-            e.setCancelled(true);
-            return;
-        }
-        //アイテム名取得
-        String itemName = item.getItemMeta().getDisplayName();
-        //ダメージ計算
-        double totalDamage = calcDamage(beAttacker,beDefender,itemName);
-        //ダメージ設定
-        e.setDamage(totalDamage);
+        //ダメージ格納用変数
+        double totalDamage;
 
-        //ノックバック
-        if ((itemName.equalsIgnoreCase(BERSERKER_AXE_NAME)) || (itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) {
-            knockback(attacker,defender);
+        /* 攻撃したのがプレイヤー -> if文の中
+         * それ以外のEntity -> デス判定だけすればいいよね
+         *
+         * 矢で撃たれた時はBeSnipeEventでダメージとノックバックの設定がされているから
+         * 特にすることはないね
+         */
+        if (e.getDamager() instanceof Player) {
+            //攻撃したプレイヤーの取得
+            Player attacker = (Player) e.getDamager();
+            BePlayer beAttacker = BePlayerList.getBePlayer(attacker);
+            //ゲーム参加者じゃなかったわー笑
+            if (beAttacker == null) { return; }
+
+            //所持アイテム取得
+            ItemStack item = attacker.getInventory().getItemInMainHand();
+            //素手で殴ってやがるよ笑
+            if (item == null) {
+                e.setCancelled(true);
+                return;
+            }
+            //アイテム名取得
+            String itemName = item.getItemMeta().getDisplayName();
+            //ダメージ計算
+            totalDamage = calcDamage(beAttacker,beDefender,itemName);
+            //ダメージ設定
+            e.setDamage(totalDamage);
+
+            //ノックバック
+            if ((itemName.equalsIgnoreCase(BERSERKER_AXE_NAME)) || (itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) {
+                knockback(attacker,defender);
+            }
+
         }
 
+        totalDamage = e.getDamage();
         //ダメージが残りHP以上であればデス処理
         if (totalDamage >= defender.getHealth()) {
             e.setCancelled(true);
