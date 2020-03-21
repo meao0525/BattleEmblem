@@ -26,10 +26,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getLogger().info("plugin enabled");
         getCommand("be").setExecutor(this);
 
-        //スコアボード
-        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        scoreboard.registerNewObjective("cooldown","dummy","CD: ");
-
         getServer().getPluginManager().registerEvents(new DefaultGameEvent(), this);
         getServer().getPluginManager().registerEvents(new OpenSelectorEvent(), this);
         getServer().getPluginManager().registerEvents(new LoginEvent(), this);

@@ -12,9 +12,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
@@ -106,19 +103,16 @@ public class BePlayer extends BukkitRunnable {
     public void setCooldown(int cooldown, Plugin plugin) {
         this.cooldown = cooldown;
         //TODO: thread開始
-//        this.runTaskTimer(plugin,0, 20);
+        this.runTaskTimer(plugin,0, 20);
     }
 
     public void run() {
-        Objective objective = player.getScoreboard().getObjective("cooldown");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         if (cooldown > 0) {
             //残りクールダウンを表示
+            player.sendTitle(null, "能力使用可能まで" + ChatColor.RED +cooldown + ChatColor.RESET +"秒", 0, 20, 0);
             cooldown--;
-            objective.getScore("cooldown").setScore(cooldown);
         } else {
             //残り0秒になったら終わり
-            objective.setDisplaySlot(null);
             this.cancel();
         }
     }
