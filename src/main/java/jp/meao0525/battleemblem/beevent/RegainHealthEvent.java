@@ -7,6 +7,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -17,6 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
@@ -63,10 +65,11 @@ public class RegainHealthEvent implements Listener {
         //ゲーム中じゃなきゃ関係ないね
         if (BeGame.getPhase() == 0) { return; }
 
-        //移動距離0
-        if (e.getFrom().equals(e.getTo())) {
-            return;
-        }
+        //座標の取得(ブロック単位でやらないとシビアすぎる)
+        Location from = e.getFrom().getBlock().getLocation();
+        Location to = e.getTo().getBlock().getLocation();
+        //移動したブロック数0
+        if (from.equals(to)) { return; }
 
         //動いたらhealingリストから削除して回復できなくしてやる、フハハ
         if (healingPlayer.containsKey(e.getPlayer())) {
@@ -102,16 +105,20 @@ public class RegainHealthEvent implements Listener {
                 @Override
                 public void run() {
                     //healingリストにいないかHPが満タン
-                    if ((!healingPlayer.containsKey(player) )
-                            || (player.getHealth() == player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue())) {
+                    if (!healingPlayer.containsKey(player)) {
                         this.cancel();
                     }
 
                     //5秒以上経った
                     if (count >= 5) {
-                        //HP1回復
-                        player.setHealth(player.getHealth() + 1.0); //TODO: ここでエラー
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
+                        if (player.getHealthScale() < player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
+                            //HP1回復
+                            player.setHealth(player.getHealth() + 1.0); //TODO: ここでエラー
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
+                        } else {
+                            player.sendMessage(ChatColor.YELLOW + "回復が終了しました");
+                            this.cancel();
+                        }
                     } else {
                         //経過秒数を1増やす
                         count++;

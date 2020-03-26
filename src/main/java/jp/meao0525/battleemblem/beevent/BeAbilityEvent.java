@@ -26,7 +26,7 @@ public class BeAbilityEvent implements Listener {
     @EventHandler
     public void PlayerInteractEvent(PlayerInteractEvent e) {
         //ゲーム中しか使えない
-        if (BeGame.getPhase() == 0) { return; }
+        if (BeGame.getPhase() != 2) { return; }
 
         Player player = e.getPlayer();
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
@@ -52,7 +52,8 @@ public class BeAbilityEvent implements Listener {
                 /* ==剣聖アビリティ==
                  * 5秒間スピードを1段階あげる(CD:15s)
                  */
-                bePlayer.setCooldown(15, plugin);
+                bePlayer.setCooldown(15);
+                bePlayer.runTaskTimer(plugin,0,20); //TODO: なにかがnullらしい
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
                 return;
             case BERSERKER_AXE_NAME:

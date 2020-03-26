@@ -100,20 +100,18 @@ public class BePlayer extends BukkitRunnable {
         return false;
     }
 
-    public void setCooldown(int cooldown, Plugin plugin) {
+    public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
-        //TODO: thread開始
-        this.runTaskTimer(plugin,0, 20);
     }
 
     public void run() {
         if (cooldown > 0) {
             //残りクールダウンを表示
-            player.sendTitle(null, "能力使用可能まで" + ChatColor.RED +cooldown + ChatColor.RESET +"秒", 0, 20, 0);
+            player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
             cooldown--;
         } else {
             //残り0秒になったら終わり
-            this.cancel();
+            cancel();
         }
     }
 
