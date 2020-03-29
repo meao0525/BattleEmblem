@@ -9,6 +9,7 @@ import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -29,8 +30,19 @@ public class BeAbilityEvent implements Listener {
         if (BeGame.getPhase() != 2) { return; }
 
         Player player = e.getPlayer();
-        BePlayer bePlayer = BePlayerList.getBePlayer(player);
+        //みぎくりっく以外
+        if (!(e.getAction().equals(Action.RIGHT_CLICK_AIR))
+                && !(e.getAction().equals(Action.RIGHT_CLICK_BLOCK))) {
+            return;
+        }
 
+        //手に持ってるアイテムは?
+        ItemStack item = player.getInventory().getItemInMainHand();
+        //何も持ってない
+        if (item == null) { return; }
+
+
+        BePlayer bePlayer = BePlayerList.getBePlayer(player);
         //ゲームプレイヤーじゃないやんけぇ
         if (bePlayer == null) { return; }
         //アビリティ使用中ですよ
@@ -44,9 +56,15 @@ public class BeAbilityEvent implements Listener {
             return;
         }
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        String iName = item.getItemMeta().getDisplayName();
+        //能力発動!!!
+        activateAbility(bePlayer,item);
+    }
 
+    //アビリティ内容
+    public void activateAbility(BePlayer bePlayer, ItemStack item) {
+        //アイテム名取得
+        String iName = item.getItemMeta().getDisplayName();
+        //名前で判定
         switch(iName) {
             case MASTER_SWORD_NAME:
                 /* ==剣聖アビリティ==
@@ -54,7 +72,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setCooldown(15);
                 bePlayer.runTaskTimer(plugin,0,20); //TODO: なにかがnullらしい
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
+                bePlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
                 return;
             case BERSERKER_AXE_NAME:
                 /* ==狂戦士アビリティ==
@@ -86,6 +104,4 @@ public class BeAbilityEvent implements Listener {
                 return;
         }
     }
-
-    //TODO: アビリティのタイマーはこっちに書かなきゃいけないのでは
 }
