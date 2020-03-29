@@ -105,9 +105,7 @@ public class RegainHealthEvent implements Listener {
                 @Override
                 public void run() {
                     //healingリストにいないかHPが満タン
-                    if (!healingPlayer.containsKey(player)) {
-                        this.cancel();
-                    }
+                    if (!healingPlayer.containsKey(player)) { this.cancel(); }
 
                     //5秒以上経った
                     if (count >= 5) {
@@ -128,5 +126,4 @@ public class RegainHealthEvent implements Listener {
             }.runTaskTimer(plugin,0,20);
         }
     }
-
 }

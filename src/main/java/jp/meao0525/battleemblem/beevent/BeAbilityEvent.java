@@ -47,18 +47,12 @@ public class BeAbilityEvent implements Listener {
         //何も持ってない
         if (item == null) { return; }
 
-
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
         //ゲームプレイヤーじゃないやんけぇ
         if (bePlayer == null) { return; }
-        //アビリティ使用中ですよ
-        if (bePlayer.isUsingAbility()) {
-            player.sendMessage(ChatColor.GRAY + "アビリティを使用中です");
-            return;
-        }
-        //くぉーるだぅん
-        if (bePlayer.getCooldown() != 0) {
-            player.sendMessage(ChatColor.GRAY + "クールダウン中です");
+        //アビリティ使用できない
+        if (cooldownPlayers.containsKey(player)) {
+            player.sendMessage(ChatColor.GRAY + "アビリティは現在使用できません");
             return;
         }
 
@@ -68,6 +62,9 @@ public class BeAbilityEvent implements Listener {
 
     //アビリティ内容
     public void activateAbility(BePlayer bePlayer, ItemStack item) {
+        //timer用変数
+        int cd = 0;
+        int at = 0;
         //アイテム名取得
         String iName = item.getItemMeta().getDisplayName();
         //名前で判定
@@ -76,50 +73,63 @@ public class BeAbilityEvent implements Listener {
                 /* ==剣聖アビリティ==
                  * 5秒間スピードを1段階あげる(CD:15s)
                  */
-                cooldownPlayers.put(bePlayer.getPlayer(),new CoolDownThread(bePlayer,15));
+                cd = 15;
+                at= 5;
                 bePlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
-                return;
+                break;
             case BERSERKER_AXE_NAME:
                 /* ==狂戦士アビリティ==
                  * 殴った人を2秒スタンorめっちゃノックバック(CD:30s)
                  */
-                return;
+                cd = 30;
+                break;
             case KNIGHT_AXE_NAME:
                 /* ==重鎧兵アビリティ==
                  * 半径5メートル以内の敵の動きを5秒間止める(CD:30s)
                  */
-                return;
+                cd = 30;
+                break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
                  * 被ダメージの50%回復(CD:30s)
                  */
-                return;
+                cd = 30;
+                break;
             case SNIPER_BOW_NAME:
                 /* ==狙撃手アビリティ==
                  * なんか特殊な矢でも渡します？
                  */
-                return;
+                cd = 10;
+                break;
             case ASSASSIN_DAGGER_NAME:
                 /* ==暗殺者アビリティ==
                  * 10秒間透明化する
                  * 攻撃をすると透明化が解除される(CD:10s)
                  */
-                return;
-            default:
-                return;
+                cd = 10;
+                break;
         }
+        //能力時間、クールダウンを設定
+        CoolDownThread thread = new CoolDownThread(bePlayer, at, cd);
+        cooldownPlayers.put(bePlayer.getPlayer(), thread);
+        //タイマースタート
+        thread.startCount();
     }
 
     private class CoolDownThread {
+
         Player player;
         BePlayer bePlayer;
+        //能力時間とクールダウンの合計
+        int totalTime;
+        //クールダウン
         int cooldown;
 
-        private CoolDownThread(BePlayer beplayer, int cooldown) {
+        private CoolDownThread(BePlayer beplayer, int abilityTime, int cooldown) {
             this.bePlayer = beplayer;
             this.player = beplayer.getPlayer();
             this.cooldown = cooldown;
-            startCount();
+            this.totalTime = cooldown + abilityTime;
         }
 
         private void startCount() {
@@ -127,7 +137,9 @@ public class BeAbilityEvent implements Listener {
                 @Override
                 public void run() {
                     if (cooldownPlayers.containsKey(player)) {
-                        if (cooldown > 0) {
+                        if (totalTime > cooldown) {
+                            //能力の使用中
+                        } else if (totalTime > 0) {
                             //残りクールダウンを表示
                             player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
                             cooldown--;
