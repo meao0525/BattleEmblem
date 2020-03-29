@@ -129,24 +129,4 @@ public class RegainHealthEvent implements Listener {
         }
     }
 
-//    public void countHealStart(Player player) {
-//        new BukkitRunnable() {
-//            @Override
-//            public void run() {
-//                //healingリストにいないか、HPが満タン
-//                if ((!healingPlayer.containsKey(player) ) || (player.getHealth() == player.getHealthScale())) {
-//                    cancel();
-//                    return;
-//                }
-//                //5秒以上経った
-//                if (healingPlayer.get(player) >= 5) {
-//                    //HP1回復
-//                    player.setHealth(player.getHealth() + 1.0);
-//                    player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5.0F,5.0F);
-//                }
-//                //経過秒数を1増やす
-//                healingPlayer.put(player, healingPlayer.get(player) + 1);
-//            }
-//        }.runTaskTimer(plugin,0,20);
-//    }
 }

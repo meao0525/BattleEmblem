@@ -5,6 +5,8 @@ import jp.meao0525.battleemblem.beitem.BeItemName;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,12 +17,16 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.HashMap;
 
 import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 
 public class BeAbilityEvent implements Listener {
 
     private Plugin plugin;
+    private HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
 
     public BeAbilityEvent(Plugin plugin) { this.plugin = plugin; }
 
@@ -70,8 +76,7 @@ public class BeAbilityEvent implements Listener {
                 /* ==剣聖アビリティ==
                  * 5秒間スピードを1段階あげる(CD:15s)
                  */
-                bePlayer.setCooldown(15);
-                bePlayer.runTaskTimer(plugin,0,20); //TODO: なにかがnullらしい
+                cooldownPlayers.put(bePlayer.getPlayer(),new CoolDownThread(bePlayer,15));
                 bePlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
                 return;
             case BERSERKER_AXE_NAME:
@@ -102,6 +107,38 @@ public class BeAbilityEvent implements Listener {
                 return;
             default:
                 return;
+        }
+    }
+
+    private class CoolDownThread {
+        Player player;
+        BePlayer bePlayer;
+        int cooldown;
+
+        private CoolDownThread(BePlayer beplayer, int cooldown) {
+            this.bePlayer = beplayer;
+            this.player = beplayer.getPlayer();
+            this.cooldown = cooldown;
+            startCount();
+        }
+
+        private void startCount() {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (cooldownPlayers.containsKey(player)) {
+                        if (cooldown > 0) {
+                            //残りクールダウンを表示
+                            player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
+                            cooldown--;
+                        } else {
+                            //クールダウン終わり
+                            cooldownPlayers.remove(player);
+                            cancel();
+                        }
+                    }
+                }
+            }.runTaskTimer(plugin,0,20);
         }
     }
 }
