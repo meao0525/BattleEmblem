@@ -1,7 +1,13 @@
 package jp.meao0525.battleemblem.beevent;
 
+import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
+import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Villager;
 import org.bukkit.entity.WanderingTrader;
@@ -11,6 +17,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPickupArrowEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -85,5 +92,24 @@ public class DefaultGameEvent implements Listener {
         }
     }
 
-    //TODO: 村人を殴れない処理はいりますか?
+    @EventHandler
+    public void PlayerSwimEvent(PlayerMoveEvent e) {
+        //ゲーム中に参加者が水に落ちると死ぬ
+        Player player = e.getPlayer();
+        if ((BeGame.getPhase() != 0) || (BePlayerList.getBePlayer(player) == null)) {
+            return;
+        }
+
+        //現在地が水
+        World world = player.getWorld();
+        Block block = world.getBlockAt(player.getLocation());
+        if (block.isLiquid()) {
+            player.damage(2048.0);
+        }
+    }
+
+    @EventHandler
+    public void DamageEvent(EntityDamageEvent e) {
+
+    }
 }
