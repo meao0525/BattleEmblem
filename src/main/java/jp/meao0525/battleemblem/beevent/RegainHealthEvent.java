@@ -109,7 +109,7 @@ public class RegainHealthEvent implements Listener {
 
                     //5秒以上経った
                     if (count >= 5) {
-                        if (player.getHealthScale() < player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue()) {
+                        if (player.getHealth() < player.getMaxHealth()) {
                             //HP1回復
                             player.setHealth(player.getHealth() + 1.0); //TODO: ここでエラー
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
