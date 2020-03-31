@@ -5,6 +5,7 @@ import jp.meao0525.battleemblem.beitem.BeItemName;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.data.type.Switch;
@@ -26,7 +27,7 @@ import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 public class BeAbilityEvent implements Listener {
 
     private Plugin plugin;
-    private static HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
+    public static HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
 
     public BeAbilityEvent(Plugin plugin) { this.plugin = plugin; }
 
@@ -45,7 +46,7 @@ public class BeAbilityEvent implements Listener {
         //手に持ってるアイテムは?
         ItemStack item = player.getInventory().getItemInMainHand();
         //何も持ってない
-        if (item == null) { return; }
+        if (item.getType().equals(Material.AIR)) { return; }
 
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
         //ゲームプレイヤーじゃないやんけぇ
@@ -144,6 +145,7 @@ public class BeAbilityEvent implements Listener {
                             //残りクールダウンを表示
                             player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
                             totalTime--;
+                            cooldown--;
                         } else {
                             //クールダウン終わり
                             cooldownPlayers.remove(player);

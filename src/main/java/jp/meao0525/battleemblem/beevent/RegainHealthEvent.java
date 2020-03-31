@@ -5,10 +5,7 @@ import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,7 +27,7 @@ import java.util.HashMap;
 public class RegainHealthEvent implements Listener {
 
     private Plugin plugin;
-    private static HashMap<Player,HealingThread> healingPlayer = new HashMap<>();
+    public static HashMap<Player,HealingThread> healingPlayers = new HashMap<>();
 
     public RegainHealthEvent(Plugin plugin) { this.plugin = plugin; }
 
@@ -38,6 +35,8 @@ public class RegainHealthEvent implements Listener {
     public void PlayerSneakEvent(PlayerToggleSneakEvent e) {
         //ロビー中
         if (BeGame.getPhase() == 0) { return; }
+        //アドベンチャー以外のゲームモード
+        if (!e.getPlayer().getGameMode().equals(GameMode.ADVENTURE)) { return; }
 
         if (!e.getPlayer().isSneaking()) {
             //スニーク時
@@ -47,14 +46,14 @@ public class RegainHealthEvent implements Listener {
             //新しいスレッド用インスタンス
             HealingThread thread = new HealingThread(player);
             //healingPlayerに登録
-            healingPlayer.put(player,thread);
+            healingPlayers.put(player,thread);
             return;
 
         } else {
             //スニーク解除時
-            if (healingPlayer.containsKey(e.getPlayer())) {
+            if (healingPlayers.containsKey(e.getPlayer())) {
                 e.getPlayer().sendMessage(ChatColor.GRAY + "回復を中断しました");
-                healingPlayer.remove(e.getPlayer());
+                healingPlayers.remove(e.getPlayer());
             }
             return;
         }
@@ -72,17 +71,17 @@ public class RegainHealthEvent implements Listener {
         if (from.equals(to)) { return; }
 
         //動いたらhealingリストから削除して回復できなくしてやる、フハハ
-        if (healingPlayer.containsKey(e.getPlayer())) {
+        if (healingPlayers.containsKey(e.getPlayer())) {
             e.getPlayer().sendMessage(ChatColor.GRAY + "回復を中断しました");
-            healingPlayer.remove(e.getPlayer());
+            healingPlayers.remove(e.getPlayer());
         }
     }
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
         //回復中のまま抜けるなんてやめてほしいよね
-        if (healingPlayer.containsKey(e.getPlayer())) {
-            healingPlayer.remove(e.getPlayer());
+        if (healingPlayers.containsKey(e.getPlayer())) {
+            healingPlayers.remove(e.getPlayer());
         }
     }
 
@@ -99,24 +98,41 @@ public class RegainHealthEvent implements Listener {
         public void countHealStart() {
             //bePlayer取得
             BePlayer bePlayer = BePlayerList.getBePlayer(player);
+            if (bePlayer == null) { return; }
 
             //5秒止まると1ずつHPが回復
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    //healingリストにいないかHPが満タン
-                    if (!healingPlayer.containsKey(player)) { this.cancel(); }
+                    //healingリストにいない
+                    if (!healingPlayers.containsKey(player)) { this.cancel(); }
 
                     //5秒以上経った
                     if (count >= 5) {
-                        if (player.getHealth() < player.getMaxHealth()) {
-                            //HP1回復
-                            player.setHealth(player.getHealth() + 1.0); //TODO: ここでエラー
-                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
+                        double amount;
+                        //HP1回復
+                        if (bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+                            //重鎧兵はHPが通常の3倍
+                            amount = 1.0 / 3.0;
                         } else {
+                            //他はHPが通常の2倍
+                            amount = 1.0 / 2.0;
+                        }
+                        //効果音
+                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
+
+                        double hp = player.getHealth();
+                        double max = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
+                        if (max - hp > amount) {
+                            //上限超えない
+                            player.setHealth(player.getHealth() + amount);
+                        } else {
+                            //上限超えちゃう
+                            player.setHealth(max);
                             player.sendMessage(ChatColor.YELLOW + "回復が終了しました");
                             this.cancel();
                         }
+
                     } else {
                         //経過秒数を1増やす
                         count++;

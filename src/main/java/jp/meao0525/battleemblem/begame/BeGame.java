@@ -1,6 +1,7 @@
 package jp.meao0525.battleemblem.begame;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
+import jp.meao0525.battleemblem.beevent.RegainHealthEvent;
 import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
@@ -10,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.*;
 
+import static jp.meao0525.battleemblem.beevent.BeAbilityEvent.cooldownPlayers;
+import static jp.meao0525.battleemblem.beevent.RegainHealthEvent.healingPlayers;
 import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
 import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
 
@@ -120,6 +123,10 @@ public class BeGame {
         } else {
             Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者はいませんでした");
         }
+
+        //クールダウンとリジェネのMAPを消し飛ばす
+        healingPlayers.clear();
+        cooldownPlayers.clear();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             //ゲームモードをアドベンチャーにする
