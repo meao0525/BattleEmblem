@@ -117,6 +117,8 @@ public class BeGame {
             }
             //リストを空にする
             BePlayerList.getBePlayerList().clear();
+        } else {
+            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者はいませんでした");
         }
 
         for (Player p : Bukkit.getOnlinePlayers()) {

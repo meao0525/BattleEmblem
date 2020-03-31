@@ -26,7 +26,7 @@ import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 public class BeAbilityEvent implements Listener {
 
     private Plugin plugin;
-    private HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
+    private static HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
 
     public BeAbilityEvent(Plugin plugin) { this.plugin = plugin; }
 

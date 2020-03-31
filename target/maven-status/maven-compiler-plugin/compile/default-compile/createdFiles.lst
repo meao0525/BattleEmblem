@@ -23,5 +23,6 @@ jp\meao0525\battleemblem\beevent\BeAbilityEvent$CoolDownThread.class
 jp\meao0525\battleemblem\beplayer\BePlayerStatus.class
 jp\meao0525\battleemblem\beevent\LogoutEvent.class
 jp\meao0525\battleemblem\beitem\BeItemName.class
+jp\meao0525\battleemblem\beevent\FallFromStageEvent.class
 jp\meao0525\battleemblem\BattleEmblemMain.class
 jp\meao0525\battleemblem\beitem\BeItems.class

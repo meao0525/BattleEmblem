@@ -16,14 +16,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
 
-public class BePlayer extends BukkitRunnable {
+public class BePlayer {
     private Player player;
     private BattleClass battleClass;
     private double attack;
     private double defence;
 
-    private int cooldown = 0;
-    private boolean usingAbility = false;
     private int life = PLAYER_LIFE;
 
     public BePlayer(Player player) {
@@ -100,21 +98,6 @@ public class BePlayer extends BukkitRunnable {
         return false;
     }
 
-    public void setCooldown(int cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    public void run() {
-        if (cooldown > 0) {
-            //残りクールダウンを表示
-            player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
-            cooldown--;
-        } else {
-            //残り0秒になったら終わり
-            cancel();
-        }
-    }
-
     //げったーせったー
     public Player getPlayer() {
         return player;
@@ -143,14 +126,6 @@ public class BePlayer extends BukkitRunnable {
     public void setLife(int life) {
         this.life = life;
     }
-
-    public boolean isUsingAbility() { return usingAbility; }
-
-    public void setUsingAbility(boolean usingAbility) {
-        this.usingAbility = usingAbility;
-    }
-
-    public int getCooldown() { return cooldown; }
 
     //ぷらいべーとなめそっど
     private void setArmor(Player player, BattleClass battleClass) {

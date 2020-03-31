@@ -5,6 +5,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
@@ -49,6 +50,10 @@ public class FallFromStageEvent implements Listener {
                 bePlayer.removeBattleClass();
                 //プレイヤーリストから外す
                 BePlayerList.getBePlayerList().remove(bePlayer);
+                //観戦者にする
+                player.setGameMode(GameMode.SPECTATOR);
+                //初期位置にTP
+                player.teleport(coliseum);
                 //デスメッセージ
                 Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + player.getPlayerListName() + " が脱落しました");
 

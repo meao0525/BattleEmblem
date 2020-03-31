@@ -189,6 +189,10 @@ public class AttackEvent implements Listener {
             bePlayer.removeBattleClass();
             //プレイヤーリストから外す
             BePlayerList.getBePlayerList().remove(bePlayer);
+            //観戦者にする
+            p.setGameMode(GameMode.SPECTATOR);
+            //初期位置にTP
+            p.teleport(coliseum);
             //デスメッセージ
             Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + p.getPlayerListName() + " が脱落しました");
 
