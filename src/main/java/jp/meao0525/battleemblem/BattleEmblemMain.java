@@ -35,6 +35,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
         getServer().getPluginManager().registerEvents(new AttackEvent(),this);
         getServer().getPluginManager().registerEvents(new RegainHealthEvent(this),this);
         getServer().getPluginManager().registerEvents(new BeAbilityEvent(this),this);
+        getServer().getPluginManager().registerEvents(new FallFromStageEvent(),this);
     }
 
     @Override

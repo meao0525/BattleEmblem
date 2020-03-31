@@ -92,24 +92,4 @@ public class DefaultGameEvent implements Listener {
         }
     }
 
-    @EventHandler
-    public void PlayerSwimEvent(PlayerMoveEvent e) {
-        //ゲーム中に参加者が水に落ちると死ぬ
-        Player player = e.getPlayer();
-        if ((BeGame.getPhase() == 0) || (BePlayerList.getBePlayer(player) == null)) {
-            return;
-        }
-
-        //現在地が水
-        World world = player.getWorld();
-        Block block = world.getBlockAt(player.getLocation());
-        if (block.isLiquid()) {
-            player.damage(2048.0);
-        }
-    }
-
-    @EventHandler
-    public void DamageEvent(EntityDamageEvent e) {
-        //TODO
-    }
 }
