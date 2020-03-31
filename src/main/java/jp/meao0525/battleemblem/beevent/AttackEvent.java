@@ -1,6 +1,7 @@
 package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.BattleEmblemMain;
+import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
@@ -125,6 +126,17 @@ public class AttackEvent implements Listener {
         double attack = beAttacker.getAttack();
         double defence = beDefender.getDefence();
         double damage = 0;
+
+        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
+         *　ダメージのスケールも2倍になっているため2.0で割る
+         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
+         * に引き伸ばされているためダメージを3.0で割る
+         */
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+            attack /= 3.0;
+        } else {
+            attack /= 2.0;
+        }
 
         //所持アイテムの名前で判定
         switch (itemName) {
