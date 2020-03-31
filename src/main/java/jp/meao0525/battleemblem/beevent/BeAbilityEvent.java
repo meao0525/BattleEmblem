@@ -139,10 +139,11 @@ public class BeAbilityEvent implements Listener {
                     if (cooldownPlayers.containsKey(player)) {
                         if (totalTime > cooldown) {
                             //能力の使用中
+                            totalTime--;
                         } else if (totalTime > 0) {
                             //残りクールダウンを表示
                             player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
-                            cooldown--;
+                            totalTime--;
                         } else {
                             //クールダウン終わり
                             cooldownPlayers.remove(player);
