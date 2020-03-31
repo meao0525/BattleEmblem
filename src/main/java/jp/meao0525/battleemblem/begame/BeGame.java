@@ -100,21 +100,24 @@ public class BeGame {
     }
 
     public static void End() {
-        BePlayer winner = BePlayerList.getBePlayerList().get(0);
+        if (BePlayerList.getBePlayerList().size() != 0) {
+            //最後の一人が勝者だよね
+            BePlayer winner = BePlayerList.getBePlayerList().get(0);
 
-        if (winner != null) {
-            //結果発表おおおおおおおおおおおおおお
-            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者は ");
-            Bukkit.broadcastMessage(winner.getPlayer().getPlayerListName() + "です");
-            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます!");
-        }
+            if (winner != null) {
+                //結果発表おおおおおおおおおおおおおお
+                Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "勝者は ");
+                Bukkit.broadcastMessage(winner.getPlayer().getPlayerListName() + "です");
+                Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "おめでとうございます!");
+            }
 
-        //removeBattleClassをする
-        for (BePlayer bp : BePlayerList.getBePlayerList()) {
-            bp.removeBattleClass();
+            //BattleClassを剥ぎ取る(一応全員)
+            for (BePlayer bp : BePlayerList.getBePlayerList()) {
+                bp.removeBattleClass();
+            }
+            //リストを空にする
+            BePlayerList.getBePlayerList().clear();
         }
-        //リストを空にする
-        BePlayerList.getBePlayerList().clear();
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             //ゲームモードをアドベンチャーにする
