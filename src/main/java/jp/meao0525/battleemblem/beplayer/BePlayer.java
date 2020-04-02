@@ -13,6 +13,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
 
@@ -23,6 +26,11 @@ public class BePlayer {
     private double defence;
 
     private int life = PLAYER_LIFE;
+
+    private boolean ability = false;
+    private int cooldown = -1;
+
+    private Timer cdTimer;
 
     public BePlayer(Player player) {
         this.player = player;
@@ -98,6 +106,54 @@ public class BePlayer {
         return false;
     }
 
+    public void setAbilityTime(int abilitytime, int cd) {
+        //能力時間の後にクールダウン開始するとき
+        ability = true;
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //クールダウン開始
+                setCooldown(cd);
+                //能力時間終了
+                ability = false;
+                timer.cancel();
+            }
+        }, abilitytime*1000);
+    }
+
+    public void setCooldown(int count) {
+        //いきなりクールダウン開始するとき
+        cooldown = count;
+        cdTimer = new Timer();
+        cdTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (cooldown > 0) {
+                    //残りクールダウンを表示
+                    player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
+                } else {
+                    //クールダウン終わり
+                    cdTimer.cancel();
+                }
+                cooldown--;
+            }
+        },0,1000);
+    }
+
+    public void stopCooldown() {
+        //クールダウン強制終了
+        if (cdTimer != null) {
+            cdTimer.cancel();
+        }
+    }
+
+    public boolean isCooldown() {
+        //クールダウン中ですかぁ?
+        if (cooldown >= 0) { return true; }
+        return false;
+    }
+
     //げったーせったー
     public Player getPlayer() {
         return player;
@@ -125,6 +181,15 @@ public class BePlayer {
 
     public void setLife(int life) {
         this.life = life;
+    }
+
+    public boolean isAbilityFlag() {
+        return ability;
+    }
+
+    public void setAbilityFlag(boolean abilityFlag) {
+        //時間無制限に能力が使用できるとき
+        this.ability = abilityFlag;
     }
 
     //ぷらいべーとなめそっど

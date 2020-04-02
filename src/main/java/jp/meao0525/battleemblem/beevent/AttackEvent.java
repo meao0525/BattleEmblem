@@ -20,6 +20,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
@@ -64,10 +66,17 @@ public class AttackEvent implements Listener {
             //所持アイテム取得
             ItemStack item = attacker.getInventory().getItemInMainHand();
             //素手で殴ってやがるよ笑
-            if (item == null) {
+            if (item.getType().equals(Material.AIR)) {
                 e.setCancelled(true);
                 return;
             }
+
+            //透明中(暗殺者)
+            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                e.setCancelled(true);
+                return;
+            }
+
             //アイテム名取得
             String itemName = item.getItemMeta().getDisplayName();
             //ダメージ計算
@@ -78,6 +87,16 @@ public class AttackEvent implements Listener {
             //ノックバック
             if ((itemName.equalsIgnoreCase(BERSERKER_AXE_NAME)) || (itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) {
                 knockback(attacker,defender);
+            }
+
+            //スタン(狂戦士)
+            if (beAttacker.isBattleClass(BattleClass.BERSERKER) && (beAttacker.isAbilityFlag())) {
+                //殴られた人の移動速度をめちゃ下げる
+                defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,40,10));
+                //能力終了
+                beAttacker.setAbilityFlag(false);
+                //クールダウン
+                beAttacker.setCooldown(30);
             }
 
         }

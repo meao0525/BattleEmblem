@@ -3,13 +3,13 @@ jp\meao0525\battleemblem\beevent\SelectLoadOutEvent.class
 jp\meao0525\battleemblem\battleclass\ClassStatus.class
 jp\meao0525\battleemblem\beplayer\BePlayer.class
 jp\meao0525\battleemblem\beevent\LoginEvent.class
+jp\meao0525\battleemblem\beplayer\BePlayer$1.class
 jp\meao0525\battleemblem\beevent\RegainHealthEvent$HealingThread.class
 jp\meao0525\battleemblem\beevent\AttackEvent.class
 jp\meao0525\battleemblem\begame\BeLocation.class
 jp\meao0525\battleemblem\beevent\RegainHealthEvent$HealingThread$1.class
 jp\meao0525\battleemblem\battleclass\BattleClass.class
 jp\meao0525\battleemblem\begame\BeGame.class
-jp\meao0525\battleemblem\beevent\BeAbilityEvent$1.class
 jp\meao0525\battleemblem\beevent\OpenSelectorEvent.class
 jp\meao0525\battleemblem\beevent\RegainHealthEvent$1.class
 jp\meao0525\battleemblem\begame\BeGame$1.class
@@ -23,6 +23,7 @@ jp\meao0525\battleemblem\beevent\BeAbilityEvent$CoolDownThread.class
 jp\meao0525\battleemblem\beplayer\BePlayerStatus.class
 jp\meao0525\battleemblem\beevent\LogoutEvent.class
 jp\meao0525\battleemblem\beitem\BeItemName.class
+jp\meao0525\battleemblem\beplayer\BePlayer$2.class
 jp\meao0525\battleemblem\beevent\FallFromStageEvent.class
 jp\meao0525\battleemblem\BattleEmblemMain.class
 jp\meao0525\battleemblem\beitem\BeItems.class

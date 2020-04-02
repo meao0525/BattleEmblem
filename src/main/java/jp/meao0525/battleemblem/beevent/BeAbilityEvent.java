@@ -7,6 +7,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
@@ -27,7 +28,6 @@ import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 public class BeAbilityEvent implements Listener {
 
     private Plugin plugin;
-    public static HashMap<Player,CoolDownThread> cooldownPlayers = new HashMap<>();
 
     public BeAbilityEvent(Plugin plugin) { this.plugin = plugin; }
 
@@ -52,8 +52,11 @@ public class BeAbilityEvent implements Listener {
         //ゲームプレイヤーじゃないやんけぇ
         if (bePlayer == null) { return; }
         //アビリティ使用できない
-        if (cooldownPlayers.containsKey(player)) {
-            player.sendMessage(ChatColor.GRAY + "アビリティは現在使用できません");
+        if (bePlayer.isAbilityFlag()) {
+            player.sendMessage(ChatColor.GRAY + "能力を使用中です");
+            return;
+        } else if (bePlayer.isCooldown()) {
+            player.sendMessage(ChatColor.GRAY + "クールダウン中です");
             return;
         }
 
@@ -63,9 +66,8 @@ public class BeAbilityEvent implements Listener {
 
     //アビリティ内容
     public void activateAbility(BePlayer bePlayer, ItemStack item) {
-        //timer用変数
-        int cd = 0;
-        int at = 0;
+        //プレイヤー取得
+        Player player = bePlayer.getPlayer();
         //アイテム名取得
         String iName = item.getItemMeta().getDisplayName();
         //名前で判定
@@ -74,86 +76,56 @@ public class BeAbilityEvent implements Listener {
                 /* ==剣聖アビリティ==
                  * 5秒間スピードを1段階あげる(CD:15s)
                  */
-                cd = 15;
-                at= 5;
-                bePlayer.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
+                bePlayer.setAbilityTime(5, 15);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
+                player.playSound(player.getLocation(),Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case BERSERKER_AXE_NAME:
                 /* ==狂戦士アビリティ==
-                 * 殴った人を2秒スタンorめっちゃノックバック(CD:30s)
+                 * 次に殴った人を2秒スタンできる(CD:30s)
+                 * AttackEvent.javaで記述
                  */
-                cd = 30;
+                bePlayer.setAbilityFlag(true);
+                player.playSound(player.getLocation(),Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case KNIGHT_AXE_NAME:
                 /* ==重鎧兵アビリティ==
                  * 半径5メートル以内の敵の動きを5秒間止める(CD:30s)
                  */
-                cd = 30;
                 break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
                  * 被ダメージの50%回復(CD:30s)
                  */
-                cd = 30;
+                BraveHeal(bePlayer);
+                bePlayer.setCooldown(30);
+                player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case SNIPER_BOW_NAME:
                 /* ==狙撃手アビリティ==
                  * なんか特殊な矢でも渡します？
                  */
-                cd = 10;
                 break;
             case ASSASSIN_DAGGER_NAME:
                 /* ==暗殺者アビリティ==
                  * 10秒間透明化する
-                 * 攻撃をすると透明化が解除される(CD:10s)
+                 * 透明中は攻撃できない(CD:10s)
                  */
-                cd = 10;
+                bePlayer.setAbilityTime(10,10);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,200,1));
+                player.playSound(player.getLocation(),Sound.BLOCK_CONDUIT_ACTIVATE, SoundCategory.MASTER,5.0F,5.0F);
                 break;
         }
-        //能力時間、クールダウンを設定
-        CoolDownThread thread = new CoolDownThread(bePlayer, at, cd);
-        cooldownPlayers.put(bePlayer.getPlayer(), thread);
-        //タイマースタート
-        thread.startCount();
     }
 
-    private class CoolDownThread {
-
-        Player player;
-        BePlayer bePlayer;
-        //能力時間とクールダウンの合計
-        int totalTime;
-        //クールダウン
-        int cooldown;
-
-        private CoolDownThread(BePlayer beplayer, int abilityTime, int cooldown) {
-            this.bePlayer = beplayer;
-            this.player = beplayer.getPlayer();
-            this.cooldown = cooldown;
-            this.totalTime = cooldown + abilityTime;
-        }
-
-        private void startCount() {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (cooldownPlayers.containsKey(player)) {
-                        if (totalTime > cooldown) {
-                            //能力の使用中
-                            totalTime--;
-                        } else if (totalTime > 0) {
-                            //残りクールダウンを表示
-                            player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
-                            totalTime--;
-                            cooldown--;
-                        } else {
-                            //クールダウン終わり
-                            cooldownPlayers.remove(player);
-                            cancel();
-                        }
-                    }
-                }
-            }.runTaskTimer(plugin,0,20);
-        }
+    public void BraveHeal(BePlayer hero) {
+        //勇者流回復術
+        double health = hero.getPlayer().getHealth();
+        double max = hero.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
+        //回復量の求め方
+        double amount = (max - health) / 2.0;
+        //HPに足してあげよう!
+        hero.getPlayer().setHealth(health + amount);
     }
+
 }
