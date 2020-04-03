@@ -11,6 +11,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Timer;
@@ -58,9 +60,10 @@ public class BePlayer {
         if (battleClass.equals(BattleClass.ARMOR_KNIGHT) || battleClass.equals(BattleClass.BRAVE_HERO)) {
             setArmor(getPlayer(), battleClass);
         }
-        //スナイパーには矢もあげようね
+        //スナイパーには矢とジャンプ力
         if (battleClass.equals(BattleClass.SNIPER)) {
             player.getInventory().addItem(new ItemStack(Material.ARROW));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,1),false);
         }
 
         //ロードアウトセレクター回収する

@@ -4,11 +4,9 @@ import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Switch;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,7 +76,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setAbilityTime(5, 15);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
-                player.playSound(player.getLocation(),Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.MASTER,5.0F,5.0F);
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case BERSERKER_AXE_NAME:
                 /* ==狂戦士アビリティ==
@@ -86,12 +84,19 @@ public class BeAbilityEvent implements Listener {
                  * AttackEvent.javaで記述
                  */
                 bePlayer.setAbilityFlag(true);
-                player.playSound(player.getLocation(),Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.MASTER,5.0F,5.0F);
+                player.playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case KNIGHT_AXE_NAME:
                 /* ==重鎧兵アビリティ==
                  * 半径5メートル以内の敵の動きを5秒間止める(CD:30s)
                  */
+                boolean flag = KnightCrash(bePlayer);
+                //アビリティが発動した
+                if (flag) {
+                    bePlayer.setCooldown(30);
+                    player.playSound(player.getLocation(), Sound.ENTITY_WITHER_AMBIENT, SoundCategory.MASTER,5.0F,5.0F);
+                    player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
+                }
                 break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
@@ -99,7 +104,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 BraveHeal(bePlayer);
                 bePlayer.setCooldown(30);
-                player.playSound(player.getLocation(),Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER,5.0F,5.0F);
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case SNIPER_BOW_NAME:
                 /* ==狙撃手アビリティ==
@@ -113,7 +118,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setAbilityTime(10,10);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,200,1));
-                player.playSound(player.getLocation(),Sound.BLOCK_CONDUIT_ACTIVATE, SoundCategory.MASTER,5.0F,5.0F);
+                player.playSound(player.getLocation(), Sound.BLOCK_CONDUIT_ACTIVATE, SoundCategory.MASTER,5.0F,5.0F);
                 break;
         }
     }
@@ -128,4 +133,27 @@ public class BeAbilityEvent implements Listener {
         hero.getPlayer().setHealth(health + amount);
     }
 
+    public boolean KnightCrash(BePlayer knight) {
+        //地面を揺らして敵の足を止める
+        Block target = knight.getPlayer().getTargetBlock(null,3);
+        //3マス以内にターゲットブロックがない
+        if (target == null) { return false; }
+
+        knight.getPlayer().sendMessage("能力発動したよ");
+        //ターゲットブロックの座標
+        Location tLocation = target.getLocation();
+        for (BePlayer bp : BePlayerList.getBePlayerList()) {
+            Location pLocation = bp.getPlayer().getLocation();
+            if (pLocation.distance(tLocation) < 5.0) {
+                //自分にかけないようにねｗ
+                if (bp != knight) {
+                    //5メートル以内のプレイヤーを鈍化
+                    bp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60,10));
+                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_AMBIENT, SoundCategory.MASTER,5.0F,5.0F);
+                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
+                }
+            }
+        }
+        return true;
+    }
 }
