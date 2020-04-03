@@ -94,16 +94,15 @@ public class BeAbilityEvent implements Listener {
                 //アビリティが発動した
                 if (flag) {
                     bePlayer.setCooldown(30);
-                    player.playSound(player.getLocation(), Sound.ENTITY_WITHER_AMBIENT, SoundCategory.MASTER,5.0F,5.0F);
                     player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
                 }
                 break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
-                 * 被ダメージの50%回復(CD:30s)
+                 * 被ダメージの50%回復(CD:15s)
                  */
                 BraveHeal(bePlayer);
-                bePlayer.setCooldown(30);
+                bePlayer.setCooldown(15);
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case SNIPER_BOW_NAME:
@@ -137,9 +136,8 @@ public class BeAbilityEvent implements Listener {
         //地面を揺らして敵の足を止める
         Block target = knight.getPlayer().getTargetBlock(null,3);
         //3マス以内にターゲットブロックがない
-        if (target == null) { return false; }
+        if (target.isEmpty()) { return false; }
 
-        knight.getPlayer().sendMessage("能力発動したよ");
         //ターゲットブロックの座標
         Location tLocation = target.getLocation();
         for (BePlayer bp : BePlayerList.getBePlayerList()) {
@@ -149,7 +147,6 @@ public class BeAbilityEvent implements Listener {
                 if (bp != knight) {
                     //5メートル以内のプレイヤーを鈍化
                     bp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60,10));
-                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_AMBIENT, SoundCategory.MASTER,5.0F,5.0F);
                     bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
                 }
             }

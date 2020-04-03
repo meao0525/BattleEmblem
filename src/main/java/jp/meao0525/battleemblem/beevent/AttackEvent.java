@@ -33,11 +33,11 @@ public class AttackEvent implements Listener {
 
     @EventHandler
     public void BeAttackEvent(EntityDamageByEntityEvent e) {
+        //鎧ダメージを無効化するためにイベントをキャンセル
+        e.setCancelled(true);
+
         //フェーズが2以外の時は攻撃できない
-        if (BeGame.getPhase() != 2) {
-            e.setCancelled(true);
-            return;
-        }
+        if (BeGame.getPhase() != 2) { return; }
 
         //ダメージ受けたのがPlayerか?
         if (!(e.getEntity() instanceof Player)) { return; }
@@ -48,13 +48,13 @@ public class AttackEvent implements Listener {
         if (beDefender == null) { return; }
 
         //ダメージ格納用変数
-        double totalDamage;
+        double totalDamage = 0.0;
 
         /* 攻撃したのがプレイヤー -> if文の中
+         * 攻撃したのが矢 -> else ifの中
          * それ以外のEntity -> デス判定だけすればいいよね
          *
-         * 矢で撃たれた時はBeSnipeEventでダメージとノックバックの設定がされているから
-         * 特にすることはないね
+         * 矢で撃たれた時はBeSnipeEventからArrowを受け取ってダメージを設定する
          */
         if (e.getDamager() instanceof Player) {
             //攻撃したプレイヤーの取得
@@ -66,46 +66,49 @@ public class AttackEvent implements Listener {
             //所持アイテム取得
             ItemStack item = attacker.getInventory().getItemInMainHand();
             //素手で殴ってやがるよ笑
-            if (item.getType().equals(Material.AIR)) {
-                e.setCancelled(true);
-                return;
-            }
-
-            //透明中(暗殺者)
-            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                e.setCancelled(true);
-                return;
-            }
+            if (item.getType().equals(Material.AIR)) { return; }
 
             //アイテム名取得
             String itemName = item.getItemMeta().getDisplayName();
             //ダメージ計算
             totalDamage = calcDamage(beAttacker,beDefender,itemName);
-            //ダメージ設定
-            e.setDamage(totalDamage);
 
-            //ノックバック
-            if ((itemName.equalsIgnoreCase(BERSERKER_AXE_NAME)) || (itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) {
-                knockback(attacker,defender);
+            //透明中(暗殺者)
+            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) { return; }
+            //ノックバック(狙撃手)
+            if ((itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) { knockback(attacker,defender); }
+            //スタンorノックバック(狂戦士)
+            if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
+                if (beAttacker.isAbilityFlag()) {
+                    //殴られた人の移動速度をめちゃ下げる
+                    defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,40,10));
+                    //能力終了
+                    beAttacker.setAbilityFlag(false);
+                    //クールダウン
+                    beAttacker.setCooldown(30);
+                } else {
+                    //アビリティ中じゃなきゃノックバック
+                    knockback(attacker,defender);
+                }
             }
+            //パンチクールダウン
+            attacker.setCooldown(item.getType(),20);
 
-            //スタン(狂戦士)
-            if (beAttacker.isBattleClass(BattleClass.BERSERKER) && (beAttacker.isAbilityFlag())) {
-                //殴られた人の移動速度をめちゃ下げる
-                defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,40,10));
-                //能力終了
-                beAttacker.setAbilityFlag(false);
-                //クールダウン
-                beAttacker.setCooldown(30);
-            }
-
+        } else if (e.getDamager() instanceof Arrow) {
+            Arrow arrow = (Arrow) e.getDamager();
+            //矢からダメージをとりだすことはできますか?
+            totalDamage = arrow.getDamage();
+            //矢をこれで消す
+            arrow.remove();
         }
 
-        totalDamage = e.getDamage();
-        //ダメージが残りHP以上であればデス処理
         if (totalDamage >= defender.getHealth()) {
+            //ダメージが残りHP以上であればデス処理
             e.setCancelled(true);
             PlayerDeath(beDefender);
+        } else {
+            //ダメージを与える
+            defender.damage(totalDamage);
         }
     }
 
@@ -124,7 +127,10 @@ public class AttackEvent implements Listener {
         Player shooter = (Player) e.getEntity();
         BePlayer beShooter = BePlayerList.getBePlayer(shooter);
         //参加者じゃないやんけぇ
-        if (beShooter == null) { return; }
+        if (beShooter == null) {
+            e.setCancelled(true);
+            return;
+        }
 
         float force = e.getForce();
         //どんだけ引き絞った?
@@ -135,6 +141,8 @@ public class AttackEvent implements Listener {
         }
         //ノックバック
         arrow.setKnockbackStrength(2);
+        //矢をこれにしよう
+        e.setProjectile(arrow);
 
         //矢を渡しましょう
         shooter.getInventory().addItem(new ItemStack(Material.ARROW));
@@ -145,17 +153,6 @@ public class AttackEvent implements Listener {
         double attack = beAttacker.getAttack();
         double defence = beDefender.getDefence();
         double damage = 0;
-
-        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
-         *　ダメージのスケールも2倍になっているため2.0で割る
-         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
-         * に引き伸ばされているためダメージを3.0で割る
-         */
-        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-            attack /= 3.0;
-        } else {
-            attack /= 2.0;
-        }
 
         //所持アイテムの名前で判定
         switch (itemName) {
@@ -169,7 +166,9 @@ public class AttackEvent implements Listener {
 
             case BRAVE_SWORD_NAME:
                 //HP減少分の追加ダメージ
-                double decrement = ClassStatus.BRAVE_HERO_STATUS.getHp() - beAttacker.getPlayer().getHealth();
+                double max = beAttacker.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
+                double hp = beAttacker.getPlayer().getHealth();
+                double decrement = max - hp;
                 damage = attack - defence + decrement;
                 break;
 
@@ -184,6 +183,18 @@ public class AttackEvent implements Listener {
                 }
                 break;
         }
+
+        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
+         *　ダメージのスケールも2倍になっているため2.0で割る
+         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
+         * に引き伸ばされているためダメージを3.0で割る
+         */
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+            damage /= 3.0;
+        } else {
+            damage /= 2.0;
+        }
+
         return damage;
     }
 
@@ -238,6 +249,6 @@ public class AttackEvent implements Listener {
 
     private void knockback(Player attacker, Player defender) {
         //プレイヤーをノックバックさせる
-        defender.setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(5));
+        defender.setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(3));
     }
 }

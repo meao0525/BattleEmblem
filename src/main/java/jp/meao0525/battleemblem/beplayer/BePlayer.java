@@ -1,19 +1,15 @@
 package jp.meao0525.battleemblem.beplayer;
 
-import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.beitem.BeItems;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,7 +59,7 @@ public class BePlayer {
         //スナイパーには矢とジャンプ力
         if (battleClass.equals(BattleClass.SNIPER)) {
             player.getInventory().addItem(new ItemStack(Material.ARROW));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,1),false);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,1));
         }
 
         //ロードアウトセレクター回収する
@@ -80,6 +76,10 @@ public class BePlayer {
         //攻撃と防御を空に
         attack = 0;
         defence = 0;
+        //HP回復
+        player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+        //エフェクト解除
+        player.removePotionEffect(PotionEffectType.JUMP);
 
         //装備を回収
         player.getInventory().clear();
