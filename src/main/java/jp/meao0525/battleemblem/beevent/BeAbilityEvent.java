@@ -54,7 +54,9 @@ public class BeAbilityEvent implements Listener {
             player.sendMessage(ChatColor.GRAY + "能力を使用中です");
             return;
         } else if (bePlayer.isCooldown()) {
-            player.sendMessage(ChatColor.GRAY + "クールダウン中です");
+            player.sendMessage(ChatColor.GRAY + "能力使用可能まで"
+                    + ChatColor.RESET + bePlayer.getCooldown()
+                    + ChatColor.GRAY + "秒");
             return;
         }
 
@@ -94,7 +96,8 @@ public class BeAbilityEvent implements Listener {
                 //アビリティが発動した
                 if (flag) {
                     bePlayer.setCooldown(30);
-                    player.playSound(player.getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
+                    player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
+                    player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
                 }
                 break;
             case BRAVE_SWORD_NAME:
@@ -147,7 +150,8 @@ public class BeAbilityEvent implements Listener {
                 if (bp != knight) {
                     //5メートル以内のプレイヤーを鈍化
                     bp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60,10));
-                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_BREAK_BLOCK, SoundCategory.MASTER,5.0F,5.0F);
+                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
+                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
                 }
             }
         }

@@ -7,6 +7,7 @@ jp\meao0525\battleemblem\beplayer\BePlayer$1.class
 jp\meao0525\battleemblem\beevent\RegainHealthEvent$HealingThread.class
 jp\meao0525\battleemblem\beevent\AttackEvent.class
 jp\meao0525\battleemblem\begame\BeLocation.class
+jp\meao0525\battleemblem\beevent\DefaultGameEvent$1.class
 jp\meao0525\battleemblem\beevent\RegainHealthEvent$HealingThread$1.class
 jp\meao0525\battleemblem\battleclass\BattleClass.class
 jp\meao0525\battleemblem\begame\BeGame.class

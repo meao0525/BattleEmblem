@@ -7,10 +7,7 @@ import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
@@ -49,6 +46,8 @@ public class AttackEvent implements Listener {
 
         //ダメージ格納用変数
         double totalDamage = 0.0;
+        //攻撃プレイヤー格納用
+        Player attacker = null;
 
         /* 攻撃したのがプレイヤー -> if文の中
          * 攻撃したのが矢 -> else ifの中
@@ -58,15 +57,15 @@ public class AttackEvent implements Listener {
          */
         if (e.getDamager() instanceof Player) {
             //攻撃したプレイヤーの取得
-            Player attacker = (Player) e.getDamager();
+            attacker = (Player) e.getDamager();
             BePlayer beAttacker = BePlayerList.getBePlayer(attacker);
             //ゲーム参加者じゃなかったわー笑
             if (beAttacker == null) { return; }
 
             //所持アイテム取得
             ItemStack item = attacker.getInventory().getItemInMainHand();
-            //素手で殴ってやがるよ笑
-            if (item.getType().equals(Material.AIR)) { return; }
+            //クールダウン中
+            if (attacker.getCooldown(item.getType()) > 0) { return; }
 
             //アイテム名取得
             String itemName = item.getItemMeta().getDisplayName();
@@ -92,7 +91,7 @@ public class AttackEvent implements Listener {
                 }
             }
             //パンチクールダウン
-            attacker.setCooldown(item.getType(),20);
+            setPlayerCoolDown(attacker);
 
         } else if (e.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getDamager();
@@ -100,11 +99,18 @@ public class AttackEvent implements Listener {
             totalDamage = arrow.getDamage();
             //矢をこれで消す
             arrow.remove();
+            //狙撃者取得
+            if (arrow.getShooter() instanceof Player) { attacker = (Player) arrow.getShooter(); }
         }
 
+        //ダメージが残りHP以上ならデス処理するのだ
         if (totalDamage >= defender.getHealth()) {
-            //ダメージが残りHP以上であればデス処理
-            e.setCancelled(true);
+            //キルとデスの追加
+            if (attacker != null) {
+                attacker.sendMessage(ChatColor.AQUA + defender.getDisplayName() + ChatColor.RESET + " をキルしました");
+                attacker.setStatistic(Statistic.PLAYER_KILLS, attacker.getStatistic(Statistic.PLAYER_KILLS) + 1);
+                defender.setStatistic(Statistic.DEATHS,defender.getStatistic(Statistic.DEATHS) + 1);
+            }
             PlayerDeath(beDefender);
         } else {
             //ダメージを与える
@@ -145,6 +151,7 @@ public class AttackEvent implements Listener {
         e.setProjectile(arrow);
 
         //矢を渡しましょう
+        shooter.getInventory().remove(Material.ARROW);
         shooter.getInventory().addItem(new ItemStack(Material.ARROW));
     }
 
@@ -250,5 +257,25 @@ public class AttackEvent implements Listener {
     private void knockback(Player attacker, Player defender) {
         //プレイヤーをノックバックさせる
         defender.setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(3));
+    }
+
+    private void setPlayerCoolDown(Player player) {
+        //アイテムによってクールダウンを変える
+        ItemStack item = player.getInventory().getItemInMainHand();
+        switch (item.getType()) {
+            case DIAMOND_AXE:
+            case IRON_AXE:
+            case GOLDEN_AXE:
+            case STONE_AXE:
+                player.setCooldown(item.getType(), 20);
+                break;
+            case DIAMOND_SWORD:
+            case IRON_SWORD:
+            case GOLDEN_SWORD:
+            case STONE_SWORD:
+            case BOW:
+                player.setCooldown(item.getType(), 10);
+                break;
+        }
     }
 }

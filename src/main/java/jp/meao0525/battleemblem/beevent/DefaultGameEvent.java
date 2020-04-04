@@ -1,23 +1,19 @@
 package jp.meao0525.battleemblem.beevent;
 
-import jp.meao0525.battleemblem.battleclass.BattleClass;
-import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
-import jp.meao0525.battleemblem.beplayer.BePlayer;
-import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Villager;
 import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
+
+import static org.bukkit.Material.*;
+import static org.bukkit.Material.DIAMOND_AXE;
 
 public class DefaultGameEvent implements Listener {
     @EventHandler
@@ -90,4 +86,33 @@ public class DefaultGameEvent implements Listener {
         }
     }
 
+    @EventHandler
+    public void LeftClickCoolDown(PlayerInteractEvent e) {
+        //剣、弓、斧を持って左クリックするとクールダウン
+        if ((e.getAction().equals(Action.LEFT_CLICK_AIR)) || (e.getAction().equals(Action.LEFT_CLICK_BLOCK))) {
+            Player player = e.getPlayer();
+            ItemStack item = player.getInventory().getItemInMainHand();
+            //クールダウン中ならキャンセル
+            if (player.getCooldown(item.getType()) > 0) {
+                e.setCancelled(true);
+            } else {
+                switch (item.getType()) {
+                    case DIAMOND_AXE:
+                    case IRON_AXE:
+                    case GOLDEN_AXE:
+                    case STONE_AXE:
+                        player.setCooldown(item.getType(),20);
+                        break;
+                    case DIAMOND_SWORD:
+                    case IRON_SWORD:
+                    case GOLDEN_SWORD:
+                    case STONE_SWORD:
+                    case BOW:
+                        player.setCooldown(item.getType(),10);
+                        break;
+                }
+            }
+
+        }
+    }
 }

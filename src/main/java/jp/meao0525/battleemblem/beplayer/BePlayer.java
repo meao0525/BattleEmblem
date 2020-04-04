@@ -26,8 +26,7 @@ public class BePlayer {
     private int life = PLAYER_LIFE;
 
     private boolean ability = false;
-    private int cooldown = -1;
-
+    private int cooldown = 0;
     private Timer cdTimer;
 
     public BePlayer(Player player) {
@@ -59,7 +58,7 @@ public class BePlayer {
         //スナイパーには矢とジャンプ力
         if (battleClass.equals(BattleClass.SNIPER)) {
             player.getInventory().addItem(new ItemStack(Material.ARROW));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,1));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,2));
         }
 
         //ロードアウトセレクター回収する
@@ -128,20 +127,23 @@ public class BePlayer {
     public void setCooldown(int count) {
         //いきなりクールダウン開始するとき
         cooldown = count;
+        player.sendMessage(ChatColor.GRAY + "能力使用可能まで"
+                + ChatColor.RESET + cooldown
+                + ChatColor.GRAY + "秒");
         cdTimer = new Timer();
         cdTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (cooldown > 0) {
-                    //残りクールダウンを表示
-                    player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
+//                    //残りクールダウンを表示
+//                    player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
+                    cooldown--;
                 } else {
                     //クールダウン終わり
                     cdTimer.cancel();
                 }
-                cooldown--;
             }
-        },0,1000);
+        },1000,1000);
     }
 
     public void stopCooldown() {
@@ -153,7 +155,7 @@ public class BePlayer {
 
     public boolean isCooldown() {
         //クールダウン中ですかぁ?
-        if (cooldown >= 0) { return true; }
+        if (cooldown > 0) { return true; }
         return false;
     }
 
@@ -188,6 +190,10 @@ public class BePlayer {
 
     public boolean isAbilityFlag() {
         return ability;
+    }
+
+    public int getCooldown() {
+        return cooldown;
     }
 
     public void setAbilityFlag(boolean abilityFlag) {

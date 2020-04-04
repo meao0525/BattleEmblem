@@ -3,19 +3,14 @@ package jp.meao0525.battleemblem;
 import jp.meao0525.battleemblem.beevent.*;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
-import jp.meao0525.battleemblem.beplayer.BePlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Statistic;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Scoreboard;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
 
@@ -49,6 +44,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
             return false;
         }
 
+        Player player;
         switch (args[0]) {
             case "help" :
                 //不正なコマンドじゃない?
@@ -68,8 +64,37 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 return true;
 
             case "score" : //スコアの表示
-                //TODO:
-                sender.sendMessage("プレイヤーのスコアを表示します");
+                if (args.length == 1) { //プレイヤー指定なし
+                    if (sender instanceof Player) {
+                        player = (Player) sender; //自分を指定
+                    } else {
+                        sender.sendMessage(ChatColor.DARK_RED + "このコマンドはゲーム内から行ってください");
+                        return true;
+                    }
+                } else if (args.length == 2) { //プレイヤー指定あり
+                    //あなたはOPですか?
+                    if (!(sender.isOp())) {
+                        sender.sendMessage(ChatColor.DARK_RED + "このコマンドはOP権限がないと実行できません。残念だったな!!!");
+                        return true;
+                    }
+                    player = Bukkit.getPlayerExact(args[1]);
+                    if (player == null) {
+                        sender.sendMessage(ChatColor.DARK_RED + "そんな人いないよ...");
+                        return true;
+                    }
+                } else { //それ以外の引数はあり得ない
+                    return false;
+                }
+                //キル・デス・レートの表示
+                double kill = player.getStatistic(Statistic.PLAYER_KILLS);
+                double death = player.getStatistic(Statistic.DEATHS);
+                sender.sendMessage(ChatColor.DARK_AQUA + "===== Score =====");
+                sender.sendMessage(String.format(" Kill --- %d", (int)kill));
+                sender.sendMessage(String.format("Death --- %d", (int)death));
+                if (death != 0.0) {
+                    sender.sendMessage(String.format("  K/D --- %3f", kill/death));
+                }
+                sender.sendMessage(ChatColor.DARK_AQUA + "================");
                 return true;
 
             case "start" : //ゲームを始める
@@ -116,7 +141,6 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 return true;
 
             case "give" : //beアイテムを渡す
-                Player player;
                 if (args.length == 2) { //プレイヤー指定なし
                     if (sender instanceof Player) {
                         player = (Player) sender; //自分を指定
