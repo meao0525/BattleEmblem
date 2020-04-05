@@ -2,8 +2,14 @@ package jp.meao0525.battleemblem.beplayer;
 
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
+import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -14,6 +20,7 @@ import org.bukkit.potion.PotionEffectType;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
 
@@ -26,7 +33,7 @@ public class BePlayer {
     private int life = PLAYER_LIFE;
 
     private boolean ability = false;
-    private int cooldown = 0;
+    private int cooldown = -1;
     private Timer cdTimer;
 
     public BePlayer(Player player) {
@@ -68,6 +75,8 @@ public class BePlayer {
     public void removeBattleClass() {
         //プレイヤーリスト名を元に戻す
         player.setPlayerListName(player.getDisplayName());
+        //バトルクラスを使用可にする
+        if (battleClass != null) { battleClass.setUsed(false); }
 
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
@@ -83,6 +92,39 @@ public class BePlayer {
         //装備を回収
         player.getInventory().clear();
 
+    }
+
+    public void death() {
+        //残機はなんぼ?
+        if (life > 0) {
+            //ライフを1減らす
+            life--;
+            //初期位置にTP
+            player.teleport(coliseum);
+            //HPを回復
+            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+            //残機を教えてあげて
+            player.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
+                    + ChatColor.RESET + "残機は"
+                    + ChatColor.AQUA + life
+                    + ChatColor.RESET + "です");
+        } else {
+            //バトルクラスを外す
+            removeBattleClass();
+            //プレイヤーリストから外す
+            BePlayerList.getBePlayerList().remove(this);
+            //観戦者にする
+            player.setGameMode(GameMode.SPECTATOR);
+            //初期位置にTP
+            player.teleport(coliseum);
+            //デスメッセージ
+            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + player.getPlayerListName() + " が脱落しました");
+
+            //残り人数が一人以下ならゲーム終了
+            if (BePlayerList.getBePlayerList().size() <= 1) {
+                BeGame.End();
+            }
+        }
     }
     public boolean isBattleClass() {
         //バトルクラスを持っているか？
@@ -127,23 +169,22 @@ public class BePlayer {
     public void setCooldown(int count) {
         //いきなりクールダウン開始するとき
         cooldown = count;
-        player.sendMessage(ChatColor.GRAY + "能力使用可能まで"
-                + ChatColor.RESET + cooldown
-                + ChatColor.GRAY + "秒");
         cdTimer = new Timer();
         cdTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 if (cooldown > 0) {
-//                    //残りクールダウンを表示
-//                    player.sendTitle("", "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET +"秒", 0, 20, 0);
-                    cooldown--;
+                    //残りクールダウンを表示
+                    String msg = "能力使用可能まで" + ChatColor.RED + cooldown + ChatColor.RESET + "秒";
+                    BaseComponent[] component = TextComponent.fromLegacyText(msg);
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, component);
                 } else {
                     //クールダウン終わり
                     cdTimer.cancel();
                 }
+                cooldown--;
             }
-        },1000,1000);
+        },0,1000);
     }
 
     public void stopCooldown() {
@@ -155,7 +196,7 @@ public class BePlayer {
 
     public boolean isCooldown() {
         //クールダウン中ですかぁ?
-        if (cooldown > 0) { return true; }
+        if (cooldown >= 0) { return true; }
         return false;
     }
 

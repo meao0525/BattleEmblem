@@ -16,9 +16,6 @@ public class LogoutEvent implements Listener {
 
     @EventHandler
     public void PlayerLogoutEvent(PlayerQuitEvent e) {
-        //ゲーム中じゃなきゃいんじゃね
-        if (BeGame.getPhase() == 0) { return; }
-
         Player player = e.getPlayer();
         //BeGameからBePlayerのインスタンスを取得
         BePlayer bePlayer = BePlayerList.getBePlayer(player);

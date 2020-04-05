@@ -111,7 +111,8 @@ public class AttackEvent implements Listener {
                 attacker.setStatistic(Statistic.PLAYER_KILLS, attacker.getStatistic(Statistic.PLAYER_KILLS) + 1);
                 defender.setStatistic(Statistic.DEATHS,defender.getStatistic(Statistic.DEATHS) + 1);
             }
-            PlayerDeath(beDefender);
+            //死ぬ
+            beDefender.death();
         } else {
             //ダメージを与える
             defender.damage(totalDamage);
@@ -205,40 +206,40 @@ public class AttackEvent implements Listener {
         return damage;
     }
 
-    public void PlayerDeath(BePlayer bePlayer) {
-        //プレイヤーの取得
-        Player p = bePlayer.getPlayer();
-        //残機はなんぼ?
-        if (bePlayer.getLife() > 0) {
-            //ライフを1減らす
-            bePlayer.setLife(bePlayer.getLife() - 1);
-            //初期位置にTP
-            p.teleport(coliseum);
-            //HPを回復
-            p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-            //残機を教えてあげて
-            p.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
-                    + ChatColor.RESET + "残機は"
-                    + ChatColor.AQUA + bePlayer.getLife()
-                    + ChatColor.RESET + "です");
-        } else {
-            //バトルクラスを外す
-            bePlayer.removeBattleClass();
-            //プレイヤーリストから外す
-            BePlayerList.getBePlayerList().remove(bePlayer);
-            //観戦者にする
-            p.setGameMode(GameMode.SPECTATOR);
-            //初期位置にTP
-            p.teleport(coliseum);
-            //デスメッセージ
-            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + p.getPlayerListName() + " が脱落しました");
-
-            //残り人数が一人以下ならゲーム終了
-            if (BePlayerList.getBePlayerList().size() <= 1) {
-                BeGame.End();
-            }
-        }
-    }
+//    public void PlayerDeath(BePlayer bePlayer) {
+//        //プレイヤーの取得
+//        Player p = bePlayer.getPlayer();
+//        //残機はなんぼ?
+//        if (bePlayer.getLife() > 0) {
+//            //ライフを1減らす
+//            bePlayer.setLife(bePlayer.getLife() - 1);
+//            //初期位置にTP
+//            p.teleport(coliseum);
+//            //HPを回復
+//            p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
+//            //残機を教えてあげて
+//            p.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
+//                    + ChatColor.RESET + "残機は"
+//                    + ChatColor.AQUA + bePlayer.getLife()
+//                    + ChatColor.RESET + "です");
+//        } else {
+//            //バトルクラスを外す
+//            bePlayer.removeBattleClass();
+//            //プレイヤーリストから外す
+//            BePlayerList.getBePlayerList().remove(bePlayer);
+//            //観戦者にする
+//            p.setGameMode(GameMode.SPECTATOR);
+//            //初期位置にTP
+//            p.teleport(coliseum);
+//            //デスメッセージ
+//            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + p.getPlayerListName() + " が脱落しました");
+//
+//            //残り人数が一人以下ならゲーム終了
+//            if (BePlayerList.getBePlayerList().size() <= 1) {
+//                BeGame.End();
+//            }
+//        }
+//    }
 
     private boolean isBackAttack(BePlayer beAttacker, BePlayer beDefender) {
         /*

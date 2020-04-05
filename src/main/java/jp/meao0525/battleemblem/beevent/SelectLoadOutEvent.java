@@ -7,6 +7,7 @@ import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -43,6 +44,12 @@ public class SelectLoadOutEvent implements Listener {
         Player player = (Player) e.getWhoClicked();
         //とりあえずのnewBePlayer
         BePlayer bePlayer = new BePlayer(player);
+
+        //アドベンチャー以外はダメ
+        if (!player.getGameMode().equals(GameMode.ADVENTURE)) {
+            player.sendMessage(ChatColor.DARK_RED + "現在のゲームモードでは選択できません");
+            return;
+        }
 
         //バトルクラスを持っている人はダメよ
         if (bePlayer.isBattleClass()) {

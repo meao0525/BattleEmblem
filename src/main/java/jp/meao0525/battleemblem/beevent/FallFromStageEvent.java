@@ -33,36 +33,7 @@ public class FallFromStageEvent implements Listener {
         Block block = world.getBlockAt(player.getLocation());
         //現在地が水
         if (block.isLiquid()) {
-            //残機はなんぼ?
-            if (bePlayer.getLife() > 0) {
-                //ライフを1減らす
-                bePlayer.setLife(bePlayer.getLife() - 1);
-                //初期位置にTP
-                player.teleport(coliseum);
-                //HPを回復
-                player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-                //残機を教えてあげて
-                player.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
-                        + ChatColor.RESET + "残機は"
-                        + ChatColor.AQUA + bePlayer.getLife()
-                        + ChatColor.RESET + "です");
-            } else {
-                //バトルクラスを外す
-                bePlayer.removeBattleClass();
-                //プレイヤーリストから外す
-                BePlayerList.getBePlayerList().remove(bePlayer);
-                //観戦者にする
-                player.setGameMode(GameMode.SPECTATOR);
-                //初期位置にTP
-                player.teleport(coliseum);
-                //デスメッセージ
-                Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + player.getPlayerListName() + " が脱落しました");
-
-                //残り人数が一人以下ならゲーム終了
-                if (BePlayerList.getBePlayerList().size() <= 1) {
-                    BeGame.End();
-                }
-            }
+            bePlayer.death();
         }
     }
 }

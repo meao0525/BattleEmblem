@@ -1,6 +1,9 @@
 package jp.meao0525.battleemblem.beevent;
 
+import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beplayer.BePlayer;
+import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WanderingTrader;
@@ -95,24 +98,37 @@ public class DefaultGameEvent implements Listener {
             //クールダウン中ならキャンセル
             if (player.getCooldown(item.getType()) > 0) {
                 e.setCancelled(true);
-            } else {
-                switch (item.getType()) {
-                    case DIAMOND_AXE:
-                    case IRON_AXE:
-                    case GOLDEN_AXE:
-                    case STONE_AXE:
-                        player.setCooldown(item.getType(),20);
-                        break;
-                    case DIAMOND_SWORD:
-                    case IRON_SWORD:
-                    case GOLDEN_SWORD:
-                    case STONE_SWORD:
-                    case BOW:
-                        player.setCooldown(item.getType(),10);
-                        break;
-                }
             }
 
+            switch (item.getType()) {
+                case DIAMOND_AXE:
+                case IRON_AXE:
+                case GOLDEN_AXE:
+                case STONE_AXE:
+                    player.setCooldown(item.getType(),20);
+                    break;
+                case DIAMOND_SWORD:
+                case IRON_SWORD:
+                case GOLDEN_SWORD:
+                case STONE_SWORD:
+                case BOW:
+                    player.setCooldown(item.getType(),10);
+                    break;
+            }
+        }
+    }
+
+    @EventHandler
+    public void DeathEvent(EntityDamageEvent e) {
+        //死んだらすぐリスポ(デスカウントは増やさない)
+        if (!(e.getEntity() instanceof Player)) { return; }
+        Player player = (Player) e.getEntity();
+
+        if (e.getDamage() >= player.getHealth()) {
+            if ((BeGame.getPhase() != 2) || (BePlayerList.getBePlayer(player) == null)) {
+                e.setCancelled(true);
+                player.setGameMode(GameMode.SPECTATOR);
+            }
         }
     }
 }

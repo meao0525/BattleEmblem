@@ -54,9 +54,7 @@ public class BeAbilityEvent implements Listener {
             player.sendMessage(ChatColor.GRAY + "能力を使用中です");
             return;
         } else if (bePlayer.isCooldown()) {
-            player.sendMessage(ChatColor.GRAY + "能力使用可能まで"
-                    + ChatColor.RESET + bePlayer.getCooldown()
-                    + ChatColor.GRAY + "秒");
+            player.sendMessage(ChatColor.GRAY + "クールダウン中です");
             return;
         }
 
