@@ -200,6 +200,27 @@ public class BePlayer {
         return false;
     }
 
+    public void setIndicator(ItemStack item) {
+        //持ち物の種類によってクールダウンを設定
+        switch (item.getType()) {
+            case DIAMOND_AXE:
+            case IRON_AXE:
+            case GOLDEN_AXE:
+            case STONE_AXE:
+                player.setCooldown(item.getType(),20);
+                break;
+            case DIAMOND_SWORD:
+            case IRON_SWORD:
+            case GOLDEN_SWORD:
+            case STONE_SWORD:
+            case BOW:
+                player.setCooldown(item.getType(),10);
+                break;
+            default:
+                player.setCooldown(item.getType(),5);
+        }
+    }
+
     //げったーせったー
     public Player getPlayer() {
         return player;

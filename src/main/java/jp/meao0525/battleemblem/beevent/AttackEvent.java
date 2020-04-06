@@ -65,7 +65,11 @@ public class AttackEvent implements Listener {
             //所持アイテム取得
             ItemStack item = attacker.getInventory().getItemInMainHand();
             //クールダウン中
-            if (attacker.getCooldown(item.getType()) > 0) { return; }
+            if (attacker.getCooldown(item.getType()) > 0) {
+                //所持アイテムに改めてクールダウンを設定
+                beAttacker.setIndicator(item);
+                return;
+            }
 
             //アイテム名取得
             String itemName = item.getItemMeta().getDisplayName();
@@ -96,11 +100,22 @@ public class AttackEvent implements Listener {
         } else if (e.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getDamager();
             //矢からダメージをとりだすことはできますか?
-            totalDamage = arrow.getDamage();
+            totalDamage = arrow.getDamage() - beDefender.getDefence();
             //矢をこれで消す
             arrow.remove();
             //狙撃者取得
             if (arrow.getShooter() instanceof Player) { attacker = (Player) arrow.getShooter(); }
+        }
+
+        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
+         *　ダメージのスケールも2倍になっているため2.0で割る
+         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
+         * に引き伸ばされているためダメージを3.0で割る
+         */
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+            totalDamage /= 3.0;
+        } else {
+            totalDamage /= 2.0;
         }
 
         //ダメージが残りHP以上ならデス処理するのだ
@@ -190,17 +205,6 @@ public class AttackEvent implements Listener {
                     damage = attack - defence;
                 }
                 break;
-        }
-
-        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
-         *　ダメージのスケールも2倍になっているため2.0で割る
-         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
-         * に引き伸ばされているためダメージを3.0で割る
-         */
-        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-            damage /= 3.0;
-        } else {
-            damage /= 2.0;
         }
 
         return damage;

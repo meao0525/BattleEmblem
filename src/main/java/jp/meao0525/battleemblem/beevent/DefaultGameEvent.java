@@ -5,6 +5,7 @@ import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.GameMode;
+import org.bukkit.Statistic;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
@@ -100,20 +101,10 @@ public class DefaultGameEvent implements Listener {
                 e.setCancelled(true);
             }
 
-            switch (item.getType()) {
-                case DIAMOND_AXE:
-                case IRON_AXE:
-                case GOLDEN_AXE:
-                case STONE_AXE:
-                    player.setCooldown(item.getType(),20);
-                    break;
-                case DIAMOND_SWORD:
-                case IRON_SWORD:
-                case GOLDEN_SWORD:
-                case STONE_SWORD:
-                case BOW:
-                    player.setCooldown(item.getType(),10);
-                    break;
+            BePlayer bp = BePlayerList.getBePlayer(player);
+            if (bp != null) {
+                //持ち物にクールダウンをセット
+                bp.setIndicator(item);
             }
         }
     }
@@ -130,5 +121,11 @@ public class DefaultGameEvent implements Listener {
                 player.setGameMode(GameMode.SPECTATOR);
             }
         }
+    }
+
+    @EventHandler
+    public void dontDeathCountEvent(PlayerDeathEvent e) {
+        //事故死してもデスカウント増やさない
+        e.getEntity().setStatistic(Statistic.DEATHS, e.getEntity().getStatistic(Statistic.DEATHS) - 1);
     }
 }
