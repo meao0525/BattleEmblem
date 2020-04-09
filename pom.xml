@@ -6,7 +6,7 @@
 
     <groupId>jp.meao0525</groupId>
     <artifactId>BattleEmblem</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-alpha</version>
 
     <repositories>
         <repository>

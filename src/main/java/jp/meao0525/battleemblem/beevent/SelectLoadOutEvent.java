@@ -92,7 +92,7 @@ public class SelectLoadOutEvent implements Listener {
             bePlayer.setBattleClass(battleClass);
             //プレイヤーリストに追加
             BePlayerList.getBePlayerList().add(bePlayer);
-            //TODO: 効果音
+            //効果音
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BANJO,5.0F,5.0F);
             //インベントリ閉じる
             player.closeInventory();
