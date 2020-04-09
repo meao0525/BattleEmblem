@@ -35,12 +35,16 @@ public class RegainHealthEvent implements Listener {
     public void PlayerSneakEvent(PlayerToggleSneakEvent e) {
         //ロビー中
         if (BeGame.getPhase() == 0) { return; }
+
+        //プレイヤー取得
+        Player player = e.getPlayer();
         //アドベンチャー以外のゲームモード
-        if (!e.getPlayer().getGameMode().equals(GameMode.ADVENTURE)) { return; }
+        if (!player.getGameMode().equals(GameMode.ADVENTURE)) { return; }
+        //すでに体力満タン
+        if (player.getHealth() == player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) { return; }
 
         if (!e.getPlayer().isSneaking()) {
             //スニーク時
-            Player player = e.getPlayer();
             player.sendMessage(ChatColor.YELLOW + "回復中...");
 
             //新しいスレッド用インスタンス
@@ -63,6 +67,8 @@ public class RegainHealthEvent implements Listener {
     public void PlayerMoveEvent(PlayerMoveEvent e) {
         //ゲーム中じゃなきゃ関係ないね
         if (BeGame.getPhase() == 0) { return; }
+        //すでに体力満タン
+        if (e.getPlayer().getHealth() == e.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue()) { return; }
 
         //座標の取得(ブロック単位でやらないとシビアすぎる)
         Location from = e.getFrom().getBlock().getLocation();
@@ -107,8 +113,8 @@ public class RegainHealthEvent implements Listener {
                     //healingリストにいない
                     if (!healingPlayers.containsKey(player)) { this.cancel(); }
 
-                    //5秒以上経った
-                    if (count >= 5) {
+                    //3秒以上経った
+                    if (count >= 3) {
                         double amount;
                         //HP1回復
                         if (bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)) {

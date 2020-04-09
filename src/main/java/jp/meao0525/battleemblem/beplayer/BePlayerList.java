@@ -13,13 +13,18 @@ public class BePlayerList {
 
     public BePlayerList() { }
 
-    public static void createPlayerList() {
+    public static void createPlayerList(BattleClass battleClass) {
         for (Player p : Bukkit.getOnlinePlayers()) {
             //アドベンチャーモードでクラスを選択していない人
             if ((p.getGameMode().equals(GameMode.ADVENTURE)) && (p.getPlayerListName().equalsIgnoreCase(p.getDisplayName()))) {
                 BePlayer bp = new BePlayer(p);
-                //ランダムクラスを与える
-                bp.setBattleClass(getRandomClass());
+                if (battleClass == null) {
+                    //ランダムクラスを与える
+                    bp.setBattleClass(getRandomClass());
+                } else {
+                    //指定したバトルクラスにする
+                    bp.setBattleClass(battleClass);
+                }
                 //プレイヤーリストに追加
                 bePlayerList.add(bp);
             }

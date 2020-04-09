@@ -80,7 +80,7 @@ public class BeAbilityEvent implements Listener {
                 break;
             case BERSERKER_AXE_NAME:
                 /* ==狂戦士アビリティ==
-                 * 次に殴った人を2秒スタンできる(CD:30s)
+                 * 次に殴った人を3秒スタンできる(CD:30s)
                  * AttackEvent.javaで記述
                  */
                 bePlayer.setAbilityFlag(true);
@@ -88,12 +88,12 @@ public class BeAbilityEvent implements Listener {
                 break;
             case KNIGHT_AXE_NAME:
                 /* ==重鎧兵アビリティ==
-                 * 半径5メートル以内の敵の動きを5秒間止める(CD:30s)
+                 * 半径5メートル以内の敵の動きを3秒間止める(CD:30s)
                  */
                 boolean flag = KnightCrash(bePlayer);
                 //アビリティが発動した
                 if (flag) {
-                    bePlayer.setCooldown(30);
+                    bePlayer.setCooldown(15);
                     player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
                     player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
                 }

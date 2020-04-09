@@ -56,6 +56,9 @@ public class BePlayer {
         setAttack(status.getAttack()); //攻撃
         setDefence(status.getDefence()); //防御
 
+        //ロードアウトセレクター回収する
+        getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
+
         //装備を与える
         player.getInventory().addItem(battleClass.getItem().toItemStack());
         //鎧は必要ですか？
@@ -67,9 +70,6 @@ public class BePlayer {
             player.getInventory().addItem(new ItemStack(Material.ARROW));
             player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,2));
         }
-
-        //ロードアウトセレクター回収する
-        getPlayer().getInventory().remove(Material.EMERALD);
     }
 
     public void removeBattleClass() {

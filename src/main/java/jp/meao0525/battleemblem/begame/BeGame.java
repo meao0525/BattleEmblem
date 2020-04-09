@@ -3,6 +3,7 @@ package jp.meao0525.battleemblem.begame;
 import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.beevent.RegainHealthEvent;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beitem.BeRuleBook;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
@@ -35,7 +36,7 @@ public class BeGame {
 
     public void Start(BattleClass battleClass) {
         //プレイヤーリスト作成
-        BePlayerList.createPlayerList();
+        BePlayerList.createPlayerList(battleClass);
 
         //プレイヤーリストの取得
         bePlayerList = BePlayerList.getBePlayerList();
@@ -46,19 +47,13 @@ public class BeGame {
             return;
         }
 
-        if (battleClass != null) {
-            for (BePlayer bp : bePlayerList) {
-                bp.setBattleClass(battleClass);
-            }
-        }
-
         for (BePlayer bp : bePlayerList) {
-            //ロードアウトセレクターは没収だあ！！！
-            bp.getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
             //リスポーンを指定
             bp.getPlayer().setBedSpawnLocation(coliseum,true);
             //ステージにスポーン
             bp.getPlayer().teleport(coliseum);
+            //ルールブック回収
+            bp.getPlayer().getInventory().remove(new BeRuleBook().toItemStack());
         }
 
         /*=======準備時間=======*/
@@ -137,6 +132,8 @@ public class BeGame {
             p.setBedSpawnLocation(lobby,true);
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
+            //ルールブックを渡す
+            p.getInventory().addItem(new BeRuleBook().toItemStack());
         }
 
         //バトルクラスの使用をすべて許可する

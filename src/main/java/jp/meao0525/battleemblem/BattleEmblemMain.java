@@ -1,8 +1,10 @@
 package jp.meao0525.battleemblem;
 
+import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.beevent.*;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beitem.BeRuleBook;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Statistic;
@@ -58,6 +60,7 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     sender.sendMessage("/be start <バトルクラス名> - 指定したバトルクラスに統一してスタート");
                     sender.sendMessage("/be end - ゲームを強制終了させる");
                     sender.sendMessage("/be give selector <プレイヤー名> - 指定したプレイヤーにロードアウトセレクターを渡す");
+                    sender.sendMessage("/be give book <プレイヤー名> - 指定したプレイヤーにルールブックを渡す");
                 }
                 sender.sendMessage(ChatColor.GOLD + "======================");
                 return true;
@@ -88,10 +91,10 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                 double kill = player.getStatistic(Statistic.PLAYER_KILLS);
                 double death = player.getStatistic(Statistic.DEATHS);
                 sender.sendMessage(ChatColor.DARK_AQUA + "===== Score =====");
-                sender.sendMessage(String.format(" Kill --- %d", (int)kill));
+                sender.sendMessage(String.format("Kill    --- %d", (int)kill));
                 sender.sendMessage(String.format("Death --- %d", (int)death));
                 if (death != 0.0) {
-                    sender.sendMessage(String.format("  K/D --- %3f", kill/death));
+                    sender.sendMessage(String.format("K/D   --- %3f", kill/death));
                 }
                 sender.sendMessage(ChatColor.DARK_AQUA + "================");
                 return true;
@@ -117,7 +120,16 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                     game.Start(null);
 
                 } else if (args.length == 2){
+                    BattleClass battleClass = null;
+                    for (BattleClass bc : BattleClass.values()) {
+                        if (bc.getName().equalsIgnoreCase(args[1])) { battleClass = bc; }
+                    }
+                    if (battleClass == null) {
+                        sender.sendMessage(ChatColor.DARK_RED + "そんなバトルクラスはありませんよ");
+                        return true;
+                    }
                     Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + "全員" + ChatColor.AQUA + args[1] + ChatColor.RESET + "でゲームスタート");
+                    game.Start(battleClass);
                 } else {
                     return false; //引数3つ以上とかありえない
                 }
@@ -165,7 +177,9 @@ public class BattleEmblemMain extends JavaPlugin implements CommandExecutor {
                         return true;
 
                     case "book" :
-                        //TODO: バトルクラス一覧を渡す
+                        //バトルクラス一覧を渡す
+                        player.getInventory().addItem(new BeRuleBook().toItemStack());
+                        sender.sendMessage(player.getDisplayName() + "　にルールブックを渡しました");
                         return true;
                 }
         }

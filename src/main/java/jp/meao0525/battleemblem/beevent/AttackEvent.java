@@ -84,7 +84,7 @@ public class AttackEvent implements Listener {
             if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
                 if (beAttacker.isAbilityFlag()) {
                     //殴られた人の移動速度をめちゃ下げる
-                    defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,40,10));
+                    defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
                     //能力終了
                     beAttacker.setAbilityFlag(false);
                     //クールダウン
@@ -188,11 +188,11 @@ public class AttackEvent implements Listener {
                 break;
 
             case BRAVE_SWORD_NAME:
-                //HP減少分の追加ダメージ
+                //HP減少分の半分の追加ダメージ
                 double max = beAttacker.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                 double hp = beAttacker.getPlayer().getHealth();
                 double decrement = max - hp;
-                damage = attack - defence + decrement;
+                damage = attack - defence + (decrement / 2.0);
                 break;
 
             case ASSASSIN_DAGGER_NAME:
