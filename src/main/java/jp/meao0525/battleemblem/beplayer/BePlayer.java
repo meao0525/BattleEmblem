@@ -7,10 +7,7 @@ import jp.meao0525.battleemblem.beitem.BeItems;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Material;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,6 +28,7 @@ public class BePlayer {
     private double defence;
 
     private int life = PLAYER_LIFE;
+    private Player lastDamager = null;
 
     private boolean ability = false;
     private int cooldown = -1;
@@ -95,6 +93,18 @@ public class BePlayer {
     }
 
     public void death() {
+        //デススコア
+        player.setStatistic(Statistic.DEATHS, player.getStatistic(Statistic.DEATHS) + 1);
+        //効果音
+        player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
+        if (lastDamager != null) {
+            //キルスコア
+            lastDamager.setStatistic(Statistic.PLAYER_KILLS, lastDamager.getStatistic(Statistic.PLAYER_KILLS) + 1);
+            //メッセージ
+            lastDamager.sendMessage(ChatColor.AQUA + player.getDisplayName() + ChatColor.RESET + " をキルしました");
+            //効果音
+            lastDamager.playSound(lastDamager.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
+        }
         //残機はなんぼ?
         if (life > 0) {
             //ライフを1減らす
@@ -126,6 +136,7 @@ public class BePlayer {
             }
         }
     }
+
     public boolean isBattleClass() {
         //バトルクラスを持っているか？
         if (!player.getPlayerListName().equalsIgnoreCase(player.getDisplayName())) {
@@ -248,6 +259,14 @@ public class BePlayer {
 
     public void setLife(int life) {
         this.life = life;
+    }
+
+    public Player getLastDamager() {
+        return lastDamager;
+    }
+
+    public void setLastDamager(Player lastDamager) {
+        this.lastDamager = lastDamager;
     }
 
     public boolean isAbilityFlag() {

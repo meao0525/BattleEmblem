@@ -42,7 +42,7 @@ public class BeRuleBook {
             "攻撃力 --- 4+\n" +
             "防御力 --- 1\n\n" +
             "勇者は攻撃時、被ダメージの半分をダメージに追加する\n" +
-            "剣を持って右クリックすると被ダメージの半分のHPを回復する(CD:30s)";
+            "剣を持って右クリックすると被ダメージの半分のHPを回復する(上限10)(CD:30s)";
     private final String PAGE6 = ChatColor.BLUE + "狙撃手 (SNIPER)\n\n" +
             ChatColor.RESET + "HP     --- 40\n" +
             "素早さ --- 2\n" +

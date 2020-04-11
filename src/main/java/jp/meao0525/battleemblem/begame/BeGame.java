@@ -83,7 +83,7 @@ public class BeGame {
 
                     for (BePlayer bp : bePlayerList) {
                         //開戦のエフェクト
-                        bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,5.0F,5.0F);
+                        bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER,4.0F,4.0F);
                         bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,5.0F,5.0F);
                         bp.getPlayer().sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }

@@ -13,6 +13,7 @@ import org.bukkit.entity.AbstractArrow;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
@@ -85,6 +86,7 @@ public class AttackEvent implements Listener {
                 if (beAttacker.isAbilityFlag()) {
                     //殴られた人の移動速度をめちゃ下げる
                     defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
+                    defender.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
                     //能力終了
                     beAttacker.setAbilityFlag(false);
                     //クールダウン
@@ -118,20 +120,10 @@ public class AttackEvent implements Listener {
             totalDamage /= 2.0;
         }
 
-        //ダメージが残りHP以上ならデス処理するのだ
-        if (totalDamage >= defender.getHealth()) {
-            //キルとデスの追加
-            if (attacker != null) {
-                attacker.sendMessage(ChatColor.AQUA + defender.getDisplayName() + ChatColor.RESET + " をキルしました");
-                attacker.setStatistic(Statistic.PLAYER_KILLS, attacker.getStatistic(Statistic.PLAYER_KILLS) + 1);
-                defender.setStatistic(Statistic.DEATHS,defender.getStatistic(Statistic.DEATHS) + 1);
-            }
-            //死ぬ
-            beDefender.death();
-        } else {
-            //ダメージを与える
-            defender.damage(totalDamage);
-        }
+        //最後に攻撃した人
+        beDefender.setLastDamager(attacker);
+        //ダメージを与える
+        defender.damage(totalDamage);
     }
 
     @EventHandler

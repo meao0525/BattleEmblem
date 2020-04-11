@@ -129,6 +129,8 @@ public class BeAbilityEvent implements Listener {
         double max = hero.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
         //回復量の求め方
         double amount = (max - health) / 2.0;
+        //上限10
+        if (amount > 10.0) { amount = 10.0; }
         //HPに足してあげよう!
         hero.getPlayer().setHealth(health + amount);
     }
@@ -141,6 +143,10 @@ public class BeAbilityEvent implements Listener {
 
         //ターゲットブロックの座標
         Location tLocation = target.getLocation();
+        //演出大事
+        tLocation.getWorld().createExplosion(tLocation,3.0F,false, false, knight.getPlayer());
+        tLocation.getWorld().playSound(tLocation,Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
+        tLocation.getWorld().playSound(tLocation,Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
         for (BePlayer bp : BePlayerList.getBePlayerList()) {
             Location pLocation = bp.getPlayer().getLocation();
             if (pLocation.distance(tLocation) < 5.0) {
@@ -148,8 +154,6 @@ public class BeAbilityEvent implements Listener {
                 if (bp != knight) {
                     //5メートル以内のプレイヤーを鈍化
                     bp.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60,10));
-                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
-                    bp.getPlayer().playSound(bp.getPlayer().getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
                 }
             }
         }
