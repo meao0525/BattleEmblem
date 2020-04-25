@@ -9,11 +9,15 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -282,6 +286,17 @@ public class BePlayer {
     public void setAbilityFlag(boolean abilityFlag) {
         //時間無制限に能力が使用できるとき
         this.ability = abilityFlag;
+    }
+
+    public Vector getEyeVector() {
+        //10ブロック先のロケーションを取得
+        List<Block> sightList = player.getLineOfSight(null, 10);
+        Location sLoc = sightList.get(sightList.size() - 1).getLocation();
+        //プレイヤーのロケーション取得
+        Location pLoc = player.getLocation();
+
+        //こいつが視線のベクトルでいいよね？
+        return new Vector(sLoc.getX()-pLoc.getX(), sLoc.getY()-pLoc.getY(), sLoc.getZ()-pLoc.getZ());
     }
 
     //ぷらいべーとなめそっど

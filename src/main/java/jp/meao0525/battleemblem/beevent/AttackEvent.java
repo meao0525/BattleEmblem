@@ -197,6 +197,8 @@ public class AttackEvent implements Listener {
                 if (isBackAttack(beAttacker,beDefender)) {
                     //背後からだと防御無視+追加ダメージ
                     damage = attack + 6;
+                    beAttacker.getPlayer().sendMessage("バックアタック成功");
+                    beDefender.getPlayer().playEffect(EntityEffect.FIREWORK_EXPLODE);
                 } else {
                     //通常ダメージ
                     damage = attack - defence;
@@ -207,52 +209,24 @@ public class AttackEvent implements Listener {
         return damage;
     }
 
-//    public void PlayerDeath(BePlayer bePlayer) {
-//        //プレイヤーの取得
-//        Player p = bePlayer.getPlayer();
-//        //残機はなんぼ?
-//        if (bePlayer.getLife() > 0) {
-//            //ライフを1減らす
-//            bePlayer.setLife(bePlayer.getLife() - 1);
-//            //初期位置にTP
-//            p.teleport(coliseum);
-//            //HPを回復
-//            p.setHealth(p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-//            //残機を教えてあげて
-//            p.sendMessage(ChatColor.GOLD + "[BattleEmblem]"
-//                    + ChatColor.RESET + "残機は"
-//                    + ChatColor.AQUA + bePlayer.getLife()
-//                    + ChatColor.RESET + "です");
-//        } else {
-//            //バトルクラスを外す
-//            bePlayer.removeBattleClass();
-//            //プレイヤーリストから外す
-//            BePlayerList.getBePlayerList().remove(bePlayer);
-//            //観戦者にする
-//            p.setGameMode(GameMode.SPECTATOR);
-//            //初期位置にTP
-//            p.teleport(coliseum);
-//            //デスメッセージ
-//            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + p.getPlayerListName() + " が脱落しました");
-//
-//            //残り人数が一人以下ならゲーム終了
-//            if (BePlayerList.getBePlayerList().size() <= 1) {
-//                BeGame.End();
-//            }
-//        }
-//    }
-
     private boolean isBackAttack(BePlayer beAttacker, BePlayer beDefender) {
-        /*
-         * プレイヤーの視点先のブロック表面の法線ベクトルを取得
-         * これを比較して一致すればとりあえず背後からの攻撃とする(これでは厳密な背後判定ではない)
+        /* プレイヤーの視線をベクトルで取得
+         * 2人の視線の角度が60度以下なら背後からの攻撃
+         * マイナスのことも考慮してcosが1/2以下かどうかで判定
          */
-        Vector attackerDirection = beAttacker.getPlayer().getFacing().getDirection();
-        Vector defenderDirection = beDefender.getPlayer().getFacing().getDirection();
-        //攻撃は背後からの攻撃か?
-        if (attackerDirection.equals(defenderDirection)) {
-            return true;
-        }
+        float angle = beAttacker.getEyeVector().angle(beDefender.getEyeVector());
+        if (Math.cos(angle) <= 0.5) { return true; }
+
+//        /*
+//         * プレイヤーの視点先のブロック表面の法線ベクトルを取得
+//         * これを比較して一致すればとりあえず背後からの攻撃とする(これでは厳密な背後判定ではない)
+//         */
+//        Vector attackerDirection = beAttacker.getPlayer().getFacing().getDirection();
+//        Vector defenderDirection = beDefender.getPlayer().getFacing().getDirection();
+//        //攻撃は背後からの攻撃か?
+//        if (attackerDirection.equals(defenderDirection)) {
+//            return true;
+//        }
         return false;
     }
 
