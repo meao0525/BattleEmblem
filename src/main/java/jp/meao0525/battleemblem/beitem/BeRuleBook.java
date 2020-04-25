@@ -35,14 +35,14 @@ public class BeRuleBook {
             "素早さ --- 1\n" +
             "攻撃力 --- 6\n" +
             "防御力 --- 2\n\n" +
-            "斧を持って地面を右クリックすると5メートル以内の敵を3秒スタンさせる(CD:15s)";
+            "斧を持って地面を右クリックすると5メートル以内の敵を3秒スタンさせる(CD:30s)";
     private final String PAGE5 = ChatColor.BLUE + "勇者 (BRAVE HERO)\n\n" +
             ChatColor.RESET + "HP     --- 40\n" +
             "素早さ --- 2\n" +
             "攻撃力 --- 4+\n" +
             "防御力 --- 1\n\n" +
-            "勇者は攻撃時、被ダメージの半分をダメージに追加する\n" +
-            "剣を持って右クリックすると被ダメージの半分のHPを回復する(上限10)(CD:30s)";
+            "勇者は攻撃時、被ダメージの30%をダメージに追加する\n" +
+            "剣を持って右クリックすると被ダメージの30%のHPを回復する(CD:30s)";
     private final String PAGE6 = ChatColor.BLUE + "狙撃手 (SNIPER)\n\n" +
             ChatColor.RESET + "HP     --- 40\n" +
             "素早さ --- 2\n" +

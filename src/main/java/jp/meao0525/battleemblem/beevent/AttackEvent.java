@@ -122,8 +122,13 @@ public class AttackEvent implements Listener {
 
         //最後に攻撃した人
         beDefender.setLastDamager(attacker);
-        //ダメージを与える
-        defender.damage(totalDamage);
+        if (totalDamage >= defender.getHealth()) {
+            //プレイヤーは死んだのさ
+            beDefender.death();
+        } else {
+            //ダメージを与える
+            defender.damage(totalDamage);
+        }
     }
 
     @EventHandler
@@ -182,9 +187,9 @@ public class AttackEvent implements Listener {
             case BRAVE_SWORD_NAME:
                 //HP減少分の半分の追加ダメージ
                 double max = beAttacker.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
-                double hp = beAttacker.getPlayer().getHealth();
+                double hp = beAttacker.getPlayer().getHealth() * 2.0; //スケール調整
                 double decrement = max - hp;
-                damage = attack - defence + (decrement / 2.0);
+                damage = attack - defence + (decrement * 0.3);
                 break;
 
             case ASSASSIN_DAGGER_NAME:

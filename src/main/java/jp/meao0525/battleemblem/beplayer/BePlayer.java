@@ -105,6 +105,8 @@ public class BePlayer {
             //効果音
             lastDamager.playSound(lastDamager.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
         }
+        //lastDamagerを空にする
+        lastDamager = null;
         //残機はなんぼ?
         if (life > 0) {
             //ライフを1減らす

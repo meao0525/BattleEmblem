@@ -93,14 +93,14 @@ public class BeAbilityEvent implements Listener {
                 boolean flag = KnightCrash(bePlayer);
                 //アビリティが発動した
                 if (flag) {
-                    bePlayer.setCooldown(15);
+                    bePlayer.setCooldown(30);
                     player.playSound(player.getLocation(), Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
                     player.playSound(player.getLocation(), Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
                 }
                 break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
-                 * 被ダメージの50%回復(CD:15s)
+                 * 被ダメージの30%回復(CD:15s)
                  */
                 BraveHeal(bePlayer);
                 bePlayer.setCooldown(15);
@@ -128,9 +128,7 @@ public class BeAbilityEvent implements Listener {
         double health = hero.getPlayer().getHealth();
         double max = hero.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
         //回復量の求め方
-        double amount = (max - health) / 2.0;
-        //上限10
-        if (amount > 10.0) { amount = 10.0; }
+        double amount = (max - health) * 0.3;
         //HPに足してあげよう!
         hero.getPlayer().setHealth(health + amount);
     }

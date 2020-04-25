@@ -28,14 +28,6 @@ public class DefaultGameEvent implements Listener {
         e.setCancelled(true);
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void FallDamageEvent(EntityDamageEvent e) {
-        //落下ダメージを食らわない
-        if (e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
-            e.setCancelled(true);
-        }
-    }
-
     @EventHandler
     public void DropItemEvent(PlayerDropItemEvent e) {
         //アイテムを捨てられない
@@ -113,6 +105,14 @@ public class DefaultGameEvent implements Listener {
 
     @EventHandler
     public void DeathEvent(EntityDamageEvent e) {
+        //プレイヤー攻撃・落下ダメージは何も起きない
+        if (e.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK)
+                || e.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE)
+                || e.getCause().equals(EntityDamageEvent.DamageCause.FALL)) {
+            e.setCancelled(true);
+            return;
+        }
+
         //死んだらすぐリスポ(デスカウントは増やさない)
         if (!(e.getEntity() instanceof Player)) { return; }
         Player player = (Player) e.getEntity();
