@@ -142,7 +142,7 @@ public class BeAbilityEvent implements Listener {
         //ターゲットブロックの座標
         Location tLocation = target.getLocation();
         //演出大事
-        tLocation.getWorld().createExplosion(tLocation,3.0F,false, false, knight.getPlayer());
+        tLocation.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, tLocation, 1);
         tLocation.getWorld().playSound(tLocation,Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR, SoundCategory.MASTER,5.0F,5.0F);
         tLocation.getWorld().playSound(tLocation,Sound.ENTITY_LIGHTNING_BOLT_IMPACT, SoundCategory.MASTER,2.5F,2.5F);
         for (BePlayer bp : BePlayerList.getBePlayerList()) {

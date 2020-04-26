@@ -45,6 +45,9 @@ public class AttackEvent implements Listener {
         //被ダメージプレイヤーは参加者じゃない
         if (beDefender == null) { return; }
 
+        //重鎧兵の音
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
+
         //ダメージ格納用変数
         double totalDamage = 0.0;
         //攻撃プレイヤー格納用
@@ -77,8 +80,12 @@ public class AttackEvent implements Listener {
             //ダメージ計算
             totalDamage = calcDamage(beAttacker,beDefender,itemName);
 
-            //透明中(暗殺者)
-            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) { return; }
+            //透明中(暗殺者)に攻撃すると解除
+            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+                beAttacker.stopAbilityTime();
+                beAttacker.setCooldown(10);
+                attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
+            }
             //ノックバック(狙撃手)
             if ((itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) { knockback(attacker,defender); }
             //スタンorノックバック(狂戦士)
@@ -105,8 +112,12 @@ public class AttackEvent implements Listener {
             totalDamage = arrow.getDamage() - beDefender.getDefence();
             //矢をこれで消す
             arrow.remove();
-            //狙撃者取得
-            if (arrow.getShooter() instanceof Player) { attacker = (Player) arrow.getShooter(); }
+            if (arrow.getShooter() instanceof Player) {
+                //狙撃者取得
+                attacker = (Player) arrow.getShooter();
+                //ノックバック
+                knockback(attacker, defender);
+            }
         }
 
         /* HPは40に拡張されているのではなく見た目上引き伸ばされている
@@ -158,8 +169,6 @@ public class AttackEvent implements Listener {
         } else {
             arrow.setDamage(5.0);
         }
-        //ノックバック
-        arrow.setKnockbackStrength(2);
         //矢をこれにしよう
         e.setProjectile(arrow);
 
@@ -187,8 +196,8 @@ public class AttackEvent implements Listener {
             case BRAVE_SWORD_NAME:
                 //HP減少分の半分の追加ダメージ
                 double max = beAttacker.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
-                double hp = beAttacker.getPlayer().getHealth() * 2.0; //スケール調整
-                double decrement = max - hp;
+                double hp = beAttacker.getPlayer().getHealth();
+                double decrement = (max - hp) * 2.0; //スケール調整
                 damage = attack - defence + (decrement * 0.3);
                 break;
 
@@ -197,8 +206,7 @@ public class AttackEvent implements Listener {
                 if (isBackAttack(beAttacker,beDefender)) {
                     //背後からだと防御無視+追加ダメージ
                     damage = attack + 6;
-                    beAttacker.getPlayer().sendMessage("バックアタック成功");
-                    beDefender.getPlayer().playEffect(EntityEffect.FIREWORK_EXPLODE);
+                    beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, 4.0F, 4.0F);
                 } else {
                     //通常ダメージ
                     damage = attack - defence;
@@ -215,7 +223,7 @@ public class AttackEvent implements Listener {
          * マイナスのことも考慮してcosが1/2以下かどうかで判定
          */
         float angle = beAttacker.getEyeVector().angle(beDefender.getEyeVector());
-        if (Math.cos(angle) <= 0.5) { return true; }
+        if (Math.cos(angle) >= 0.5) { return true; }
 
 //        /*
 //         * プレイヤーの視点先のブロック表面の法線ベクトルを取得

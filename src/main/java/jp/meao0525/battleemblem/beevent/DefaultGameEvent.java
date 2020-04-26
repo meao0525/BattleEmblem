@@ -59,6 +59,14 @@ public class DefaultGameEvent implements Listener {
     }
 
     @EventHandler
+    public void ArrowHitEvent(ProjectileHitEvent e) {
+        //矢が当たったら消える
+        if (e.getHitBlock() != null) {
+            e.getEntity().remove();
+        }
+    }
+
+    @EventHandler
     public void CantTakeOffEvent(InventoryClickEvent e) {
         //装備を脱げないよ
         ItemStack item = e.getCurrentItem();

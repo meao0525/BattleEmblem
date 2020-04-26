@@ -37,6 +37,7 @@ public class BePlayer {
     private boolean ability = false;
     private int cooldown = -1;
     private Timer cdTimer;
+    private Timer abTimer;
 
     public BePlayer(Player player) {
         this.player = player;
@@ -79,6 +80,10 @@ public class BePlayer {
         player.setPlayerListName(player.getDisplayName());
         //バトルクラスを使用可にする
         if (battleClass != null) { battleClass.setUsed(false); }
+
+        //タイマーを止める
+        stopAbilityTime();
+        stopCooldown();
 
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
@@ -170,17 +175,25 @@ public class BePlayer {
     public void setAbilityTime(int abilitytime, int cd) {
         //能力時間の後にクールダウン開始するとき
         ability = true;
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        abTimer = new Timer();
+        abTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 //クールダウン開始
                 setCooldown(cd);
                 //能力時間終了
                 ability = false;
-                timer.cancel();
+                abTimer.cancel();
             }
         }, abilitytime*1000);
+    }
+
+    public void stopAbilityTime() {
+        //アビリティ時間強制終了
+        if (abTimer != null) {
+            ability = false;
+            abTimer.cancel();
+        }
     }
 
     public void setCooldown(int count) {

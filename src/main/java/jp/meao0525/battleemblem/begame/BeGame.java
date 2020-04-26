@@ -111,8 +111,6 @@ public class BeGame {
             for (BePlayer bp : BePlayerList.getBePlayerList()) {
                 //BattleClassを剥ぎ取る(一応全員)
                 bp.removeBattleClass();
-                //クールダウンを止める
-                bp.stopCooldown();
             }
             //リストを空にする
             BePlayerList.getBePlayerList().clear();
