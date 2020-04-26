@@ -46,7 +46,7 @@ public class BeRuleBook {
     private final String PAGE6 = ChatColor.BLUE + "狙撃手 (SNIPER)\n\n" +
             ChatColor.RESET + "HP     --- 40\n" +
             "素早さ --- 2\n" +
-            "攻撃力 --- 1\n" +
+            "攻撃力 --- 3\n" +
             "防御力 --- 0\n\n" +
             "弓のチャージが最大の時、矢の与えるダメージは10\n" +
             "最大でない時のダメージは5";
