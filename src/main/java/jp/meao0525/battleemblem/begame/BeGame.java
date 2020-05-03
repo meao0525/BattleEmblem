@@ -31,6 +31,9 @@ public class BeGame {
     //カウントダウン用変数
     int count;
 
+    //アルティメットゲージ用変数
+    private static Timer ultTimer;
+
     //コンストラクター
     public BeGame() { }
 
@@ -88,6 +91,8 @@ public class BeGame {
                         bp.getPlayer().sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
+                    //ウルトゲージタイマー開始
+                    startUltTimer();
                     timer.cancel();
                 }
                 count--;
@@ -121,6 +126,9 @@ public class BeGame {
         //リジェネのMAPを消し飛ばす
         healingPlayers.clear();
 
+        //ウルトタイマー止める
+        ultTimer.cancel();
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             //ゲームモードをアドベンチャーにする
             if (!p.getGameMode().equals(GameMode.CREATIVE)) { p.setGameMode(GameMode.ADVENTURE); }
@@ -141,6 +149,31 @@ public class BeGame {
 
         //フェーズを0に戻す
         setPhase(0);
+    }
+
+    private void startUltTimer() {
+        ultTimer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                for (BePlayer bp : BePlayerList.getBePlayerList()) {
+                    Player p = bp.getPlayer();
+                    //レベルが1未満の人に経験値
+                    if (p.getLevel() >= 1) {
+                        //経験値を渡す
+                        if ((bp.isBattleClass(BattleClass.BERSERKER))
+                                || (bp.isBattleClass(BattleClass.SWORD_MASTER))
+                                || (bp.isBattleClass(BattleClass.ASSASSIN))) {
+                            //狂戦士、剣聖、暗殺者のウルトは250秒後
+                            p.setExp(p.getExp() + 0.004F);
+                        } else if ((bp.isBattleClass(BattleClass.ARMOR_KNIGHT))
+                                || (bp.isBattleClass(BattleClass.BRAVE_HERO))
+                                || (bp.isBattleClass(BattleClass.SNIPER))) {
+                            //重鎧兵、勇者、狙撃手のウルトは200秒後
+                            p.setExp(p.getExp() + 0.005F);
+                        }
+                    }
+                }
+            }
+        }, 0, 1000);
     }
 
     public static int getPhase() {

@@ -225,16 +225,6 @@ public class AttackEvent implements Listener {
         float angle = beAttacker.getEyeVector().angle(beDefender.getEyeVector());
         if (Math.cos(angle) >= 0.5) { return true; }
 
-//        /*
-//         * プレイヤーの視点先のブロック表面の法線ベクトルを取得
-//         * これを比較して一致すればとりあえず背後からの攻撃とする(これでは厳密な背後判定ではない)
-//         */
-//        Vector attackerDirection = beAttacker.getPlayer().getFacing().getDirection();
-//        Vector defenderDirection = beDefender.getPlayer().getFacing().getDirection();
-//        //攻撃は背後からの攻撃か?
-//        if (attackerDirection.equals(defenderDirection)) {
-//            return true;
-//        }
         return false;
     }
 

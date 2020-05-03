@@ -95,10 +95,11 @@ public class BePlayer {
         player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
         //エフェクト解除
         player.removePotionEffect(PotionEffectType.JUMP);
-
         //装備を回収
         player.getInventory().clear();
-
+        //経験値とレベルを0に戻す
+        player.setExp(0);
+        player.setLevel(0);
     }
 
     public void death() {
