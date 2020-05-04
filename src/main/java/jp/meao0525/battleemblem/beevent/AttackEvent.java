@@ -56,8 +56,6 @@ public class AttackEvent implements Listener {
         /* 攻撃したのがプレイヤー -> if文の中
          * 攻撃したのが矢 -> else ifの中
          * それ以外のEntity -> デス判定だけすればいいよね
-         *
-         * 矢で撃たれた時はBeSnipeEventからArrowを受け取ってダメージを設定する
          */
         if (e.getDamager() instanceof Player) {
             //攻撃したプレイヤーの取得
@@ -80,35 +78,14 @@ public class AttackEvent implements Listener {
             //ダメージ計算
             totalDamage = calcDamage(beAttacker,beDefender,itemName);
 
-            //透明中(暗殺者)に攻撃すると解除
-            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                beAttacker.stopAbilityTime();
-                beAttacker.setCooldown(10);
-                attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
-            }
-            //ノックバック(狙撃手)
-            if ((itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) { knockback(attacker,defender); }
-            //スタンorノックバック(狂戦士)
-            if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
-                if (beAttacker.isAbilityFlag()) {
-                    //殴られた人の移動速度をめちゃ下げる
-                    defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
-                    defender.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
-                    //能力終了
-                    beAttacker.setAbilityFlag(false);
-                    //クールダウン
-                    beAttacker.setCooldown(30);
-                } else {
-                    //アビリティ中じゃなきゃノックバック
-                    knockback(attacker,defender);
-                }
-            }
+            //その他の効果
+            attackEffect(attacker,defender,beAttacker,beDefender);
             //パンチクールダウン
-            setPlayerCoolDown(attacker);
+            beAttacker.setIndicator(item);
 
         } else if (e.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getDamager();
-            //矢からダメージをとりだすことはできますか?
+            //BeSnipeEventからArrowを受け取ってダメージを設定する
             totalDamage = arrow.getDamage() - beDefender.getDefence();
             //矢をこれで消す
             arrow.remove();
@@ -177,11 +154,38 @@ public class AttackEvent implements Listener {
         shooter.getInventory().addItem(new ItemStack(Material.ARROW));
     }
 
+    public void attackEffect(Player attacker, Player defender, BePlayer beAttacker, BePlayer beDefender) {
+        //透明中(暗殺者)に攻撃すると解除
+        if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            beAttacker.stopAbilityTime();
+            beAttacker.setCooldown(10);
+            attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
+        }
+        //ノックバック(狙撃手)
+        if ((beAttacker.isBattleClass(BattleClass.SNIPER))) { knockback(attacker,defender); }
+        //スタンorノックバック(狂戦士)
+        if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
+            if (beAttacker.isAbilityFlag()) {
+                //殴られた人の移動速度をめちゃ下げる
+                defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
+                defender.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
+                attacker.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
+                //能力終了
+                beAttacker.setAbilityFlag(false);
+                //クールダウン
+                beAttacker.setCooldown(30);
+            } else {
+                //アビリティ中じゃなきゃノックバック
+                knockback(attacker,defender);
+            }
+        }
+    }
+
     public double calcDamage(BePlayer beAttacker, BePlayer beDefender, String itemName) {
         //攻撃力、防御力の取得
         double attack = beAttacker.getAttack();
         double defence = beDefender.getDefence();
-        double damage = 0;
+        double damage = 0.0;
 
         //所持アイテムの名前で判定
         switch (itemName) {
@@ -206,7 +210,7 @@ public class AttackEvent implements Listener {
                 if (isBackAttack(beAttacker,beDefender)) {
                     //背後からだと防御無視+追加ダメージ
                     damage = attack + 6;
-                    beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, 4.0F, 4.0F);
+                    beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.ITEM_TRIDENT_RETURN, 4.0F, 4.0F);
                 } else {
                     //通常ダメージ
                     damage = attack - defence;

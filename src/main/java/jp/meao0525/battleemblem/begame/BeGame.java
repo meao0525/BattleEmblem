@@ -152,23 +152,52 @@ public class BeGame {
     }
 
     private void startUltTimer() {
+        ultTimer = new Timer();
         ultTimer.scheduleAtFixedRate(new TimerTask() {
             public void run() {
                 for (BePlayer bp : BePlayerList.getBePlayerList()) {
                     Player p = bp.getPlayer();
                     //レベルが1未満の人に経験値
-                    if (p.getLevel() >= 1) {
+                    if (p.getLevel() < 1) {
+                        float exp = 0;
                         //経験値を渡す
-                        if ((bp.isBattleClass(BattleClass.BERSERKER))
-                                || (bp.isBattleClass(BattleClass.SWORD_MASTER))
+                        if ((bp.isBattleClass(BattleClass.SWORD_MASTER))
+                                || (bp.isBattleClass(BattleClass.BERSERKER))
                                 || (bp.isBattleClass(BattleClass.ASSASSIN))) {
                             //狂戦士、剣聖、暗殺者のウルトは250秒後
-                            p.setExp(p.getExp() + 0.004F);
+                            exp = 0.004F;
                         } else if ((bp.isBattleClass(BattleClass.ARMOR_KNIGHT))
                                 || (bp.isBattleClass(BattleClass.BRAVE_HERO))
                                 || (bp.isBattleClass(BattleClass.SNIPER))) {
                             //重鎧兵、勇者、狙撃手のウルトは200秒後
-                            p.setExp(p.getExp() + 0.005F);
+                            exp = 0.005F;
+                        }
+
+                        if (1.0F - p.getExp() > exp) {
+                            //まだ足せる
+                            p.setExp(p.getExp() + exp);
+                        } else {
+                            //あふれる
+                            p.setExp(0);
+                            p.setLevel(1);
+                            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 4.0F, 4.0F);
+                        }
+
+                        //レベルが1になったらアイテム渡す
+                        if (p.getLevel() == 1) {
+                            if (bp.isBattleClass(BattleClass.SWORD_MASTER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_SWORD.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.BERSERKER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_AXE.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+                                p.getInventory().addItem(BeItems.COUNTER_CHESTPLATE.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.BRAVE_HERO)) {
+                                p.getInventory().addItem(BeItems.INVINCIBLE_CHESTPLATE.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.SNIPER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_BOW.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.ASSASSIN)) {
+                                p.getInventory().addItem(BeItems.DEADLY_DAGGER.toItemStack());
+                            }
                         }
                     }
                 }

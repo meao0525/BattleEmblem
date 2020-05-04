@@ -125,7 +125,7 @@ public class RegainHealthEvent implements Listener {
                             amount = 1.0 / 2.0;
                         }
                         //効果音
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
+                        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5.0F,5.0F);
 
                         double hp = player.getHealth();
                         double max = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
@@ -142,7 +142,7 @@ public class RegainHealthEvent implements Listener {
                     } else {
                         //経過秒数を1増やす
                         count++;
-                        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5.0F,5.0F);
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE,5.0F,5.0F);
                     }
                 }
             }.runTaskTimer(plugin,0,20);

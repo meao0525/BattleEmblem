@@ -117,6 +117,18 @@ public class BePlayer {
         }
         //lastDamagerを空にする
         lastDamager = null;
+
+        //ウルトゲージを半分減らす
+        if (player.getLevel() < 1) {
+            //たまってないときはそのまま半分
+            player.setExp(player.getExp() / 2.0F);
+        } else {
+            //ウルトたまってるときは0レベルの半分
+            player.setLevel(0);
+            player.setExp(0.5F);
+            //TODO: ウルトアイテムを消す
+        }
+
         //残機はなんぼ?
         if (life > 0) {
             //ライフを1減らす
