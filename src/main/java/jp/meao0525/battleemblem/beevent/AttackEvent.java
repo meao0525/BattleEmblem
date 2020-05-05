@@ -5,6 +5,7 @@ import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
+import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
@@ -73,10 +74,8 @@ public class AttackEvent implements Listener {
                 return;
             }
 
-            //アイテム名取得
-            String itemName = item.getItemMeta().getDisplayName();
             //ダメージ計算
-            totalDamage = calcDamage(beAttacker,beDefender,itemName);
+            totalDamage = calcDamage(beAttacker,beDefender,item);
 
             //その他の効果
             attackEffect(attacker,defender,beAttacker,beDefender);
@@ -87,6 +86,8 @@ public class AttackEvent implements Listener {
             Arrow arrow = (Arrow) e.getDamager();
             //BeSnipeEventからArrowを受け取ってダメージを設定する
             totalDamage = arrow.getDamage() - beDefender.getDefence();
+            //ウルト?
+            if (arrow.getColor().equals(Color.YELLOW)) { defender.getWorld().strikeLightningEffect(defender.getLocation()); }
             //矢をこれで消す
             arrow.remove();
             if (arrow.getShooter() instanceof Player) {
@@ -146,6 +147,27 @@ public class AttackEvent implements Listener {
         } else {
             arrow.setDamage(5.0);
         }
+
+        //これがウルト弓を撃ったもの
+        if (shooter.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase(LIGHTNING_BOW_NAME)) {
+            Bukkit.broadcastMessage("ヘイマスタ―");
+            arrow.setDamage(30.0);
+            //色付けて判別しよう
+            arrow.setColor(Color.YELLOW);
+            //何回目ですこ
+            if (beShooter.getUltCount() < 2) {
+                Bukkit.broadcastMessage("やってる？");
+                beShooter.setUltCount(beShooter.getUltCount() + 1);
+            } else {
+                Bukkit.broadcastMessage("元気かい？");
+                //アイテム消す
+                shooter.getInventory().remove(shooter.getInventory().getItemInMainHand());
+                //ウルトカウント戻す
+                beShooter.setUltCount(0);
+                //ウルトゲージリセット
+                beShooter.resetUltimatebar();
+            }
+        }
         //矢をこれにしよう
         e.setProjectile(arrow);
 
@@ -181,7 +203,9 @@ public class AttackEvent implements Listener {
         }
     }
 
-    public double calcDamage(BePlayer beAttacker, BePlayer beDefender, String itemName) {
+    public double calcDamage(BePlayer beAttacker, BePlayer beDefender, ItemStack item) {
+        //アイテム名取得
+        String itemName = item.getItemMeta().getDisplayName();
         //攻撃力、防御力の取得
         double attack = beAttacker.getAttack();
         double defence = beDefender.getDefence();
@@ -215,6 +239,31 @@ public class AttackEvent implements Listener {
                     //通常ダメージ
                     damage = attack - defence;
                 }
+                break;
+
+            case LIGHTNING_SWORD_NAME:
+            case LIGHTNING_AXE_NAME:
+                //ウルトによる特大ダメージ
+                damage = 30.0;
+                //雷エフェクト
+                beDefender.getPlayer().getWorld().strikeLightningEffect(beDefender.getPlayer().getLocation());
+                //アイテム消す
+                beAttacker.getPlayer().getInventory().remove(item);
+                //ウルトゲージリセット
+                beAttacker.resetUltimatebar();
+                break;
+
+            case DEADLY_DAGGER_NAME:
+                //背後からの攻撃か
+                if (isBackAttack(beAttacker,beDefender)) {
+                    beAttacker.getPlayer().sendMessage(ChatColor.DARK_RED + "暗殺成功...");
+                    damage = 8000.0;
+                }
+                //アイテム消す
+                beAttacker.getPlayer().getInventory().remove(item);
+                beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, 4.0F, 4.0F);
+                //ウルトゲージリセット
+                beAttacker.resetUltimatebar();
                 break;
         }
 

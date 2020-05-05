@@ -6,6 +6,9 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import static jp.meao0525.battleemblem.beitem.BeItemName.*;
 
 public enum BeItems {
@@ -89,5 +92,21 @@ public enum BeItems {
 
     public String getName() {
         return name;
+    }
+
+    public BeItemType getItemType() {
+        return itemType;
+    }
+
+    public static ArrayList<ItemStack> getUltItem() {
+        ArrayList<ItemStack> itemSet = new ArrayList<>();
+        //ウルトアイテムを取り出す
+        for (BeItems item : BeItems.values()) {
+            if (item.getItemType().equals(BeItemType.ULTIMATE)) {
+                //タイプがウルトのときはハッシュセットに追加
+                itemSet.add(item.toItemStack());
+            }
+        }
+        return itemSet;
     }
 }

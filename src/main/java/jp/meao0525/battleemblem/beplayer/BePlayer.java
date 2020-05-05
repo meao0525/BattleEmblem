@@ -39,6 +39,8 @@ public class BePlayer {
     private Timer cdTimer;
     private Timer abTimer;
 
+    private int ultCount = 0;
+
     public BePlayer(Player player) {
         this.player = player;
     }
@@ -62,17 +64,8 @@ public class BePlayer {
         //ロードアウトセレクター回収する
         getPlayer().getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
 
-        //装備を与える
-        player.getInventory().addItem(battleClass.getItem().toItemStack());
-        //鎧は必要ですか？
-        if (battleClass.equals(BattleClass.ARMOR_KNIGHT) || battleClass.equals(BattleClass.BRAVE_HERO)) {
-            setArmor(getPlayer(), battleClass);
-        }
-        //スナイパーには矢とジャンプ力
-        if (battleClass.equals(BattleClass.SNIPER)) {
-            player.getInventory().addItem(new ItemStack(Material.ARROW));
-            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,2));
-        }
+        //装備上げる
+        giveClassItem();
     }
 
     public void removeBattleClass() {
@@ -97,9 +90,8 @@ public class BePlayer {
         player.removePotionEffect(PotionEffectType.JUMP);
         //装備を回収
         player.getInventory().clear();
-        //経験値とレベルを0に戻す
-        player.setExp(0);
-        player.setLevel(0);
+        //ウルトゲージリセット
+        resetUltimatebar();
     }
 
     public void death() {
@@ -126,7 +118,10 @@ public class BePlayer {
             //ウルトたまってるときは0レベルの半分
             player.setLevel(0);
             player.setExp(0.5F);
-            //TODO: ウルトアイテムを消す
+            //一度アイテム全部消す
+            player.getInventory().clear();
+            //改めてアイテムを渡す
+            giveClassItem();
         }
 
         //残機はなんぼ?
@@ -159,6 +154,27 @@ public class BePlayer {
                 BeGame.End();
             }
         }
+    }
+
+    public void giveClassItem() {
+        //装備を与える
+        player.getInventory().addItem(battleClass.getItem().toItemStack());
+        //鎧は必要ですか？
+        if (battleClass.equals(BattleClass.ARMOR_KNIGHT) || battleClass.equals(BattleClass.BRAVE_HERO)) {
+            setArmor(getPlayer(), battleClass);
+        }
+        //スナイパーには矢とジャンプ力
+        if (battleClass.equals(BattleClass.SNIPER)) {
+            player.getInventory().addItem(new ItemStack(Material.ARROW));
+            player.removePotionEffect(PotionEffectType.JUMP);
+            player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,36000,2));
+        }
+    }
+
+    public void resetUltimatebar() {
+        //経験値とレベルを0に戻す
+        player.setExp(0);
+        player.setLevel(0);
     }
 
     public boolean isBattleClass() {
@@ -262,6 +278,14 @@ public class BePlayer {
             default:
                 player.setCooldown(item.getType(),5);
         }
+    }
+
+    public int getUltCount() {
+        return ultCount;
+    }
+
+    public void setUltCount(int ultCount) {
+        this.ultCount = ultCount;
     }
 
     //げったーせったー

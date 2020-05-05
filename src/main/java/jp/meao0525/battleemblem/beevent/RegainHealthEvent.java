@@ -47,10 +47,12 @@ public class RegainHealthEvent implements Listener {
             //スニーク時
             player.sendMessage(ChatColor.YELLOW + "回復中...");
 
-            //新しいスレッド用インスタンス
-            HealingThread thread = new HealingThread(player);
-            //healingPlayerに登録
-            healingPlayers.put(player,thread);
+            if (!healingPlayers.containsKey(player)) {
+                //新しいスレッド用インスタンス
+                HealingThread thread = new HealingThread(player);
+                //healingPlayerに登録
+                healingPlayers.put(player,thread);
+            }
             return;
 
         } else {
@@ -105,7 +107,7 @@ public class RegainHealthEvent implements Listener {
             //bePlayer取得
             BePlayer bePlayer = BePlayerList.getBePlayer(player);
             if (bePlayer == null) { return; }
-
+            
             //5秒止まると1ずつHPが回復
             new BukkitRunnable() {
                 @Override
