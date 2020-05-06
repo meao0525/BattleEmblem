@@ -58,6 +58,14 @@ public class BeGame {
             //ルールブック回収
             bp.getPlayer().getInventory().remove(new BeRuleBook().toItemStack());
         }
+        //観戦者も飛ばしてアイテム回収
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getGameMode().equals(GameMode.SPECTATOR)) {
+                p.teleport(coliseum);
+                p.getInventory().remove(new BeRuleBook().toItemStack());
+                p.getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
+            }
+        }
 
         /*=======準備時間=======*/
         setPhase(1);
@@ -163,14 +171,14 @@ public class BeGame {
                         //経験値を渡す
                         if ((bp.isBattleClass(BattleClass.SWORD_MASTER))
                                 || (bp.isBattleClass(BattleClass.BERSERKER))
-                                || (bp.isBattleClass(BattleClass.ASSASSIN))) {
-                            //狂戦士、剣聖、暗殺者のウルトは250秒後
-                            exp = 0.004F;
+                                || (bp.isBattleClass(BattleClass.SNIPER))) {
+                            //狂戦士、剣聖のウルトは125秒後
+                            exp = 0.008F;
                         } else if ((bp.isBattleClass(BattleClass.ARMOR_KNIGHT))
                                 || (bp.isBattleClass(BattleClass.BRAVE_HERO))
-                                || (bp.isBattleClass(BattleClass.SNIPER))) {
-                            //重鎧兵、勇者、狙撃手のウルトは200秒後
-                            exp = 0.005F;
+                                || (bp.isBattleClass(BattleClass.ASSASSIN))) {
+                            //重鎧兵、勇者、狙撃手、暗殺者のウルトは100秒後
+                            exp = 0.01F;
                         }
 
                         if (1.0F - p.getExp() > exp) {
@@ -190,9 +198,9 @@ public class BeGame {
                             } else if (bp.isBattleClass(BattleClass.BERSERKER)) {
                                 p.getInventory().addItem(BeItems.LIGHTNING_AXE.toItemStack());
                             } else if (bp.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-                                p.getInventory().addItem(BeItems.COUNTER_CHESTPLATE.toItemStack());
+                                p.getInventory().addItem(BeItems.COUNTER_ARMOR.toItemStack());
                             } else if (bp.isBattleClass(BattleClass.BRAVE_HERO)) {
-                                p.getInventory().addItem(BeItems.INVINCIBLE_CHESTPLATE.toItemStack());
+                                p.getInventory().addItem(BeItems.INVINCIBLE_ARMOR.toItemStack());
                             } else if (bp.isBattleClass(BattleClass.SNIPER)) {
                                 p.getInventory().addItem(BeItems.LIGHTNING_BOW.toItemStack());
                             } else if (bp.isBattleClass(BattleClass.ASSASSIN)) {

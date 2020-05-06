@@ -40,6 +40,8 @@ public class BePlayer {
     private Timer abTimer;
 
     private int ultCount = 0;
+    private boolean ultimate = false;
+    private Timer ultTimer;
 
     public BePlayer(Player player) {
         this.player = player;
@@ -77,6 +79,7 @@ public class BePlayer {
         //タイマーを止める
         stopAbilityTime();
         stopCooldown();
+        stopUltTimer();
 
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
@@ -124,12 +127,22 @@ public class BePlayer {
             giveClassItem();
         }
 
+        //ウルト使用中
+        if (isUltimate()) {
+            //ウルトタイマー止める
+            stopUltTimer();
+            //ウルトゲージも最初から
+            resetUltimatebar();
+        }
+
         //残機はなんぼ?
         if (life > 0) {
             //ライフを1減らす
             life--;
             //初期位置にTP
             player.teleport(coliseum);
+            //ノックバック消す
+            player.setVelocity(new Vector(0,0,0));
             //HPを回復
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
             //残機を教えてあげて
@@ -175,6 +188,11 @@ public class BePlayer {
         //経験値とレベルを0に戻す
         player.setExp(0);
         player.setLevel(0);
+    }
+
+    public void clearArmor() {
+        //装備欄を空にする
+        player.getInventory().setArmorContents(null);
     }
 
     public boolean isBattleClass() {
@@ -280,12 +298,27 @@ public class BePlayer {
         }
     }
 
-    public int getUltCount() {
-        return ultCount;
+    public void setUltTimer(int ultTime) {
+        ultTimer = new Timer();
+        ultTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                //ウルト終わり
+                ultimate = false;
+                //ウルトゲージリセット
+                resetUltimatebar();
+                //アーマーセットしなおし
+                setArmor(player, battleClass);
+            }
+        },ultTime*1000);
     }
 
-    public void setUltCount(int ultCount) {
-        this.ultCount = ultCount;
+    public void stopUltTimer() {
+        //ウルトタイマー停止
+        if (ultTimer != null) {
+            ultimate = false;
+            ultTimer.cancel();
+        }
     }
 
     //げったーせったー
@@ -347,6 +380,23 @@ public class BePlayer {
 
         //こいつが視線のベクトルでいいよね？
         return new Vector(sLoc.getX()-pLoc.getX(), sLoc.getY()-pLoc.getY(), sLoc.getZ()-pLoc.getZ());
+    }
+
+
+    public int getUltCount() {
+        return ultCount;
+    }
+
+    public void setUltCount(int ultCount) {
+        this.ultCount = ultCount;
+    }
+
+    public boolean isUltimate() {
+        return ultimate;
+    }
+
+    public void setUltimate(boolean ultimate) {
+        this.ultimate = ultimate;
     }
 
     //ぷらいべーとなめそっど

@@ -29,7 +29,7 @@ public class LogoutEvent implements Listener {
         BePlayerList.getBePlayerList().remove(bePlayer);
 
         //残り人数が一人以下ならゲーム終了
-        if (BePlayerList.getBePlayerList().size() <= 1) {
+        if ((BeGame.getPhase() != 0) && (BePlayerList.getBePlayerList().size() <= 1)) {
             BeGame.End();
         }
     }

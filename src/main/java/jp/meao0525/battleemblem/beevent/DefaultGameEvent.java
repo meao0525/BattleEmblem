@@ -93,6 +93,16 @@ public class DefaultGameEvent implements Listener {
     }
 
     @EventHandler
+    public void ShiftToOffhand(PlayerSwapHandItemsEvent e) {
+        //BeItemはオフハンドに持ち替えれないよ
+        ItemStack item = e.getOffHandItem();
+        for (BeItems bi : BeItems.values()) {
+            //ゲーム内アイテムだったら持ち替えさせない
+            if (bi.toItemStack().equals(item)) { e.setCancelled(true); }
+        }
+    }
+
+    @EventHandler
     public void LeftClickCoolDown(PlayerInteractEvent e) {
         //剣、弓、斧を持って左クリックするとクールダウン
         if ((e.getAction().equals(Action.LEFT_CLICK_AIR)) || (e.getAction().equals(Action.LEFT_CLICK_BLOCK))) {

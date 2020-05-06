@@ -47,7 +47,16 @@ public class AttackEvent implements Listener {
         if (beDefender == null) { return; }
 
         //重鎧兵の音
-        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
+
+        //無敵中
+        if (beDefender.isUltimate()) {
+            if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
+                defender.playEffect(EntityEffect.HURT);
+                defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
+                return;
+            }
+        }
 
         //ダメージ格納用変数
         double totalDamage = 0.0;
@@ -73,7 +82,10 @@ public class AttackEvent implements Listener {
                 beAttacker.setIndicator(item);
                 return;
             }
-
+            //何も持ってない
+            if (item.getType().equals(Material.AIR)) {
+                return;
+            }
             //ダメージ計算
             totalDamage = calcDamage(beAttacker,beDefender,item);
 
@@ -87,14 +99,18 @@ public class AttackEvent implements Listener {
             //BeSnipeEventからArrowを受け取ってダメージを設定する
             totalDamage = arrow.getDamage() - beDefender.getDefence();
             //ウルト?
-            if (arrow.getColor().equals(Color.YELLOW)) { defender.getWorld().strikeLightningEffect(defender.getLocation()); }
+            if (arrow.getColor().equals(Color.YELLOW)) {
+                defender.getWorld().strikeLightningEffect(defender.getLocation());
+            }
             //矢をこれで消す
             arrow.remove();
             if (arrow.getShooter() instanceof Player) {
                 //狙撃者取得
                 attacker = (Player) arrow.getShooter();
                 //ノックバック
-                knockback(attacker, defender);
+                if (totalDamage == 10.0) {
+                    knockback(attacker, defender);
+                }
             }
         }
 
@@ -150,16 +166,13 @@ public class AttackEvent implements Listener {
 
         //これがウルト弓を撃ったもの
         if (shooter.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase(LIGHTNING_BOW_NAME)) {
-            Bukkit.broadcastMessage("ヘイマスタ―");
             arrow.setDamage(30.0);
             //色付けて判別しよう
             arrow.setColor(Color.YELLOW);
             //何回目ですこ
             if (beShooter.getUltCount() < 2) {
-                Bukkit.broadcastMessage("やってる？");
                 beShooter.setUltCount(beShooter.getUltCount() + 1);
             } else {
-                Bukkit.broadcastMessage("元気かい？");
                 //アイテム消す
                 shooter.getInventory().remove(shooter.getInventory().getItemInMainHand());
                 //ウルトカウント戻す
@@ -167,6 +180,8 @@ public class AttackEvent implements Listener {
                 //ウルトゲージリセット
                 beShooter.resetUltimatebar();
             }
+        } else {
+            arrow.setColor(Color.BLUE);
         }
         //矢をこれにしよう
         e.setProjectile(arrow);
