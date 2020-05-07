@@ -140,8 +140,6 @@ public class BeAbilityEvent implements Listener {
         String itemName = item.getItemMeta().getDisplayName();
         //ウルトオン
         bePlayer.setUltimate(true);
-        //アイテム消す
-        player.getInventory().remove(item);
 
         switch (itemName) {
             case COUNTER_ARMOR_NAME:
@@ -154,6 +152,8 @@ public class BeAbilityEvent implements Listener {
                 player.getInventory().setBoots(BeItems.COUNTER_BOOTS.toItemStack());
                 //ウルト時間は20秒
                 bePlayer.setUltTimer(20);
+                //アイテム消す
+                player.getInventory().remove(item);
                 //効果音
                 player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 4.0F, 4.0F);
                 break;
@@ -165,9 +165,15 @@ public class BeAbilityEvent implements Listener {
                 player.getInventory().setBoots(BeItems.INVINCIBLE_BOOTS.toItemStack());
                 //ウルト時間は20秒
                 bePlayer.setUltTimer(30);
+                //アイテム消す
+                player.getInventory().remove(item);
                 //効果音
                 player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 4.0F, 4.0F);
                 break;
+            case LIGHTNING_SWORD_NAME:
+            case LIGHTNING_AXE_NAME:
+            case LIGHTNING_BOW_NAME:
+                bePlayer.setUltimate(false);
         }
     }
 

@@ -101,7 +101,7 @@ public class AttackEvent implements Listener {
                 //狙撃者取得
                 attacker = (Player) arrow.getShooter();
                 //ノックバック
-                knockback(attacker, beDefender, 3);
+                knockback(attacker, beDefender, 2);
             }
         }
 
@@ -197,14 +197,14 @@ public class AttackEvent implements Listener {
         if (attacker.isSprinting()) {
             //ダッシュ中
             if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
-                knockbackStrength = 5;
-            } else {
                 knockbackStrength = 3;
+            } else {
+                knockbackStrength = 2;
             }
         } else {
             //ダッシュしてない
             if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
-                knockbackStrength = 3;
+                knockbackStrength = 2;
             }
         }
 
@@ -256,7 +256,7 @@ public class AttackEvent implements Listener {
                 double max = beAttacker.getPlayer().getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
                 double hp = beAttacker.getPlayer().getHealth();
                 double decrement = (max - hp) * 2.0; //スケール調整
-                damage = attack - defence + (decrement * 0.3);
+                damage = attack - defence + (decrement * 0.2);
                 break;
 
             case ASSASSIN_DAGGER_NAME:
@@ -319,6 +319,7 @@ public class AttackEvent implements Listener {
             }
         }
         //プレイヤーをノックバックさせる
+        beDefender.getPlayer().setVelocity(new Vector(0, 2, 0));
         beDefender.getPlayer().setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(strength));
     }
 }

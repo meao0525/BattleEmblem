@@ -6,5 +6,5 @@ import org.bukkit.Location;
 public class BeLocation {
     public static final Location lobby = new Location(Bukkit.getWorld("world"),208.0,6.0,-64.0);
     public static final Location coliseum = new Location(Bukkit.getWorld("world"),208.0,18.0,-285.0);
-
+    public static final Location re_coliseum = new Location(Bukkit.getWorld("world"),208.0,70.0,-300.0);
 }

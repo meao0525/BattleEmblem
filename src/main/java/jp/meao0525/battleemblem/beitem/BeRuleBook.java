@@ -45,7 +45,7 @@ public class BeRuleBook {
             "攻撃力 --- 4+\n" +
             "防御力 --- 1\n" +
             "減少したHPの30%ダメージ追加\n\n" +
-            "能力: 減少したHPの30%回復(CD:30s)\n" +
+            "能力: 減少したHPの20%回復(CD:30s)\n" +
             ChatColor.RED + "英雄: 30秒間無敵";
     private final String PAGE6 = ChatColor.BLUE + "狙撃手 (SNIPER)\n\n" +
             ChatColor.RESET + "HP     --- 40\n" +

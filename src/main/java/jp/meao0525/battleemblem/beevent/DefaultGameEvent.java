@@ -69,11 +69,13 @@ public class DefaultGameEvent implements Listener {
 
     @EventHandler
     public void CantTakeOffEvent(InventoryClickEvent e) {
+        //オペレーターはなにしてもいい
+        if (e.getWhoClicked().isOp()) { return; }
         //装備を脱げないよ
         ItemStack item = e.getCurrentItem();
         if (item == null) { return; }
 
-        if (e.getSlotType().equals(InventoryType.SlotType.ARMOR)) {
+        if (e.getSlotType().equals(InventoryType.SlotType.ARMOR) || !e.getInventory().getType().equals(InventoryType.PLAYER))  {
             e.setCancelled(true);
         }
     }

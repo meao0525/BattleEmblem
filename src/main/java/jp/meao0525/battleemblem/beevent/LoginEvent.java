@@ -15,7 +15,7 @@ public class LoginEvent implements Listener {
     public void LoginEvent(PlayerJoinEvent e) {
         Player player = e.getPlayer();
         //アドベンチャーモードの人はインベントリを空にする
-        if (player.getGameMode().equals(GameMode.ADVENTURE)) { player.getInventory().clear(); }
+        if (!player.getGameMode().equals(GameMode.CREATIVE)) { player.getInventory().clear(); }
         //ロードアウトセレクターを渡す
         player.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
         //ルールブックを渡す

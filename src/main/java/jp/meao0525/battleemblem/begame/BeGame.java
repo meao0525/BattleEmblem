@@ -13,8 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.*;
 
 import static jp.meao0525.battleemblem.beevent.RegainHealthEvent.healingPlayers;
-import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
-import static jp.meao0525.battleemblem.begame.BeLocation.lobby;
+import static jp.meao0525.battleemblem.begame.BeLocation.*;
 
 public class BeGame {
     //フェーズ
@@ -52,7 +51,7 @@ public class BeGame {
 
         for (BePlayer bp : bePlayerList) {
             //リスポーンを指定
-            bp.getPlayer().setBedSpawnLocation(coliseum,true);
+            bp.getPlayer().setBedSpawnLocation(re_coliseum,true);
             //ステージにスポーン
             bp.getPlayer().teleport(coliseum);
             //ルールブック回収
@@ -144,6 +143,8 @@ public class BeGame {
             p.teleport(lobby);
             //リスポーンを指定
             p.setBedSpawnLocation(lobby,true);
+            //一旦アイテム消す
+            p.getInventory().clear();
             //ロードアウトセレクターを渡す
             p.getInventory().addItem(BeItems.LOADOUT_SELECTOR.toItemStack());
             //ルールブックを渡す

@@ -22,6 +22,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static jp.meao0525.battleemblem.begame.BeLocation.coliseum;
+import static jp.meao0525.battleemblem.begame.BeLocation.re_coliseum;
 import static jp.meao0525.battleemblem.beplayer.BePlayerStatus.*;
 
 
@@ -106,7 +107,9 @@ public class BePlayer {
             //キルスコア
             lastDamager.setStatistic(Statistic.PLAYER_KILLS, lastDamager.getStatistic(Statistic.PLAYER_KILLS) + 1);
             //メッセージ
-            lastDamager.sendMessage(ChatColor.AQUA + player.getDisplayName() + ChatColor.RESET + " をキルしました");
+            Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]"
+                    + ChatColor.AQUA + lastDamager.getDisplayName() + ChatColor.RESET + "が"
+                    + ChatColor.AQUA + player.getDisplayName() + ChatColor.RESET + "をキルしました");
             //効果音
             lastDamager.playSound(lastDamager.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
         }
@@ -140,7 +143,7 @@ public class BePlayer {
             //ライフを1減らす
             life--;
             //初期位置にTP
-            player.teleport(coliseum);
+            player.teleport(re_coliseum);
             //ノックバック消す
             player.setVelocity(new Vector(0,0,0));
             //HPを回復
@@ -157,7 +160,7 @@ public class BePlayer {
             BePlayerList.getBePlayerList().remove(this);
             //観戦者にする
             player.setGameMode(GameMode.SPECTATOR);
-            //初期位置にTP
+            //リスポ位置にTP
             player.teleport(coliseum);
             //デスメッセージ
             Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]" + ChatColor.RESET + player.getPlayerListName() + " が脱落しました");
