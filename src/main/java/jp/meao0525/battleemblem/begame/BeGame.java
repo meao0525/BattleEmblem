@@ -31,6 +31,9 @@ public class BeGame {
     //カウントダウン用変数
     int count;
 
+    //アルティメットゲージ用変数
+    private static Timer ultTimer;
+
     //コンストラクター
     public BeGame() { }
 
@@ -54,6 +57,14 @@ public class BeGame {
             bp.getPlayer().teleport(coliseum);
             //ルールブック回収
             bp.getPlayer().getInventory().remove(new BeRuleBook().toItemStack());
+        }
+        //観戦者も飛ばしてアイテム回収
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (p.getGameMode().equals(GameMode.SPECTATOR)) {
+                p.teleport(coliseum);
+                p.getInventory().remove(new BeRuleBook().toItemStack());
+                p.getInventory().remove(BeItems.LOADOUT_SELECTOR.toItemStack());
+            }
         }
 
         /*=======準備時間=======*/
@@ -88,6 +99,8 @@ public class BeGame {
                         bp.getPlayer().sendTitle(ChatColor.AQUA + "-開戦-",null,1,60,1);
                     }
                     Bukkit.broadcastMessage(ChatColor.AQUA + "=====" + ChatColor.RESET + "開戦" + ChatColor.AQUA + "=====");
+                    //ウルトゲージタイマー開始
+                    startUltTimer();
                     timer.cancel();
                 }
                 count--;
@@ -121,6 +134,9 @@ public class BeGame {
         //リジェネのMAPを消し飛ばす
         healingPlayers.clear();
 
+        //ウルトタイマー止める
+        ultTimer.cancel();
+
         for (Player p : Bukkit.getOnlinePlayers()) {
             //ゲームモードをアドベンチャーにする
             if (!p.getGameMode().equals(GameMode.CREATIVE)) { p.setGameMode(GameMode.ADVENTURE); }
@@ -141,6 +157,60 @@ public class BeGame {
 
         //フェーズを0に戻す
         setPhase(0);
+    }
+
+    private void startUltTimer() {
+        ultTimer = new Timer();
+        ultTimer.scheduleAtFixedRate(new TimerTask() {
+            public void run() {
+                for (BePlayer bp : BePlayerList.getBePlayerList()) {
+                    Player p = bp.getPlayer();
+                    //レベルが1未満の人に経験値
+                    if (p.getLevel() < 1) {
+                        float exp = 0;
+                        //経験値を渡す
+                        if ((bp.isBattleClass(BattleClass.SWORD_MASTER))
+                                || (bp.isBattleClass(BattleClass.BERSERKER))
+                                || (bp.isBattleClass(BattleClass.SNIPER))) {
+                            //狂戦士、剣聖のウルトは125秒後
+                            exp = 0.008F;
+                        } else if ((bp.isBattleClass(BattleClass.ARMOR_KNIGHT))
+                                || (bp.isBattleClass(BattleClass.BRAVE_HERO))
+                                || (bp.isBattleClass(BattleClass.ASSASSIN))) {
+                            //重鎧兵、勇者、狙撃手、暗殺者のウルトは100秒後
+                            exp = 0.01F;
+                        }
+
+                        if (1.0F - p.getExp() > exp) {
+                            //まだ足せる
+                            p.setExp(p.getExp() + exp);
+                        } else {
+                            //あふれる
+                            p.setExp(0);
+                            p.setLevel(1);
+                            p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 4.0F, 4.0F);
+                        }
+
+                        //レベルが1になったらアイテム渡す
+                        if (p.getLevel() == 1) {
+                            if (bp.isBattleClass(BattleClass.SWORD_MASTER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_SWORD.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.BERSERKER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_AXE.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+                                p.getInventory().addItem(BeItems.COUNTER_ARMOR.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.BRAVE_HERO)) {
+                                p.getInventory().addItem(BeItems.INVINCIBLE_ARMOR.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.SNIPER)) {
+                                p.getInventory().addItem(BeItems.LIGHTNING_BOW.toItemStack());
+                            } else if (bp.isBattleClass(BattleClass.ASSASSIN)) {
+                                p.getInventory().addItem(BeItems.DEADLY_DAGGER.toItemStack());
+                            }
+                        }
+                    }
+                }
+            }
+        }, 0, 1000);
     }
 
     public static int getPhase() {

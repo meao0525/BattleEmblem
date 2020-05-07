@@ -5,6 +5,7 @@ import jp.meao0525.battleemblem.battleclass.BattleClass;
 import jp.meao0525.battleemblem.battleclass.ClassStatus;
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
+import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
@@ -46,7 +47,16 @@ public class AttackEvent implements Listener {
         if (beDefender == null) { return; }
 
         //重鎧兵の音
-        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
+        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
+
+        //無敵中
+        if (beDefender.isUltimate()) {
+            if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
+                defender.playEffect(EntityEffect.HURT);
+                defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
+                return;
+            }
+        }
 
         //ダメージ格納用変数
         double totalDamage = 0.0;
@@ -56,8 +66,6 @@ public class AttackEvent implements Listener {
         /* 攻撃したのがプレイヤー -> if文の中
          * 攻撃したのが矢 -> else ifの中
          * それ以外のEntity -> デス判定だけすればいいよね
-         *
-         * 矢で撃たれた時はBeSnipeEventからArrowを受け取ってダメージを設定する
          */
         if (e.getDamager() instanceof Player) {
             //攻撃したプレイヤーの取得
@@ -74,49 +82,35 @@ public class AttackEvent implements Listener {
                 beAttacker.setIndicator(item);
                 return;
             }
-
-            //アイテム名取得
-            String itemName = item.getItemMeta().getDisplayName();
+            //何も持ってない
+            if (item.getType().equals(Material.AIR)) {
+                return;
+            }
             //ダメージ計算
-            totalDamage = calcDamage(beAttacker,beDefender,itemName);
+            totalDamage = calcDamage(beAttacker,beDefender,item);
 
-            //透明中(暗殺者)に攻撃すると解除
-            if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
-                beAttacker.stopAbilityTime();
-                beAttacker.setCooldown(10);
-                attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
-            }
-            //ノックバック(狙撃手)
-            if ((itemName.equalsIgnoreCase(SNIPER_BOW_NAME))) { knockback(attacker,defender); }
-            //スタンorノックバック(狂戦士)
-            if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
-                if (beAttacker.isAbilityFlag()) {
-                    //殴られた人の移動速度をめちゃ下げる
-                    defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
-                    defender.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
-                    //能力終了
-                    beAttacker.setAbilityFlag(false);
-                    //クールダウン
-                    beAttacker.setCooldown(30);
-                } else {
-                    //アビリティ中じゃなきゃノックバック
-                    knockback(attacker,defender);
-                }
-            }
+            //その他の効果
+            attackEffect(attacker,defender,beAttacker,beDefender);
             //パンチクールダウン
-            setPlayerCoolDown(attacker);
+            beAttacker.setIndicator(item);
 
         } else if (e.getDamager() instanceof Arrow) {
             Arrow arrow = (Arrow) e.getDamager();
-            //矢からダメージをとりだすことはできますか?
+            //BeSnipeEventからArrowを受け取ってダメージを設定する
             totalDamage = arrow.getDamage() - beDefender.getDefence();
+            //ウルト?
+            if (arrow.getColor().equals(Color.YELLOW)) {
+                defender.getWorld().strikeLightningEffect(defender.getLocation());
+            }
             //矢をこれで消す
             arrow.remove();
             if (arrow.getShooter() instanceof Player) {
                 //狙撃者取得
                 attacker = (Player) arrow.getShooter();
                 //ノックバック
-                knockback(attacker, defender);
+                if (totalDamage == 10.0) {
+                    knockback(attacker, defender);
+                }
             }
         }
 
@@ -169,6 +163,26 @@ public class AttackEvent implements Listener {
         } else {
             arrow.setDamage(5.0);
         }
+
+        //これがウルト弓を撃ったもの
+        if (shooter.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase(LIGHTNING_BOW_NAME)) {
+            arrow.setDamage(30.0);
+            //色付けて判別しよう
+            arrow.setColor(Color.YELLOW);
+            //何回目ですこ
+            if (beShooter.getUltCount() < 2) {
+                beShooter.setUltCount(beShooter.getUltCount() + 1);
+            } else {
+                //アイテム消す
+                shooter.getInventory().remove(shooter.getInventory().getItemInMainHand());
+                //ウルトカウント戻す
+                beShooter.setUltCount(0);
+                //ウルトゲージリセット
+                beShooter.resetUltimatebar();
+            }
+        } else {
+            arrow.setColor(Color.BLUE);
+        }
         //矢をこれにしよう
         e.setProjectile(arrow);
 
@@ -177,11 +191,40 @@ public class AttackEvent implements Listener {
         shooter.getInventory().addItem(new ItemStack(Material.ARROW));
     }
 
-    public double calcDamage(BePlayer beAttacker, BePlayer beDefender, String itemName) {
+    public void attackEffect(Player attacker, Player defender, BePlayer beAttacker, BePlayer beDefender) {
+        //透明中(暗殺者)に攻撃すると解除
+        if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
+            beAttacker.stopAbilityTime();
+            beAttacker.setCooldown(10);
+            attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
+        }
+        //ノックバック(狙撃手)
+        if ((beAttacker.isBattleClass(BattleClass.SNIPER))) { knockback(attacker,defender); }
+        //スタンorノックバック(狂戦士)
+        if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
+            if (beAttacker.isAbilityFlag()) {
+                //殴られた人の移動速度をめちゃ下げる
+                defender.addPotionEffect(new PotionEffect(PotionEffectType.SLOW,60,10));
+                defender.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
+                attacker.playSound(defender.getLocation(),Sound.ENTITY_ZOMBIE_BREAK_WOODEN_DOOR,5.0F,5.0F);
+                //能力終了
+                beAttacker.setAbilityFlag(false);
+                //クールダウン
+                beAttacker.setCooldown(30);
+            } else {
+                //アビリティ中じゃなきゃノックバック
+                knockback(attacker,defender);
+            }
+        }
+    }
+
+    public double calcDamage(BePlayer beAttacker, BePlayer beDefender, ItemStack item) {
+        //アイテム名取得
+        String itemName = item.getItemMeta().getDisplayName();
         //攻撃力、防御力の取得
         double attack = beAttacker.getAttack();
         double defence = beDefender.getDefence();
-        double damage = 0;
+        double damage = 0.0;
 
         //所持アイテムの名前で判定
         switch (itemName) {
@@ -206,11 +249,36 @@ public class AttackEvent implements Listener {
                 if (isBackAttack(beAttacker,beDefender)) {
                     //背後からだと防御無視+追加ダメージ
                     damage = attack + 6;
-                    beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.BLOCK_ANVIL_PLACE, 4.0F, 4.0F);
+                    beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.ITEM_TRIDENT_RETURN, 4.0F, 4.0F);
                 } else {
                     //通常ダメージ
                     damage = attack - defence;
                 }
+                break;
+
+            case LIGHTNING_SWORD_NAME:
+            case LIGHTNING_AXE_NAME:
+                //ウルトによる特大ダメージ
+                damage = 30.0;
+                //雷エフェクト
+                beDefender.getPlayer().getWorld().strikeLightningEffect(beDefender.getPlayer().getLocation());
+                //アイテム消す
+                beAttacker.getPlayer().getInventory().remove(item);
+                //ウルトゲージリセット
+                beAttacker.resetUltimatebar();
+                break;
+
+            case DEADLY_DAGGER_NAME:
+                //背後からの攻撃か
+                if (isBackAttack(beAttacker,beDefender)) {
+                    beAttacker.getPlayer().sendMessage(ChatColor.DARK_RED + "暗殺成功...");
+                    damage = 8000.0;
+                }
+                //アイテム消す
+                beAttacker.getPlayer().getInventory().remove(item);
+                beAttacker.getPlayer().playSound(beAttacker.getPlayer().getLocation(), Sound.ENTITY_ITEM_BREAK, 4.0F, 4.0F);
+                //ウルトゲージリセット
+                beAttacker.resetUltimatebar();
                 break;
         }
 
@@ -225,16 +293,6 @@ public class AttackEvent implements Listener {
         float angle = beAttacker.getEyeVector().angle(beDefender.getEyeVector());
         if (Math.cos(angle) >= 0.5) { return true; }
 
-//        /*
-//         * プレイヤーの視点先のブロック表面の法線ベクトルを取得
-//         * これを比較して一致すればとりあえず背後からの攻撃とする(これでは厳密な背後判定ではない)
-//         */
-//        Vector attackerDirection = beAttacker.getPlayer().getFacing().getDirection();
-//        Vector defenderDirection = beDefender.getPlayer().getFacing().getDirection();
-//        //攻撃は背後からの攻撃か?
-//        if (attackerDirection.equals(defenderDirection)) {
-//            return true;
-//        }
         return false;
     }
 

@@ -2,6 +2,7 @@ package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItemName;
+import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
 import org.bukkit.*;
@@ -49,6 +50,15 @@ public class BeAbilityEvent implements Listener {
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
         //ゲームプレイヤーじゃないやんけぇ
         if (bePlayer == null) { return; }
+
+        //持ってるのがウルトアイテム
+        for (ItemStack i : BeItems.getUltItem()) {
+            if (item.equals(i) && !(item.getItemMeta().getDisplayName().equalsIgnoreCase(LIGHTNING_BOW_NAME))) {
+                activateUltimate(bePlayer, item);
+                return;
+            }
+        }
+
         //アビリティ使用できない
         if (bePlayer.isAbilityFlag()) {
             player.sendMessage(ChatColor.GRAY + "能力を使用中です");
@@ -76,6 +86,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setAbilityTime(5, 15);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,100,1));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case BERSERKER_AXE_NAME:
@@ -100,10 +111,10 @@ public class BeAbilityEvent implements Listener {
                 break;
             case BRAVE_SWORD_NAME:
                 /* ==勇者アビリティ==
-                 * 被ダメージの30%回復(CD:15s)
+                 * 被ダメージの30%回復(CD:30s)
                  */
                 BraveHeal(bePlayer);
-                bePlayer.setCooldown(15);
+                bePlayer.setCooldown(30);
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case SNIPER_BOW_NAME:
@@ -118,7 +129,44 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setAbilityTime(10,10);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY,200,1));
-                player.playSound(player.getLocation(), Sound.BLOCK_CONDUIT_ACTIVATE, SoundCategory.MASTER,5.0F,5.0F);
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 200, 1));
+                player.playSound(player.getLocation(), Sound.BLOCK_CONDUIT_DEACTIVATE, SoundCategory.MASTER,5.0F,5.0F);
+                break;
+        }
+    }
+
+    public void activateUltimate(BePlayer bePlayer, ItemStack item) {
+        Player player = bePlayer.getPlayer();
+        String itemName = item.getItemMeta().getDisplayName();
+        //ウルトオン
+        bePlayer.setUltimate(true);
+        //アイテム消す
+        player.getInventory().remove(item);
+
+        switch (itemName) {
+            case COUNTER_ARMOR_NAME:
+                //足が速くなる
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 400, 2));
+                //装備付ける
+                player.getInventory().setHelmet(BeItems.COUNTER_HELMET.toItemStack());
+                player.getInventory().setChestplate(BeItems.COUNTER_CHESTPLATE.toItemStack());
+                player.getInventory().setLeggings(BeItems.COUNTER_LEGGINGS.toItemStack());
+                player.getInventory().setBoots(BeItems.COUNTER_BOOTS.toItemStack());
+                //ウルト時間は20秒
+                bePlayer.setUltTimer(20);
+                //効果音
+                player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, 4.0F, 4.0F);
+                break;
+            case INVINCIBLE_ARMOR_NAME:
+                //装備付ける
+                player.getInventory().setHelmet(BeItems.INVINCIBLE_HELMET.toItemStack());
+                player.getInventory().setChestplate(BeItems.INVINCIBLE_CHESTPLATE.toItemStack());
+                player.getInventory().setLeggings(BeItems.INVINCIBLE_LEGGINGS.toItemStack());
+                player.getInventory().setBoots(BeItems.INVINCIBLE_BOOTS.toItemStack());
+                //ウルト時間は20秒
+                bePlayer.setUltTimer(30);
+                //効果音
+                player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 4.0F, 4.0F);
                 break;
         }
     }

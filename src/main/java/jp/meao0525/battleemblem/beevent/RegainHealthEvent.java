@@ -23,6 +23,8 @@ import org.bukkit.util.Vector;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RegainHealthEvent implements Listener {
 
@@ -47,10 +49,12 @@ public class RegainHealthEvent implements Listener {
             //スニーク時
             player.sendMessage(ChatColor.YELLOW + "回復中...");
 
-            //新しいスレッド用インスタンス
-            HealingThread thread = new HealingThread(player);
-            //healingPlayerに登録
-            healingPlayers.put(player,thread);
+            if (!healingPlayers.containsKey(player)) {
+                //新しいスレッド用インスタンス
+                HealingThread thread = new HealingThread(player);
+                //healingPlayerに登録
+                healingPlayers.put(player,thread);
+            }
             return;
 
         } else {
@@ -95,6 +99,7 @@ public class RegainHealthEvent implements Listener {
     private class HealingThread {
         private Player player;
         private int count = 0;
+        private int period = 0; //連打対策用
 
         private HealingThread(Player player) {
             this.player = player;
@@ -106,46 +111,50 @@ public class RegainHealthEvent implements Listener {
             BePlayer bePlayer = BePlayerList.getBePlayer(player);
             if (bePlayer == null) { return; }
 
+            Timer timer = new Timer();
             //5秒止まると1ずつHPが回復
-            new BukkitRunnable() {
+            timer.scheduleAtFixedRate(new TimerTask() {
                 @Override
                 public void run() {
                     //healingリストにいない
                     if (!healingPlayers.containsKey(player)) { this.cancel(); }
+                    //連打対策に1/1000秒ごとに判定してやるぜ
+                    if (period % 1000 == 0) {
+                        //3秒以上経った
+                        if (count >= 3) {
+                            double amount;
+                            //HP1回復
+                            if (bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+                                //重鎧兵はHPが通常の3倍
+                                amount = 1.0 / 3.0;
+                            } else {
+                                //他はHPが通常の2倍
+                                amount = 1.0 / 2.0;
+                            }
+                            //効果音
+                            player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5.0F,5.0F);
 
-                    //3秒以上経った
-                    if (count >= 3) {
-                        double amount;
-                        //HP1回復
-                        if (bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-                            //重鎧兵はHPが通常の3倍
-                            amount = 1.0 / 3.0;
+                            double hp = player.getHealth();
+                            double max = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
+                            if (max - hp > amount) {
+                                //上限超えない
+                                player.setHealth(player.getHealth() + amount);
+                            } else {
+                                //上限超えちゃう
+                                player.setHealth(max);
+                                player.sendMessage(ChatColor.YELLOW + "回復が終了しました");
+                                this.cancel();
+                            }
+
                         } else {
-                            //他はHPが通常の2倍
-                            amount = 1.0 / 2.0;
+                            //経過秒数を1増やす
+                            count++;
+                            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_SNARE,5.0F,5.0F);
                         }
-                        //効果音
-                        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,5.0F,5.0F);
-
-                        double hp = player.getHealth();
-                        double max = player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue();
-                        if (max - hp > amount) {
-                            //上限超えない
-                            player.setHealth(player.getHealth() + amount);
-                        } else {
-                            //上限超えちゃう
-                            player.setHealth(max);
-                            player.sendMessage(ChatColor.YELLOW + "回復が終了しました");
-                            this.cancel();
-                        }
-
-                    } else {
-                        //経過秒数を1増やす
-                        count++;
-                        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP,5.0F,5.0F);
                     }
+                    period++;
                 }
-            }.runTaskTimer(plugin,0,20);
+            }, 0, 1);
         }
     }
 }
