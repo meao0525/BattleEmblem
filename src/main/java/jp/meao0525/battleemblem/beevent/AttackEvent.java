@@ -49,17 +49,10 @@ public class AttackEvent implements Listener {
         //重鎧兵の音
         if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) { defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_BLAZE_HURT, 4.0f,4.0F); }
 
-        //無敵中
-        if (beDefender.isUltimate()) {
-            if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
-                defender.playEffect(EntityEffect.HURT);
-                defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
-                return;
-            }
-        }
-
         //ダメージ格納用変数
         double totalDamage = 0.0;
+        //ノックバック格納用変数
+        int knockbackStrength = 0;
         //攻撃プレイヤー格納用
         Player attacker = null;
 
@@ -108,9 +101,16 @@ public class AttackEvent implements Listener {
                 //狙撃者取得
                 attacker = (Player) arrow.getShooter();
                 //ノックバック
-                if (totalDamage == 10.0) {
-                    knockback(attacker, defender);
-                }
+                knockback(attacker, beDefender, 3);
+            }
+        }
+
+        //無敵中
+        if (beDefender.isUltimate()) {
+            if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
+                defender.playEffect(EntityEffect.HURT);
+                defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
+                return;
             }
         }
 
@@ -181,7 +181,7 @@ public class AttackEvent implements Listener {
                 beShooter.resetUltimatebar();
             }
         } else {
-            arrow.setColor(Color.BLUE);
+            arrow.setColor(Color.WHITE);
         }
         //矢をこれにしよう
         e.setProjectile(arrow);
@@ -192,14 +192,28 @@ public class AttackEvent implements Listener {
     }
 
     public void attackEffect(Player attacker, Player defender, BePlayer beAttacker, BePlayer beDefender) {
+        //ノックバックの強さ
+        int knockbackStrength = 0;
+        if (attacker.isSprinting()) {
+            //ダッシュ中
+            if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
+                knockbackStrength = 5;
+            } else {
+                knockbackStrength = 3;
+            }
+        } else {
+            //ダッシュしてない
+            if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
+                knockbackStrength = 3;
+            }
+        }
+
         //透明中(暗殺者)に攻撃すると解除
         if (attacker.hasPotionEffect(PotionEffectType.INVISIBILITY)) {
             beAttacker.stopAbilityTime();
             beAttacker.setCooldown(10);
             attacker.removePotionEffect(PotionEffectType.INVISIBILITY);
         }
-        //ノックバック(狙撃手)
-        if ((beAttacker.isBattleClass(BattleClass.SNIPER))) { knockback(attacker,defender); }
         //スタンorノックバック(狂戦士)
         if (beAttacker.isBattleClass(BattleClass.BERSERKER)) {
             if (beAttacker.isAbilityFlag()) {
@@ -211,11 +225,12 @@ public class AttackEvent implements Listener {
                 beAttacker.setAbilityFlag(false);
                 //クールダウン
                 beAttacker.setCooldown(30);
-            } else {
-                //アビリティ中じゃなきゃノックバック
-                knockback(attacker,defender);
+                //ノックバック消す
+                knockbackStrength = 0;
             }
         }
+        //ノックバック
+        knockback(attacker,beDefender,knockbackStrength);
     }
 
     public double calcDamage(BePlayer beAttacker, BePlayer beDefender, ItemStack item) {
@@ -296,28 +311,14 @@ public class AttackEvent implements Listener {
         return false;
     }
 
-    private void knockback(Player attacker, Player defender) {
-        //プレイヤーをノックバックさせる
-        defender.setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(3));
-    }
-
-    private void setPlayerCoolDown(Player player) {
-        //アイテムによってクールダウンを変える
-        ItemStack item = player.getInventory().getItemInMainHand();
-        switch (item.getType()) {
-            case DIAMOND_AXE:
-            case IRON_AXE:
-            case GOLDEN_AXE:
-            case STONE_AXE:
-                player.setCooldown(item.getType(), 20);
-                break;
-            case DIAMOND_SWORD:
-            case IRON_SWORD:
-            case GOLDEN_SWORD:
-            case STONE_SWORD:
-            case BOW:
-                player.setCooldown(item.getType(), 10);
-                break;
+    private void knockback(Player attacker, BePlayer beDefender, int strength) {
+        //相手が無敵中はノックバックしないでサヨナラ
+        if (beDefender.isUltimate()) {
+            if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
+                return;
+            }
         }
+        //プレイヤーをノックバックさせる
+        beDefender.getPlayer().setVelocity(attacker.getLocation().getDirection().setY(0).normalize().multiply(strength));
     }
 }

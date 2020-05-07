@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 
@@ -72,14 +73,7 @@ public class DefaultGameEvent implements Listener {
         ItemStack item = e.getCurrentItem();
         if (item == null) { return; }
 
-        if ((item.equals(BeItems.BRAVE_BOOTS.toItemStack()))
-        ||(item.equals(BeItems.BRAVE_CHESTPLATE.toItemStack()))
-        ||(item.equals(BeItems.BRAVE_HELMET.toItemStack()))
-        ||(item.equals(BeItems.BRAVE_LEGGINGS.toItemStack()))
-        ||(item.equals(BeItems.KNIGHT_BOOTS.toItemStack()))
-        ||(item.equals(BeItems.KNIGHT_CHESTPLATE.toItemStack()))
-        ||(item.equals(BeItems.KNIGHT_HELMET.toItemStack()))
-        ||(item.equals(BeItems.KNIGHT_LEGGINGS.toItemStack()))) {
+        if (e.getSlotType().equals(InventoryType.SlotType.ARMOR)) {
             e.setCancelled(true);
         }
     }

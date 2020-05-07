@@ -86,7 +86,7 @@ public class BeAbilityEvent implements Listener {
                  */
                 bePlayer.setAbilityTime(5, 15);
                 player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED,100,1));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,100,1));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP,100,2));
                 player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, SoundCategory.MASTER,5.0F,5.0F);
                 break;
             case BERSERKER_AXE_NAME:

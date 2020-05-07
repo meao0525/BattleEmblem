@@ -309,6 +309,8 @@ public class BePlayer {
                 resetUltimatebar();
                 //アーマーセットしなおし
                 setArmor(player, battleClass);
+                //効果音
+                player.playSound(player.getLocation(),Sound.BLOCK_BEACON_DEACTIVATE, 4.0F, 4.0F);
             }
         },ultTime*1000);
     }
