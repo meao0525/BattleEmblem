@@ -56,6 +56,6 @@ public class BePlayerList {
         //リストをシャッフル
         Collections.shuffle(classList);
 
-        return classList.get(1);
+        return classList.get(0);
     }
 }
