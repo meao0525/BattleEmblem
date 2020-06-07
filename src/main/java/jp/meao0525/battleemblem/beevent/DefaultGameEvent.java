@@ -4,7 +4,9 @@ import jp.meao0525.battleemblem.begame.BeGame;
 import jp.meao0525.battleemblem.beitem.BeItems;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
+import org.bukkit.EntityEffect;
 import org.bukkit.GameMode;
+import org.bukkit.Sound;
 import org.bukkit.Statistic;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
@@ -130,18 +132,19 @@ public class DefaultGameEvent implements Listener {
         //死んだらすぐリスポ(デスカウントは増やさない)
         if (!(e.getEntity() instanceof Player)) { return; }
         Player player = (Player) e.getEntity();
+        //ゲーム中じゃないときやゲームプレイヤー以外はダメージ受けない(エフェクトだけ)
+        if ((BeGame.getPhase() != 2) || (BePlayerList.getBePlayer(player) == null)) {
+            e.setCancelled(true);
+            player.playEffect(EntityEffect.HURT);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
+            return;
+        }
+
         //ダメージが残りHPを超えてる
         if (e.getDamage() >= player.getHealth()) {
-            if ((BeGame.getPhase() == 2) && (BePlayerList.getBePlayer(player) != null)) {
-                //ゲーム中プレイヤーならデス処理
-                BePlayer bePlayer = BePlayerList.getBePlayer(player);
-                bePlayer.death();
-            } else {
-                //HP満タンにして観戦モードにする
-                e.setCancelled(true);
-                player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getDefaultValue());
-                player.setGameMode(GameMode.SPECTATOR);
-            }
+            //ゲーム中プレイヤーならデス処理
+            BePlayer bePlayer = BePlayerList.getBePlayer(player);
+            bePlayer.death();
         }
     }
 
