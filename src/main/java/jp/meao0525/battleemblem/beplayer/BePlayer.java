@@ -98,6 +98,27 @@ public class BePlayer {
         resetUltimatebar();
     }
 
+    public void damage(double damage) {
+        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
+         *　ダメージのスケールも2倍になっているため2.0で割る
+         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
+         * に引き伸ばされているためダメージを3.0で割る
+         */
+        if (isBattleClass(BattleClass.ARMOR_KNIGHT)) {
+            damage /= 3.0;
+        } else {
+            damage /= 2.0;
+        }
+
+        if (damage >= player.getHealth()) {
+            //プレイヤーは死んだのさ
+            death();
+        } else {
+            //ダメージを与える
+            player.damage(damage);
+        }
+    }
+
     public void death() {
         //デススコア
         player.setStatistic(Statistic.DEATHS, player.getStatistic(Statistic.DEATHS) + 1);

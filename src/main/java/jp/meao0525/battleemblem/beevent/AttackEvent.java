@@ -51,8 +51,6 @@ public class AttackEvent implements Listener {
 
         //ダメージ格納用変数
         double totalDamage = 0.0;
-        //ノックバック格納用変数
-        int knockbackStrength = 0;
         //攻撃プレイヤー格納用
         Player attacker = null;
 
@@ -108,32 +106,18 @@ public class AttackEvent implements Listener {
         //無敵中
         if (beDefender.isUltimate()) {
             if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT) || beDefender.isBattleClass(BattleClass.BRAVE_HERO)) {
-                defender.playEffect(EntityEffect.HURT);
-                defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
-                return;
+                if (totalDamage < 8000.0) {
+                    defender.playEffect(EntityEffect.HURT);
+                    defender.getWorld().playSound(defender.getLocation(), Sound.ENTITY_PLAYER_HURT, 4.0F, 4.0F);
+                    return;
+                }
             }
         }
-
-        /* HPは40に拡張されているのではなく見た目上引き伸ばされている
-         *　ダメージのスケールも2倍になっているため2.0で割る
-         * 被ダメージプレイヤーが重鎧兵の時、HPのスケールが60(通常の3倍)
-         * に引き伸ばされているためダメージを3.0で割る
-         */
-        if (beDefender.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-            totalDamage /= 3.0;
-        } else {
-            totalDamage /= 2.0;
-        }
-
         //最後に攻撃した人
         beDefender.setLastDamager(attacker);
-        if (totalDamage >= defender.getHealth()) {
-            //プレイヤーは死んだのさ
-            beDefender.death();
-        } else {
-            //ダメージを与える
-            defender.damage(totalDamage);
-        }
+
+        //ダメージ与える
+        beDefender.damage(totalDamage);
     }
 
     @EventHandler
