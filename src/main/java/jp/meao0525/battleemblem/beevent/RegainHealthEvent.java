@@ -125,8 +125,8 @@ public class RegainHealthEvent implements Listener {
                             double amount;
                             //HP1回復
                             if (bePlayer.isBattleClass(BattleClass.ARMOR_KNIGHT)) {
-                                //重鎧兵はHPが通常の3倍
-                                amount = 1.0 / 3.0;
+                                //重鎧兵はHPが通常の3倍で回復量2倍
+                                amount = 2.0 / 3.0;
                             } else {
                                 //他はHPが通常の2倍
                                 amount = 1.0 / 2.0;
