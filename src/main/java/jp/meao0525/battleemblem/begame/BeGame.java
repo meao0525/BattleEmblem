@@ -44,7 +44,7 @@ public class BeGame {
         bePlayerList = BePlayerList.getBePlayerList();
 
         //プレイヤーがいない
-        if (bePlayerList.size() == 0) { //TODO: ここは最終的には1以下
+        if (bePlayerList.size() == 0) {
             Bukkit.broadcastMessage(ChatColor.DARK_RED + "誰もいないね...");
             return;
         }
