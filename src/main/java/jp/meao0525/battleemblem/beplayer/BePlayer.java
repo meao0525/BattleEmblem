@@ -33,7 +33,7 @@ public class BePlayer {
     private double defence;
 
     private int life = PLAYER_LIFE;
-    private Player lastDamager = null;
+    private BePlayer lastDamager = null;
 
     private boolean ability = false;
     private int cooldown = -1;
@@ -43,6 +43,10 @@ public class BePlayer {
     private int ultCount = 0;
     private boolean ultimate = false;
     private Timer ultTimer;
+
+    private int kill = 0;
+    private int damage = 0;
+    private int death = 0;
 
     public BePlayer(Player player) {
         this.player = player;
@@ -82,6 +86,15 @@ public class BePlayer {
         stopCooldown();
         stopUltTimer();
 
+        //スコアを見せてやろう
+        player.sendMessage(ChatColor.DARK_AQUA + "===== Your Score =====");
+        player.sendMessage("ダメージ： " + damage);
+        player.sendMessage("キル： " + kill);
+        player.sendMessage(ChatColor.DARK_AQUA + "======================");
+        //スコア設定
+        player.setStatistic(Statistic.PLAYER_KILLS, player.getStatistic(Statistic.PLAYER_KILLS) + kill);
+        player.setStatistic(Statistic.DEATHS, player.getStatistic(Statistic.DEATHS) + 1);
+
         //ステータスを元に戻す
         player.setHealthScale(DEFAULT_HEALTH);
         player.setWalkSpeed(DEFAULT_SPEED);
@@ -111,9 +124,13 @@ public class BePlayer {
         }
 
         if (damage >= player.getHealth()) {
+            //ダメージスコア設定
+            lastDamager.setDamage((int)(lastDamager.getDamage() + player.getHealth()));
             //プレイヤーは死んだのさ
             death();
         } else {
+            //ダメージスコア設定
+            lastDamager.setDamage((int)(lastDamager.getDamage() + damage));
             //ダメージを与える
             player.damage(damage);
         }
@@ -121,18 +138,19 @@ public class BePlayer {
 
     public void death() {
         //デススコア
-        player.setStatistic(Statistic.DEATHS, player.getStatistic(Statistic.DEATHS) + 1);
+        death += 1;
         //効果音
         player.playSound(player.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
         if (lastDamager != null) {
+            Player damager = lastDamager.getPlayer();
             //キルスコア
-            lastDamager.setStatistic(Statistic.PLAYER_KILLS, lastDamager.getStatistic(Statistic.PLAYER_KILLS) + 1);
+            lastDamager.setKill(lastDamager.getKill() + 1);
             //メッセージ
             Bukkit.broadcastMessage(ChatColor.GOLD + "[BattleEmblem]"
-                    + ChatColor.AQUA + lastDamager.getDisplayName() + ChatColor.RESET + "が"
+                    + ChatColor.AQUA + damager.getDisplayName() + ChatColor.RESET + "が"
                     + ChatColor.AQUA + player.getDisplayName() + ChatColor.RESET + "をキルしました");
             //効果音
-            lastDamager.playSound(lastDamager.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
+            damager.playSound(damager.getLocation(), Sound.ENTITY_WITHER_SPAWN, SoundCategory.MASTER, 4.0F,4.0F);
         }
         //lastDamagerを空にする
         lastDamager = null;
@@ -376,11 +394,11 @@ public class BePlayer {
         this.life = life;
     }
 
-    public Player getLastDamager() {
+    public BePlayer getLastDamager() {
         return lastDamager;
     }
 
-    public void setLastDamager(Player lastDamager) {
+    public void setLastDamager(BePlayer lastDamager) {
         this.lastDamager = lastDamager;
     }
 
@@ -423,6 +441,22 @@ public class BePlayer {
 
     public void setUltimate(boolean ultimate) {
         this.ultimate = ultimate;
+    }
+
+    public int getKill() {
+        return kill;
+    }
+
+    public void setKill(int kill) {
+        this.kill = kill;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
     //ぷらいべーとなめそっど

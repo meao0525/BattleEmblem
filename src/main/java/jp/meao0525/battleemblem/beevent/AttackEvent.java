@@ -53,6 +53,7 @@ public class AttackEvent implements Listener {
         double totalDamage = 0.0;
         //攻撃プレイヤー格納用
         Player attacker = null;
+        BePlayer beAttacker = null;
 
         /* 攻撃したのがプレイヤー -> if文の中
          * 攻撃したのが矢 -> else ifの中
@@ -61,7 +62,7 @@ public class AttackEvent implements Listener {
         if (e.getDamager() instanceof Player) {
             //攻撃したプレイヤーの取得
             attacker = (Player) e.getDamager();
-            BePlayer beAttacker = BePlayerList.getBePlayer(attacker);
+            beAttacker = BePlayerList.getBePlayer(attacker);
             //ゲーム参加者じゃなかったわー笑
             if (beAttacker == null) { return; }
 
@@ -98,6 +99,9 @@ public class AttackEvent implements Listener {
             if (arrow.getShooter() instanceof Player) {
                 //狙撃者取得
                 attacker = (Player) arrow.getShooter();
+                beAttacker = BePlayerList.getBePlayer(attacker);
+                //ゲーム参加者じゃなかったわー笑
+                if (beAttacker == null) { return; }
                 //ノックバック
                 knockback(attacker, beDefender, 2);
             }
@@ -113,8 +117,10 @@ public class AttackEvent implements Listener {
                 }
             }
         }
-        //最後に攻撃した人
-        beDefender.setLastDamager(attacker);
+        if (beAttacker != null) {
+            //最後に攻撃した人
+            beDefender.setLastDamager(beAttacker);
+        }
 
         //ダメージ与える
         beDefender.damage(totalDamage);
