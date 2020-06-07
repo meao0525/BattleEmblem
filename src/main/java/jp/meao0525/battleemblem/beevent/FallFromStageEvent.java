@@ -33,7 +33,12 @@ public class FallFromStageEvent implements Listener {
         Block block = world.getBlockAt(player.getLocation());
         //現在地が水
         if (block.isLiquid()) {
-            bePlayer.death();
+            if (BeGame.getPhase() == 1) {
+                //ステージにスポーン
+                player.teleport(coliseum);
+            } else {
+                bePlayer.death();
+            }
         }
     }
 }
