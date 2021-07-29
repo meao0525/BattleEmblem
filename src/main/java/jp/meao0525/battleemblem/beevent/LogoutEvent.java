@@ -2,6 +2,8 @@ package jp.meao0525.battleemblem.beevent;
 
 import jp.meao0525.battleemblem.BattleEmblemMain;
 import jp.meao0525.battleemblem.begame.BeGame;
+import jp.meao0525.battleemblem.beitem.BeItems;
+import jp.meao0525.battleemblem.beitem.BeRuleBook;
 import jp.meao0525.battleemblem.beplayer.BePlayer;
 
 import jp.meao0525.battleemblem.beplayer.BePlayerList;
@@ -19,6 +21,15 @@ public class LogoutEvent implements Listener {
         Player player = e.getPlayer();
         //BeGameからBePlayerのインスタンスを取得
         BePlayer bePlayer = BePlayerList.getBePlayer(player);
+
+        //持ち物消す
+        if (player.isOp()) {
+            //ロードアウトセレクターとルールブックだけ消す
+            player.getInventory().removeItem(BeItems.LOADOUT_SELECTOR.toItemStack(), new BeRuleBook().toItemStack());
+        } else {
+            //全部消す
+            player.getInventory().clear();
+        }
 
         //ログアウトしたのがBePlayerじゃない
         if (bePlayer == null) { return; }
